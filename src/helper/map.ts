@@ -7,36 +7,40 @@ export interface Map3DOptions {
   el: HTMLCanvasElement
 }
 
+export interface StatisticalCard {
+  icon: string;
+  zhLabel: string;
+  enLabel: string;
+  value: number;
+  unit: string;
+  decimals?: number;
+}
+
 export interface Map3DState {
   /** 进度 */
-  progress: number
+  progress: number,
+  /** 顶部菜单激活索引 */
+  activeIndex: string | number,
+  /** 统计卡片 */
+  statisticalCards: StatisticalCard[]
 }
 
 export default class Map3D {
   private readonly _el: HTMLCanvasElement
   /** 资源 */
   private _assets?: Assets
-  /** 状态 */
-  private _state: Map3DState
   private _world?: World
 
   constructor(options: Map3DOptions) {
     this._el = options.el
-    this._state = {
-      progress: 0,
-    }
   }
 
   get assets() {
     return this._assets
   }
 
-  get state() {
-    return this._state
-  }
-
   /** 初始化加载资源 */
-  initAssets(onLoadCallback?: () => void) {
+  initAssets(onLoadCallback?: () => void, onProgressCallback?: (progress: number) => void) {
     emitter.$on("loadMap", () => this.loadMap())
     emitter.$on("mapPlayComplete", () => this.handleMapPlayComplete())
     let params = {
@@ -48,7 +52,7 @@ export default class Map3D {
       gsap.to(params, {
         progress: p,
         onUpdate: () => {
-          this._state.progress = Math.floor(params.progress)
+          onProgressCallback?.(Math.floor(params.progress))
         },
       })
     })
@@ -68,7 +72,40 @@ export default class Map3D {
 
   /** 地图开始动画播放完成 */
   handleMapPlayComplete() {
-    console.log("handleMapPlayComplete")
+    const tl = gsap.timeline({ paused: false })
+    const leftCards = gsap.utils.toArray(".left-card")
+    const rightCards = gsap.utils.toArray(".right-card")
+    const countCards = gsap.utils.toArray(".count-card")
+    tl.addLabel("start", 0.5)
+    tl.addLabel("menu", 0.5)
+    tl.addLabel("card", 1)
+    tl.addLabel("countCard", 3)
+    tl.to(".m-header", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
+    tl.to(".bottom-tray", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "start")
+    tl.to(
+      ".top-menu",
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1.5,
+        ease: "power4.out",
+      },
+      "-=1"
+    )
+    tl.to(".bottom-radar", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }, "-=2")
+    tl.to(leftCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
+    tl.to(rightCards, { x: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power4.out" }, "card")
+    tl.to(
+      countCards,
+      {
+        y: 0,
+        opacity: 1,
+        stagger: 0.2,
+        duration: 1.5,
+        ease: "power4.out",
+      },
+      "card"
+    )
   }
 
   loadMap() {
@@ -81,5 +118,31 @@ export default class Map3D {
     this._world?.time.resume()
     this._world?.animateTl.timeScale(1)
     this._world?.animateTl.play()
+  }
+
+  /** 隐藏loading */
+  async hideLoading() {
+    return new Promise((resolve, reject) => {
+      let tl = gsap.timeline()
+      tl.to(".loading-text span", {
+        y: "200%",
+        opacity: 0,
+        ease: "power4.inOut",
+        duration: 2,
+        stagger: 0.2,
+      })
+      tl.to(".loading-progress", { opacity: 0, ease: "power4.inOut", duration: 2 }, "<")
+      tl.to(
+        ".loading",
+        {
+          opacity: 0,
+          ease: "power4.inOut",
+          onComplete: () => {
+            resolve(0)
+          },
+        },
+        "-=1"
+      )
+    })
   }
 }
