@@ -1,0 +1,51 @@
+/* 定义关键帧动画 */
+@keyframes blurAni {
+  to {
+    filter: blur(3px);
+  }
+}
+
+@keyframes arrowAnimate {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes arrowAnimate2 {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(90%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes screenLineAnimate {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes rotate360Animate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

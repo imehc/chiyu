@@ -2,11 +2,8 @@ import type { Object3D, Vector3Like } from 'three';
 import { CSS3DSprite as ThreeCSS3DSprite } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 
 export default class CSS3DSprite extends ThreeCSS3DSprite {
-    constructor(element: HTMLElement) {
-        super(element)
-    }
 
-    init(content: string, position: Vector3Like) { }
+    init(_content: string, _position: Vector3Like) { }
 
     hide() { }
 
@@ -14,5 +11,5 @@ export default class CSS3DSprite extends ThreeCSS3DSprite {
 
     show() { }
 
-    setParent(object3D: Object3D) { }
+    setParent(_object3D: Object3D) { }
 }

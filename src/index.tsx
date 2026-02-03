@@ -1,5 +1,5 @@
 /* @refresh reload */
-import './index.css';
+import './css/index.css';
 import { render } from 'solid-js/web';
 import 'solid-devtools';
 
@@ -13,4 +13,4 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-render(() => <App />, root!);
+render(() => <App />, root as HTMLElement);

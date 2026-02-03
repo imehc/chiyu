@@ -1,0 +1,29 @@
+@import "tailwindcss" prefix(tw);
+@import "./font.css";
+@import "./animation.css";
+
+:root {
+  line-height: normal;
+}
+
+/* 配置 Tailwind 主题变量 */
+@theme {
+  /* 字体族定义 */
+  --font-d-din: "D-DIN", Arial, sans-serif;
+  --font-d-din-bold: "D-DIN-Bold", Arial, sans-serif;
+  --font-d-din-italic: "D-DIN-Italic", Arial, sans-serif;
+  --font-alibaba: "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-alimama-shuhei: "阿里妈妈数黑体 Bold", "PingFang SC", "Microsoft YaHei", sans-serif;
+  /* 注册动画 */
+  --animate-blur-ani: blurAni 1.5s calc(var(--index) / 5 * 1s) alternate infinite;
+  /* 文字大小 */
+  --text-xxs: 10px;
+}
+
+body {
+  font-family: "SourceHanSansCN", "-apple-system", "BlinkMacSystemFont", "Helvetica Neue", Helvetica, "Segoe UI",
+    "Arial", "Roboto", "PingFang SC", "miui", "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+  background: #000;
+  -webkit-user-select: none;
+  user-select: none;
+}

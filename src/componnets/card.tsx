@@ -116,6 +116,7 @@ export default function Card({ width = 398, height = 200, title = '标题', chil
             <div class="m-card-hd">
                 <div class="m-card-hd-bg">
                     <svg width={width} height="36" viewBox={`0 0 ${width} 36`} fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <title> </title>
                         <g clip-path={`url(#clip0_70_69244${uid})`}>
                             <rect y="34.5" width={width} height="1" fill="url(#paint0_linear_70_69244)" />
                             <mask id={`path-2-inside-1_70_69244${uid}`} fill="white">
@@ -369,6 +370,7 @@ export default function Card({ width = 398, height = 200, title = '标题', chil
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                     >
+                        <title> </title>
                         <g opacity="0.6">
                             <path d={bdPath} fill="rgba(26, 57, 77,1)" />
                             <path d={bdPath} stroke="url(#paint1_linear_70_69585)" />

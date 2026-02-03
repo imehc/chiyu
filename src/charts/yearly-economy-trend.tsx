@@ -12,7 +12,7 @@ export default function YearlyEconomyTrend() {
         { name: '类型4', value: 150 },
     ]
     return (
-        <div class="left-card">
+        <div id="left-card" class="left-card">
             <Card title="年度经济增长点">
                 <div class="pie-chat-wrap">
                     <div class="pie-chat">

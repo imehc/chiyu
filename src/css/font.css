@@ -1,17 +1,18 @@
 
+/* 定义 @font-face */
 @font-face {
   font-family: "D-DIN";
-  src: url("/assets/font/D-DIN.otf") format("opentype");
+  src: url("/assets/font/D-DIN.otf") format("otf");
 }
 
 @font-face {
   font-family: "D-DIN-Bold";
-  src: url("/assets/font/D-DIN-Bold.otf") format("opentype");
+  src: url("/assets/font/D-DIN-Bold.otf") format("otf");
 }
 
 @font-face {
   font-family: "D-DIN-Italic";
-  src: url("/assets/font/D-DIN-Italic.otf") format("opentype");
+  src: url("/assets/font/D-DIN-Italic.otf") format("otf");
 }
 
 @font-face {

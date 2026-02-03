@@ -41,6 +41,7 @@ export default function SvgLineAnimation({
     return (
         <div class={className}>
             <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} fill="none" xmlns="http://www.w3.org/2000/svg">
+                <title> </title>
                 <defs>
                     <radialGradient id={radialGradientId} cx="50%" cy="50%" fx="100%" fy="50%" r="50%">
                         <stop offset="0%" stop-color="#fff" stop-opacity={dir[1]} />

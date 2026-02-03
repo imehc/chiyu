@@ -3,7 +3,7 @@
  * 提供材质、几何体、纹理的递归销毁功能
  */
 
-import { type Material, Texture, type Object3D, BufferGeometry } from 'three';
+import { BufferGeometry, type Material, type Object3D, Texture } from "three";
 
 /**
  * 材质销毁函数
@@ -11,15 +11,15 @@ import { type Material, Texture, type Object3D, BufferGeometry } from 'three';
  * @param material - 单个材质或材质数组
  */
 const materialDispose = (material: Material | Material[]): void => {
-    if (material instanceof Array) {
-        material.forEach(materialDispose);
-    } else {
-        // 检查并销毁材质的贴图
-        if ('map' in material && material.map instanceof Texture) {
-            material.map.dispose();
-        }
-        material.dispose();
-    }
+	if (Array.isArray(material)) {
+		material.forEach(materialDispose);
+	} else {
+		// 检查并销毁材质的贴图
+		if ("map" in material && material.map instanceof Texture) {
+			material.map.dispose();
+		}
+		material.dispose();
+	}
 };
 
 /**
@@ -28,26 +28,26 @@ const materialDispose = (material: Material | Material[]): void => {
  * @param obj - Three.js 对象
  */
 const deallocate = (obj: Object3D): void => {
-    // 销毁几何体
-    if ('geometry' in obj && obj.geometry instanceof BufferGeometry) {
-        obj.geometry.dispose();
-    }
+	// 销毁几何体
+	if ("geometry" in obj && obj.geometry instanceof BufferGeometry) {
+		obj.geometry.dispose();
+	}
 
-    // 销毁材质
-    if ('material' in obj && obj.material !== undefined) {
-        const mat = obj.material as Material | Material[];
-        materialDispose(mat);
-    }
+	// 销毁材质
+	if ("material" in obj && obj.material !== undefined) {
+		const mat = obj.material as Material | Material[];
+		materialDispose(mat);
+	}
 
-    // 销毁纹理
-    if ('texture' in obj && obj.texture instanceof Texture) {
-        obj.texture.dispose();
-    }
+	// 销毁纹理
+	if ("texture" in obj && obj.texture instanceof Texture) {
+		obj.texture.dispose();
+	}
 
-    // 递归处理子对象
-    if (obj.children.length > 0) {
-        obj.children.forEach(deallocate);
-    }
+	// 递归处理子对象
+	if (obj.children.length > 0) {
+		obj.children.forEach(deallocate);
+	}
 };
 
 /**
@@ -56,15 +56,15 @@ const deallocate = (obj: Object3D): void => {
  * @param obj - 包含子对象的 Three.js 对象
  */
 const emptyObject = (obj: Object3D | null | undefined): void => {
-    if (obj === null || obj === undefined) {
-        return;
-    }
+	if (obj === null || obj === undefined) {
+		return;
+	}
 
-    while (obj.children.length > 0) {
-        const childObj = obj.children[0];
-        obj.remove(childObj);
-        deallocate(childObj);
-    }
+	while (obj.children.length > 0) {
+		const childObj = obj.children[0];
+		obj.remove(childObj);
+		deallocate(childObj);
+	}
 };
 
 export { emptyObject, deallocate, materialDispose };
