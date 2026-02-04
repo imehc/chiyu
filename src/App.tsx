@@ -10,7 +10,9 @@ import PurposeSpecialFunds from "./charts/purpose-special-funds";
 import QuarterlyGrowthSituation from "./charts/quarterly-growth-situation";
 import Radar from "./charts/radar";
 import YearlyEconomyTrend from "./charts/yearly-economy-trend";
+import CurrentTime from "./componnets/current-time";
 import SvgLineAnimation from "./componnets/svg-line-animation";
+import Weather from "./componnets/weather";
 import Map3D, { type Map3DState } from "./helper/map";
 import Bottom from "./layouts/bottom";
 import Header from "./layouts/header";
@@ -97,20 +99,8 @@ const App: Component = () => {
 				<Header
 					title="广东省数据可视化平台"
 					subText="Guangdong Economic Visualization Platform"
-					leftChindren={
-						<div>
-							<span class="tw:pr-2 tw:text-[#c4f3fe] tw:text-sm">小雨</span>
-							<span class="tw:pr-2 tw:text-[#c4f3fe] tw:text-sm">27℃</span>
-						</div>
-					}
-					rightChindren={
-						<div>
-							<span class="tw:pr-2 tw:text-[#c4f3fe] tw:text-sm">
-								2023-10-12
-							</span>
-							<span class="tw:pr-2 tw:text-[#c4f3fe] tw:text-sm">17:53:16</span>
-						</div>
-					}
+					leftChindren={<Weather />}
+					rightChindren={<CurrentTime />}
 				/>
 				<div
 					id="top-menu"
