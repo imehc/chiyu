@@ -38,6 +38,7 @@ export default class Label3D {
 		this.#css3DRenderer.domElement.style.top = "0px";
 		this.#css3DRenderer.domElement.style.left = "0px";
 		this.#css3DRenderer.domElement.style.pointerEvents = "none";
+		this.#css3DRenderer.domElement.style.zIndex = "9999";
 		this.#css3DRenderer.domElement.className = `label3d-${uuid()}`;
 		this.#canvas.parentNode?.appendChild(this.#css3DRenderer.domElement);
 		this.#time.on("tick", () => {

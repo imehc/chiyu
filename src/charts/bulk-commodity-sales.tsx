@@ -206,7 +206,10 @@ export default function BulkCommoditySales() {
 	// });
 
 	return (
-		<div id="left-card" class="left-card">
+		<div
+			id="left-card"
+			class="tw:flex-1 tw:mb-3 tw:-translate-x-[150%] tw:opacity-0"
+		>
 			<Card title="大宗商品销售额">
 				<div ref={chartRef} class="tw:size-full" />
 			</Card>

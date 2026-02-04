@@ -23,8 +23,8 @@ import {
 	WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { cn } from "../utils/cn";
 import { emptyObject } from "../utils/empty-object";
-import "./pie.css";
 
 interface PieOption {
 	width: number;
@@ -440,9 +440,15 @@ export default function PieChart({
 	});
 
 	return (
-		<div class={`three-pie-wrap ${className}`}>
-			<div class="three-pie" ref={pieDom}></div>
-			<div class="three-pie-slot">
+		<div class={`tw:relative tw:size-full tw:z-2 ${className}`}>
+			<div class="tw:size-full" ref={pieDom}></div>
+			<div
+				class={cn(
+					"tw:absolute tw:top-0 tw:left-0",
+					"tw:flex tw:justify-center tw:items-center",
+					"tw:size-full tw:pointer-events-none",
+				)}
+			>
 				{children?.({ ...data[activeIndex()], count })}
 			</div>
 		</div>

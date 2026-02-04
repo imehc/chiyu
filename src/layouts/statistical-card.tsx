@@ -1,6 +1,6 @@
 import type { Statistical } from "../helper/map";
+import { cn } from "../utils/cn";
 import StatisticalCount from "./statistical-count";
-import "./statistical-card.css";
 
 export default function StatisticalCard({
 	icon = "xiaoshoujine",
@@ -11,16 +11,41 @@ export default function StatisticalCard({
 	decimals = 0,
 }: Statistical) {
 	return (
-		<div id="count-card" class="count-card">
-			<div class="count-card-left">
-				<div class={`count-card-icon icon-${icon}`}></div>
-				<div class="count-card-title leading-none">
-					<div class="title-zh">{zhLabel}</div>
-					<div class="title-en">{enLabel.toUpperCase()}</div>
+		<div
+			id="count-card"
+			class={cn(
+				"tw:px-12 tw:flex tw:items-center",
+				"tw:opacity-0 tw:translate-y-full",
+			)}
+		>
+			<div class="tw:flex tw:items-center">
+				<div
+					class={cn(
+						"tw:size-14 tw:mr-2.5 tw:bg-no-repeat tw:bg-center tw:bg-[length:100%]",
+						[
+							icon === "xiaoshoujine"
+								? "tw:bg-[url(/assets/images/icon1.png)]"
+								: "tw:bg-[url(/assets/images/icon2.png)]",
+						],
+					)}
+				></div>
+				<div>
+					<div class="tw:font-bold tw:text-lg tw:text-white tw:whitespace-nowrap tw:leading-none">
+						{zhLabel}
+					</div>
+					<div class="tw:font-d-din tw:font-normal tw:text-xs tw:text-white tw:opacity-50 tw:pt-1 tw:whitespace-nowrap">
+						{enLabel.toUpperCase()}
+					</div>
 				</div>
 			</div>
-			<div class="count-card-right">
-				<div class="value">
+			<div class="tw:flex tw:items-center tw:pl-5">
+				<div
+					class={cn(
+						"tw:font-d-din tw:font-bold tw:text-3xl tw:text-white",
+						"tw:tracking-wide tw:mr-2.5 tw:text-nowrap",
+						"tw:[text-shadow:0px_0px_18px_#ffffffb3]",
+					)}
+				>
 					<StatisticalCount
 						startVal={0}
 						endVal={value}
@@ -30,7 +55,14 @@ export default function StatisticalCard({
 						autoplay
 					/>
 				</div>
-				<div class="unit">{unit}</div>
+				<div
+					class={cn(
+						"tw:font-medium tw:text-xs tw:text-white tw:pt-4",
+						"tw:opacity-50 tw:whitespace-nowrap",
+					)}
+				>
+					{unit}
+				</div>
 			</div>
 		</div>
 	);

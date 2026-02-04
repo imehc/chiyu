@@ -1,5 +1,4 @@
 import { createContext, createSignal, type JSX, useContext } from "solid-js";
-import "./index.css";
 
 // 创建上下文
 interface MenuContextType {
@@ -51,7 +50,7 @@ export default function Menu(props: MenuProps) {
 
 	return (
 		<MenuContext.Provider value={contextValue}>
-			<div class="m-menu">{props.children}</div>
+			<div class="tw:flex">{props.children}</div>
 		</MenuContext.Provider>
 	);
 }

@@ -226,7 +226,10 @@ export default function PurposeSpecialFunds() {
 	});
 
 	return (
-		<div id="right-card" class="right-card">
+		<div
+			id="right-card"
+			class="tw:flex-1 tw:mb-3 tw:translate-x-[150%] tw:opacity-0"
+		>
 			<Card title="专项资金用途">
 				<div ref={chartRef} class="tw:size-full" />
 			</Card>

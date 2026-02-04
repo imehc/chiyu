@@ -41,6 +41,7 @@ import chinaData from "../maps/china";
 import provincesData from "../maps/guang-dong";
 import infoData from "../maps/info";
 import scatterData from "../maps/scatter";
+import { cn } from "../utils/cn";
 import emitter from "../utils/emitter";
 import type Assets from "./assets";
 import { sortByValue } from "./utils/sort-by-value";
@@ -572,17 +573,29 @@ export default class World extends WorldCore {
 		) {
 			const label = self._label3d.create("", "provinces-label", false);
 			label.init(
-				`<div class="provinces-label ${index > 4 ? "yellow" : ""}">
-                    <div id="provinces-label-wrap" class="provinces-label-wrap">
-                        <div id="number" class="number">
-                            <span id="value" class="value">${data.value}</span>
-                            <span class="unit">万人</span>
+				`<div>
+                    <div id="provinces-label-wrap" class="${cn(
+					"tw:translate-x-1/2 tw:translate-y-[200%] tw:opacity-0",
+					"tw:flex tw:justify-between tw:items-center tw:px-5",
+					"tw:h-13 tw:rounded-3xl tw:rounded-bl-none",
+					"tw:bg-[#00000066] tw:box-border tw:gap-x-2"
+				)}">
+                        <div id="number" class="tw:text-white tw:text-3xl tw:font-bold tw:whitespace-nowrap">
+                            <span id="value">${data.value}</span>
+                            <span class="tw:text-white tw:text-xs tw:font-normal tw:opacity-50 tw:pl-1">万人</span>
                         </div>
-                        <div class="name">
-                            <span class="zh">${data.name}</span>
-                            <span class="en">${data.enName.toUpperCase()}</span>
+                        <div class="tw:text-white tw:text-base tw:font-bold">
+                            <span class="tw:block">${data.name}</span>
+                            <span class="tw:block tw:text-white tw:text-xxs tw:opacity-50 tw:font-bold">${data.enName.toUpperCase()}</span>
                         </div>
-                        <div class="no">${index + 1}</div>
+                        <div class="${cn(
+					"tw:text-3xl tw:font-bold",
+					[index > 4 ?
+						"tw:text-[#fef99e] tw:[text-shadow:0_0_5px_#fef99e,0_0_10px_#fef99e]" :
+						"tw:text-[#7efbf6] tw:[text-shadow:0_0_5px_#7efbf6,0_0_10px_#7efbf6]"]
+				)}">
+								${index + 1}
+							</div>
                     </div>
                 </div>`,
 				position,
@@ -888,12 +901,22 @@ export default class World extends WorldCore {
 		) {
 			const label = label3d.create(
 				"",
-				`china-label ${province.blur ? " blur" : ""}`,
+				cn(
+					"tw:text-white tw:text-xs tw:will-change-transform",
+					{ "tw:blur-xxs" : province.blur }
+				),
 				false,
 			);
 			const [x, y] = self.geoProjection(province.center as [number, number]);
 			label.init(
-				`<div id="other-label" class="other-label"><img class="label-icon" src="${labelIcon}">${province.name}</div>`,
+				`<div id="other-label" class="${cn(
+					"tw:flex tw:items-center tw:p-1 tw:rounded-sm",
+					"tw:bg-[#00000099] tw:will-change-transform",
+					"tw:translate-y-[200%] tw:opacity-0 tw:bg-none"
+				)}">
+					<img class="tw:block tw:size-5 tw:mr-2" src="${labelIcon}">
+					${province.name}
+				</div>`,
 				new Vector3(x, -y, 0.4),
 			);
 			label3d.setLabelStyle(label, 0.02, "x");
@@ -905,10 +928,21 @@ export default class World extends WorldCore {
 			label3d: Label3D,
 			labelGroup: Group,
 		) {
-			const label = label3d.create("", "map-label", false);
+			const label = label3d.create(
+				"", cn(
+					"tw:p-1 tw:text-white tw:will-change-transform tw:tracking-wider tw:text-4xl tw:font-bold",
+					"tw:[-webkit-box-reflect:below_0_-webkit-linear-gradient(transparent,transparent_20%,#ffffff4d)]"
+				), false
+			);
 			const [x, y] = self.geoProjection(province.center);
 			label.init(
-				`<div id="other-label" class="other-label"><span>${province.name}</span><span>${province.enName}</span></div>`,
+				`<div id="other-label" class="${cn(
+					"tw:flex tw:flex-col tw:will-change-transform",
+					"tw:translate-y-[200%] tw:opacity-0 tw:bg-none"
+				)}">
+					<span class="tw:text-5xl">${province.name}</span>
+					<span class="tw:text-xs tw:leading-6 tw:font-normal tw:tracking-normal tw:text-[#a7d5ef]">${province.enName}</span>
+				</div>`,
 				new Vector3(x, -y, 0.4),
 			);
 			label3d.setLabelStyle(label, 0.015, "x");
@@ -922,12 +956,18 @@ export default class World extends WorldCore {
 		) {
 			const label = label3d.create(
 				"",
-				`decoration-label  ${data.reflect ? " reflect" : ""}`,
+				cn(
+					"decoration-label",
+					{ "" : data.reflect }
+				),
 				false,
 			);
 			const [x, y] = self.geoProjection(data.center);
 			label.init(
-				`<div id="other-label" class="other-label"><img class="label-icon" style="width:${data.width};height:${data.height}" src="${data.icon}">`,
+				`<div id="other-label" class="tw:translate-y-[200%] tw:opacity-0 tw:bg-none tw:will-change-transform">
+					<img class="tw:block tw:size-10" style="width:${data.width};height:${data.height}" src="${data.icon}">
+				</div>
+				`,
 				new Vector3(x, -y, 0.4),
 			);
 			label3d.setLabelStyle(label, 0.02, "x");
@@ -943,17 +983,25 @@ export default class World extends WorldCore {
 		// 	const label = label3d.create("", "provinces-label", false);
 		// 	const [x, y] = self.geoProjection(data.center);
 		// 	label.init(
-		// 		`<div class="provinces-label">
-		//             <div id="provinces-label-wrap" class="provinces-label-wrap">
-		//                 <div id="number" class="number">
-        //                      <span id="value" class="value">${data.value}</span>
-        //                      <span>万人</span>
-        //                 </div>
-		//                 <div class="name">
-            //                 <span class="zh">${data.name}</span>
-            //                 <span class="en">${data.enName.toUpperCase()}</span>
+		// 		`<div>
+		//             <div id="provinces-label-wrap" class="${cn(
+		// 				"tw:translate-x-1/2 tw:translate-y-[200%] tw:opacity-0",
+		// 				"tw:flex tw:justify-between tw:items-center tw:px-5",
+		// 				"tw:h-13 tw:rounded-3xl tw:rounded-bl-none",
+		// 				"tw:bg-[#00000066] tw:box-border tw:gap-x-2"
+		// 			)}">
+		//                 <div id="number" class="tw:text-white tw:text-3xl tw:font-bold tw:whitespace-nowrap">
+		//                     <span id="value">${data.value}</span>
+		//                     <span class="tw:text-white tw:text-xs tw:font-normal tw:opacity-50 tw:pl-1">万人</span>
 		//                 </div>
-		//                 <div class="no">${index + 1}</div>
+		//                 <div class="tw:text-white tw:text-base tw:font-bold">
+		//                     <span class="tw:block">${data.name}</span>
+		//                     <span class="tw:block tw:text-white tw:text-xxs tw:opacity-50 tw:font-bold">${data.enName.toUpperCase()}</span>
+		//                 </div>
+		//                 <div class="${cn(
+		// 					"tw:text-3xl tw:font-bold tw:text-[#7efbf6]",
+		// 					"tw:[text-shadow:0_0_5px_#7efbf6,0_0_10px_#7efbf6]"
+		// 				)}">${index + 1}</div>
 		//             </div>
 		//         </div>`,
 		// 		new Vector3(x, -y, 2.4),
@@ -1225,20 +1273,55 @@ export default class World extends WorldCore {
 			label3d: Label3D,
 			labelGroup: Group,
 		) {
-			const label = label3d.create("", "info-point", true);
+			const label = label3d.create(
+				"",
+				cn(
+					"tw:bg-[#00000080] tw:text-[#a3dcde] tw:text-sm",
+					"tw:w-42.5 tw:h-26.5 tw:pt-4 tw:px-3 tw:mb-7.5",
+					"tw:will-change-transform tw:box-content",
+				),
+				true,
+			);
 			const [x, y] = self.geoProjection([data.lng, data.lat]);
 			label.init(
-				` <div class="info-point-wrap">
-                    <div class="info-point-wrap-inner">
-                        <div class="info-point-line">
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line"></div>
+				` <div class="${cn(
+					"tw:before:content-[''] tw:before:block tw:before:size-4",
+					"tw:before:border-t tw:before:border-l tw:before:border-solid",
+					"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
+					"tw:before:absolute tw:before:top-0 tw:before:left-0",
+					"tw:after:content-[''] tw:after:block tw:after:size-4",
+					"tw:after:border-t tw:after:border-r tw:after:border-solid",
+					"tw:after:border-t-[#4b87a6] tw:after:border-r-[#4b87a6]",
+					"tw:after:absolute tw:after:top-0 tw:after:right-0"
+				)}">
+                    <div class="${cn(
+					"tw:before:content-[''] tw:before:block tw:before:size-4",
+					"tw:before:border-b tw:before:border-l tw:before:border-solid",
+					"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
+					"tw:before:absolute tw:before:bottom-0 tw:before:left-0",
+					"tw:after:content-[''] tw:after:block tw:after:size-4",
+					"tw:after:border-b tw:after:border-r tw:after:border-solid",
+					"tw:after:border-b-[#4b87a6] tw:after:border-r-[#4b87a6]",
+					"tw:after:absolute tw:after:bottom-0 tw:after:right-0"
+				)}">
+                        <div class="tw:absolute tw:top-2 tw:right-3 tw:flex">
+							<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
+                        	<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
+                        	<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
                         </div>
-                        <div class="info-point-content">
-                        <div class="content-item"><span class="label">名称</span><span class="value">${data.name}</span></div>
-                        <div class="content-item"><span class="label">PM2.5</span><span class="value">${data.value}ug/m²</span></div>
-                        <div class="content-item"><span class="label">等级</span><span class="value">${data.level}</span></div>
+                        <div>
+                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
+								<span class="tw:w-15 tw:pl-2">名称</span>
+								<span class="tw:text-white">${data.name}</span>
+							</div>
+                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
+								<span class="tw:w-15 tw:pl-2">PM2.5</span>
+								<span class="tw:text-white">${data.value}ug/m²</span>
+							</div>
+                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
+								<span class="tw:w-15 tw:pl-2">等级</span>
+								<span class="tw:text-white">${data.level}</span>
+							</div>
                         </div>
                     </div>
                     </div>
@@ -1309,7 +1392,7 @@ export default class World extends WorldCore {
 		//     console.log(this.camera.instance.position);
 		// });
 		const tl = gsap.timeline({
-			onComplete: () => {},
+			onComplete: () => { },
 		});
 		tl.pause();
 		this._animateTl = tl;

@@ -61,7 +61,7 @@ export default function SvgLineAnimation({
                         </circle>
                     </mask>
                 </defs>
-                <path class="mix-blend-screen" d={path} stroke={color} stroke-width={strokeWidth} mask={`url(#${maskId})`} />
+                <path class="tw:mix-blend-screen" d={path} stroke={color} stroke-width={strokeWidth} mask={`url(#${maskId})`} />
             </svg>
         </div>
     )

@@ -8,7 +8,7 @@ export interface Map3DOptions {
 }
 
 export interface Statistical {
-	icon: string;
+	icon: "xiaoshoujine" | "zongxiaoliang";
 	zhLabel: string;
 	enLabel: string;
 	value: number;
@@ -32,7 +32,7 @@ export default class Map3D {
 	private _world?: World;
 
 	constructor(options: Map3DOptions) {
-		this._el = options.el
+		this._el = options.el;
 	}
 
 	get assets() {
@@ -132,7 +132,7 @@ export default class Map3D {
 	}
 
 	loadMap() {
-		this._world = new World(this._el, this._assets)
+		this._world = new World(this._el, this._assets);
 		this._world?.time.pause();
 	}
 

@@ -11,7 +11,6 @@ const emitter = mitt<Events>();
 export default {
 	/** 监听事件 */
 	$on<K extends keyof Events>(event: K, handler: (payload: Events[K]) => void) {
-		console.log("监听事件", event);
 		emitter.on(event, handler);
 	},
 

@@ -1,7 +1,7 @@
 import { type ECharts, type EChartsOption, graphic, init } from "echarts";
 import { onCleanup, onMount } from "solid-js";
 import Card from "../componnets/card";
-import "./proportion-population-consumption.css";
+import { cn } from "../utils/cn";
 
 export default function ProportionPopulationConsumption() {
 	const pieDataColor = ["#17E6C3", "#40CFFF", "#1979FF", "#FFC472"];
@@ -135,24 +135,69 @@ export default function ProportionPopulationConsumption() {
 	});
 
 	return (
-		<div id="right-card" class="right-card">
+		<div
+			id="right-card"
+			class="tw:flex-1 tw:mb-3 tw:translate-x-[150%] tw:opacity-0"
+		>
 			<Card title="人群消费占比">
-				<div class="population-proportion">
-					<div class="population-proportion-chart">
+				<div class="tw:flex tw:h-full">
+					<div
+						class={cn(
+							"tw:relative tw:w-45 tw:h-full tw:ml-4",
+							"tw:bg-[url(/assets/images/pie/pie-zs-bg.png)] tw:bg-no-repeat tw:bg-cover",
+							"tw:after:content-['']",
+							"tw:after:absolute tw:after:left-1/2 tw:after:top-1/2",
+							"tw:after:-translate-1/2",
+							"tw:after:-z-1 tw:after:size-18",
+							"tw:after:bg-[url(/assets/images/pie/pie-zs-bg.png)] tw:after:bg-no-repeat",
+							"tw:after:bg-contain tw:after:bg-center",
+							"tw:after:animate-[rotate360Animate_2s_linear_infinite]",
+						)}
+					>
 						<div ref={chartRef} class="tw:size-full" />
-						<div class="label-name">消费占比</div>
+						<div
+							class={cn(
+								"tw:absolute tw:left-1/2 tw:top-1/2",
+								"tw:-translate-1/2",
+								"tw:size-18",
+								"tw:flex tw:items-center tw:justify-center",
+								"tw:text-xs tw:text-[#c4e3fd]",
+							)}
+						>
+							消费占比
+						</div>
 					</div>
-					<div class="pie-legend">
+					<div class={cn(
+						"tw:flex tw:flex-col tw:justify-between tw:items-center tw:flex-wrap",
+						"tw:pl-8 tw:py-5"
+					)}>
 						{pieData.map((item, idx) => (
-							<div class="pie-legend-item">
+							<div class="tw:flex tw:items-center tw:flex-nowrap tw:box-border">
 								<div
-									class="icon"
+									class={cn(
+										"tw:size-2.5 tw:rounded-full",
+										"tw:border-2 tw:border-solid tw:border-[#17e6c3]",
+										"tw:box-border tw:mr-2",
+									)}
 									style={{ "border-color": pieDataColor[idx] }}
 								></div>
-								<div class="name">{item.name}</div>
-								<div class="value">
+								<div class="tw:font-medium tw:text-xs tw:text-white">
+									{item.name}
+								</div>
+								<div
+									class={cn(
+										"tw:flex tw:flex-nowrap tw:justify-end tw:items-center",
+										"tw:w-20 tw:text-right",
+										"tw:font-bold tw:text-white tw:font-d-din tw:text-base",
+									)}
+								>
 									{item.value}
-									<span class="unit">%</span>
+									<span class={cn(
+										"tw:font-d-din tw:font-normal tw:text-xxs",
+										"tw:opacity-50 tw:pl-2.5"
+									)}>
+										%
+									</span>
 								</div>
 							</div>
 						))}

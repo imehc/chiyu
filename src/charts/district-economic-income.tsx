@@ -216,7 +216,10 @@ export default function DistrictEconomicIncome() {
 	});
 
 	return (
-		<div id="left-card" class="left-card">
+		<div
+			id="left-card"
+			class="tw:flex-1 tw:mb-3 tw:-translate-x-[150%] tw:opacity-0"
+		>
 			<Card title="各区经济收益">
 				<div ref={chartRef} class="tw:size-full" />
 			</Card>

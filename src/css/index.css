@@ -14,10 +14,13 @@
   --font-d-din-italic: "D-DIN-Italic", Arial, sans-serif;
   --font-alibaba: "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-alimama-shuhei: "阿里妈妈数黑体 Bold", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-pingfang-sc: "PingFang SC", "Microsoft YaHei", sans-serif;
   /* 注册动画 */
   --animate-blur-ani: blurAni 1.5s calc(var(--index) / 5 * 1s) alternate infinite;
   /* 文字大小 */
   --text-xxs: 10px;
+  /* 模糊 */
+  --blur-xxs: 2px;
 }
 
 body {
