@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/imehc/imehc.github.io/compare/v1.0.0...v1.1.0) (2026-02-04)
+
+
+### Features
+
+* canvas 文本拖拽 ([f1e43e8](https://github.com/imehc/imehc.github.io/commit/f1e43e861c3a19f8ce98e01256e9e16d8f3c74c2))
+
 # 1.0.0 (2026-02-04)
 
 
