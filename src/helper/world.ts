@@ -196,14 +196,14 @@ export default class World extends WorldCore {
 		this.createChinaBlurLine();
 		this.createGrid();
 		this.createRotateBorder();
-		// this.createLabel();
+		this.createLabel();
 		this.createMap();
-		// this.createEvent();
-		// this.createFlyLine();
-		// this.createFocus();
-		// this.createParticles();
-		// this.createScatter();
-		// this.createInfoPoint();
+		this.createEvent();
+		this.createFlyLine();
+		this.createFocus();
+		this.createParticles();
+		this.createScatter();
+		this.createInfoPoint();
 		this.createStorke();
 		this.createAnimationTimeline();
 	}
