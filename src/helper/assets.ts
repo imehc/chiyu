@@ -9,13 +9,13 @@ import focusBgTexture from "/texture/focus/focus_bg.png";
 import focusMidQuanTexture from "/texture/focus/focus_mid_quan.png";
 import focusMoveBgTexture from "/texture/focus/focus_move_bg.png";
 import guangquan1 from "/texture/guangquan01.png";
-import flyLineFocus from "/texture/guangquan01.png";
+// import flyLineFocus from "/texture/guangquan01.png";
 import guangquan2 from "/texture/guangquan02.png";
 import huiguang from "/texture/huiguang.png";
 import ocean from "/texture/ocean-bg.png";
-import pathLine2 from "/texture/pathLine.png";
+// import pathLine2 from "/texture/pathLine.png";
 import pathLine3 from "/texture/pathLine2.png";
-import pathLine from "/texture/pathLine4.png";
+// import pathLine from "/texture/pathLine4.png";
 import point from "/texture/point1.png";
 import rotationBorder1 from "/texture/rotationBorder1.png";
 import rotationBorder2 from "/texture/rotationBorder2.png";
@@ -49,9 +49,9 @@ export default class Assets {
 			{ type: "File", name: "mapJson", path: "/geojson/广东省.json" },
 			{ type: "File", name: "mapStroke", path: "/geojson/广东省-轮廓.json" },
 
-			{ type: "Texture", name: "flyline", path: pathLine },
-			{ type: "Texture", name: "pathLine", path: pathLine },
-			{ type: "Texture", name: "pathLine2", path: pathLine2 },
+			// { type: "Texture", name: "flyline", path: pathLine },
+			// { type: "Texture", name: "pathLine", path: pathLine },
+			// { type: "Texture", name: "pathLine2", path: pathLine2 },
 			{ type: "Texture", name: "pathLine3", path: pathLine3 },
 
 			{ type: "Texture", name: "huiguang", path: huiguang },
@@ -62,7 +62,7 @@ export default class Assets {
 			{ type: "Texture", name: "chinaBlurLine", path: chinaBlurLine },
 			{ type: "Texture", name: "ocean", path: ocean },
 			{ type: "Texture", name: "side", path: side },
-			{ type: "Texture", name: "flyLineFocus", path: flyLineFocus },
+			// { type: "Texture", name: "flyLineFocus", path: flyLineFocus },
 			{ type: "Texture", name: "mapFlyline", path: mapFlyline },
 			{ type: "Texture", name: "arrow", path: arrow },
 			{ type: "Texture", name: "point", path: point },
