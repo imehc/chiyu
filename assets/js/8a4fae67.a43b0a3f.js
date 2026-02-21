@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkanch=self.webpackChunkanch||[]).push([["868"],{84984(a){a.exports=JSON.parse('{"tag":{"label":"React","permalink":"/blog/tags/react","allTagsPath":"/blog/tags","count":3,"unlisted":false},"listMetadata":{"permalink":"/blog/tags/react","page":1,"postsPerPage":10,"totalPages":1,"totalCount":3,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
