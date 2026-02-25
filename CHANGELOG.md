@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/imehc/imehc.github.io/compare/v1.1.0...v1.1.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* 笔记图片未能正常加载 ([fe04ca8](https://github.com/imehc/imehc.github.io/commit/fe04ca8545a60dcd4f0c42b83986aad067f32521))
+
 # [1.1.0](https://github.com/imehc/imehc.github.io/compare/v1.0.0...v1.1.0) (2026-02-04)
 
 
