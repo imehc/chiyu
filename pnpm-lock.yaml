@@ -117,8 +117,8 @@ importers:
         specifier: ^2.3.0
         version: 2.4.1(react@19.2.3)
       proj4:
-        specifier: ^2.20.2
-        version: 2.20.2
+        specifier: ^2.20.3
+        version: 2.20.3
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -7132,8 +7132,8 @@ packages:
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
-  proj4@2.20.2:
-    resolution: {integrity: sha512-ipfBRfQly0HhHTO7hnC1GfaX8bvroO7VV4KH889ehmADSE8C/qzp2j+Jj6783S9Tj6c2qX/hhYm7oH0kgXzBAA==}
+  proj4@2.20.3:
+    resolution: {integrity: sha512-uKJXnf/RkHhExxnWHqQqy2J1bPc5Qo8XSGzrMSJTdPWUQDo1DkunIRBfAS0crQaP9bZCSKNjqYJdYWVov0hDXw==}
 
   promise-worker-transferable@1.0.4:
     resolution: {integrity: sha512-bN+0ehEnrXfxV2ZQvU2PetO0n4gqBD4ulq3MI1WOPLgr7/Mg9yRQkX5+0v1vagr74ZTsl7XtzlaYDo2EuCeYJw==}
@@ -8384,8 +8384,8 @@ packages:
   wildcard@2.0.1:
     resolution: {integrity: sha512-CC1bOL87PIWSBhDcTrdeLo6eGT7mCFtrg0uIJtqJUFyK+eJnzl8A1niH56uu7KMa5XFrtiV+AQuHO3n7DsHnLQ==}
 
-  wkt-parser@1.5.2:
-    resolution: {integrity: sha512-1ZUiV1FTwSiSrgWzV9KXJuOF2BVW91KY/mau04BhnmgOdroRQea7Q0s5TVqwGLm0D2tZwObd/tBYXW49sSxp3Q==}
+  wkt-parser@1.5.3:
+    resolution: {integrity: sha512-myla+RrMj+WTlnHc8Y4HEwjBcBF9dqJ3vjff/zmlrn9V3OKOM1mZVIyNjlPEmOM9Jjr/PPut0tnaTs9NyHcK8Q==}
 
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
@@ -17673,10 +17673,10 @@ snapshots:
 
   process-nextick-args@2.0.1: {}
 
-  proj4@2.20.2:
+  proj4@2.20.3:
     dependencies:
       mgrs: 1.0.0
-      wkt-parser: 1.5.2
+      wkt-parser: 1.5.3
 
   promise-worker-transferable@1.0.4:
     dependencies:
@@ -18304,7 +18304,7 @@ snapshots:
     dependencies:
       but-unzip: 0.1.7
       parsedbf: 2.0.0
-      proj4: 2.20.2
+      proj4: 2.20.3
 
   side-channel-list@1.0.0:
     dependencies:
@@ -19177,7 +19177,7 @@ snapshots:
 
   wildcard@2.0.1: {}
 
-  wkt-parser@1.5.2: {}
+  wkt-parser@1.5.3: {}
 
   word-wrap@1.2.5: {}
 
