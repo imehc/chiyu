@@ -30,6 +30,15 @@ export default class Map3D {
 	/** 资源 */
 	private _assets?: Assets;
 	private _world?: World;
+	private _isDestroyed = false;
+	private readonly _onLoadMap = () => this.loadMap();
+	private readonly _onMapPlayComplete = () => this.handleMapPlayComplete();
+	private _onAssetsProgress?: (
+		path: string,
+		itemsLoaded: number,
+		itemsTotal: number,
+	) => void;
+	private _onAssetsLoad?: () => void;
 
 	constructor(options: Map3DOptions) {
 		this._el = options.el;
@@ -44,13 +53,17 @@ export default class Map3D {
 		onLoadCallback?: () => void,
 		onProgressCallback?: (progress: number) => void,
 	) {
-		emitter.$on("loadMap", () => this.loadMap());
-		emitter.$on("mapPlayComplete", () => this.handleMapPlayComplete());
+		this._isDestroyed = false;
+		emitter.$on("loadMap", this._onLoadMap);
+		emitter.$on("mapPlayComplete", this._onMapPlayComplete);
 		const params = {
 			progress: 0,
 		};
 		this._assets = new Assets();
-		this._assets.instance.on("onProgress", (_path, itemsLoaded, itemsTotal) => {
+		this._onAssetsProgress = (_path, itemsLoaded, itemsTotal) => {
+			if (this._isDestroyed) {
+				return;
+			}
 			const p = Math.floor((itemsLoaded / itemsTotal) * 100);
 			gsap.to(params, {
 				progress: p,
@@ -58,19 +71,41 @@ export default class Map3D {
 					onProgressCallback?.(Math.floor(params.progress));
 				},
 			});
-		});
+		};
+		this._assets.instance.on("onProgress", this._onAssetsProgress);
 		// 资源加载完成
-		this._assets.instance.on("onLoad", () => {
+		this._onAssetsLoad = () => {
+			if (this._isDestroyed) {
+				return;
+			}
 			// 加载地图
 			emitter.$emit("loadMap", this._assets);
 			onLoadCallback?.();
-		});
+		};
+		this._assets.instance.on("onLoad", this._onAssetsLoad);
 	}
 
 	/** 销毁 */
 	destroy() {
-		emitter.$off("loadMap", () => this.loadMap());
-		emitter.$off("mapPlayComplete", () => this.handleMapPlayComplete());
+		this._isDestroyed = true;
+		emitter.$off("loadMap", this._onLoadMap);
+		emitter.$off("mapPlayComplete", this._onMapPlayComplete);
+		if (this._world) {
+			this._world.destroy();
+			this._world = undefined;
+		}
+		if (this._assets) {
+			if (this._onAssetsProgress) {
+				this._assets.instance.off("onProgress", this._onAssetsProgress);
+			}
+			if (this._onAssetsLoad) {
+				this._assets.instance.off("onLoad", this._onAssetsLoad);
+			}
+			this._assets.instance.destroy();
+			this._assets = undefined;
+		}
+		this._onAssetsProgress = undefined;
+		this._onAssetsLoad = undefined;
 	}
 
 	/** 地图开始动画播放完成 */
