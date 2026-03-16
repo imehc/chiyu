@@ -96,8 +96,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0
       globe.gl:
-        specifier: ^2.45.0
-        version: 2.45.0
+        specifier: ^2.45.1
+        version: 2.45.1
       gsap:
         specifier: ^3.14.2
         version: 3.14.2
@@ -5205,8 +5205,8 @@ packages:
     resolution: {integrity: sha512-Y1zNGV+pzQdh7H39l9zgB4PJqjRNqydvdYCDG4HFXM4XuvSaQQlEc91IU1yALL8gUTDomgBAfz3XJdmUS+oo0w==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  globe.gl@2.45.0:
-    resolution: {integrity: sha512-fjkLHVBrnbESkUgklTd4UbcGLciu4nIl49IIi1hclLjI6MU3ASu6JYmf/K5qwPf7I+tNOauQRr4i5Y28JTtHQg==}
+  globe.gl@2.45.1:
+    resolution: {integrity: sha512-OTNU+0RxM/b8xHdHdrarJWHmobzgGEkBep1nYVdsQ1WIb+DRzngNtFe52mI2ndfRSiwHs/fRQKJSTAkDoduhiA==}
     engines: {node: '>=12'}
 
   glsl-noise@0.0.0:
@@ -5999,6 +5999,9 @@ packages:
 
   lodash-es@4.17.22:
     resolution: {integrity: sha512-XEawp1t0gxSi9x01glktRZ5HDy0HXqrM0x5pXQM98EaI0NxO6jVM7omDOxsuEo5UIASAnm2bRp1Jt/e0a2XU8Q==}
+
+  lodash-es@4.17.23:
+    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
 
   lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
@@ -7125,8 +7128,8 @@ packages:
   potpack@1.0.2:
     resolution: {integrity: sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==}
 
-  preact@10.28.2:
-    resolution: {integrity: sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==}
+  preact@10.29.0:
+    resolution: {integrity: sha512-wSAGyk2bYR1c7t3SZ3jHcM6xy0lcBcDel6lODcs9ME6Th++Dx2KU+6D3HD8wMMKGA8Wpw7OMd3/4RGzYRpzwRg==}
 
   pretty-error@4.0.0:
     resolution: {integrity: sha512-AoJ5YMAcXKYxKhuJGdcvse+Voc6v1RgnsR3nWcYU7q4t6z0Q6T86sv5Zq8VIRbOWWFpvdGE83LtdSMNd+6Y0xw==}
@@ -7950,8 +7953,8 @@ packages:
     peerDependencies:
       three: '>= 0.159.0'
 
-  three-render-objects@1.40.4:
-    resolution: {integrity: sha512-Ukpu1pei3L5r809izvjsZxwuRcYLiyn6Uvy3lZ9bpMTdvj3i6PeX6w++/hs2ZS3KnEzGjb6YvTvh4UQuwHTDJg==}
+  three-render-objects@1.40.5:
+    resolution: {integrity: sha512-iA+rYdal0tkond37YeXIvEMAxUFGxw1wU6+ce/GsuiOUKL+8zaxFXY7PTVft0F+Km50mbmtKQ24b2FdwSG3p3A==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.168'
@@ -14060,7 +14063,7 @@ snapshots:
   chevrotain-allstar@0.3.1(chevrotain@11.0.3):
     dependencies:
       chevrotain: 11.0.3
-      lodash-es: 4.17.22
+      lodash-es: 4.17.23
 
   chevrotain@11.0.3:
     dependencies:
@@ -15263,7 +15266,7 @@ snapshots:
     dependencies:
       d3-selection: 3.0.0
       kapsule: 1.16.3
-      preact: 10.28.2
+      preact: 10.29.0
 
   follow-redirects@1.15.11(debug@4.4.3):
     optionalDependencies:
@@ -15438,14 +15441,14 @@ snapshots:
       merge2: 1.4.1
       slash: 4.0.0
 
-  globe.gl@2.45.0:
+  globe.gl@2.45.1:
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
       kapsule: 1.16.3
       three: 0.182.0
       three-globe: 2.45.0(three@0.182.0)
-      three-render-objects: 1.40.4(three@0.182.0)
+      three-render-objects: 1.40.5(three@0.182.0)
 
   glsl-noise@0.0.0: {}
 
@@ -16031,7 +16034,7 @@ snapshots:
 
   kapsule@1.16.3:
     dependencies:
-      lodash-es: 4.17.22
+      lodash-es: 4.17.23
 
   katex@0.16.27:
     dependencies:
@@ -16236,6 +16239,8 @@ snapshots:
   lodash-es@4.17.21: {}
 
   lodash-es@4.17.22: {}
+
+  lodash-es@4.17.23: {}
 
   lodash.camelcase@4.3.0: {}
 
@@ -17690,7 +17695,7 @@ snapshots:
 
   potpack@1.0.2: {}
 
-  preact@10.28.2: {}
+  preact@10.29.0: {}
 
   pretty-error@4.0.0:
     dependencies:
@@ -17837,7 +17842,7 @@ snapshots:
 
   react-globe.gl@2.37.0(react@19.2.3):
     dependencies:
-      globe.gl: 2.45.0
+      globe.gl: 2.45.1
       prop-types: 15.8.1
       react: 19.2.3
       react-kapsule: 2.5.7(react@19.2.3)
@@ -18682,7 +18687,7 @@ snapshots:
     dependencies:
       three: 0.182.0
 
-  three-render-objects@1.40.4(three@0.182.0):
+  three-render-objects@1.40.5(three@0.182.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
