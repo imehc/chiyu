@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@cesium-china/cesium-map':
         specifier: ^1.0.0
-        version: 1.0.0(cesium@1.139.1)
+        version: 1.0.0(cesium@1.140.0)
       '@codesandbox/sandpack-react':
         specifier: ^2.20.0
         version: 2.20.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -75,8 +75,8 @@ importers:
         specifier: ^25.0.0
         version: 25.0.0
       cesium:
-        specifier: ^1.139.1
-        version: 1.139.1
+        specifier: ^1.140.0
+        version: 1.140.0
       cesium-navigation-es6:
         specifier: ^3.0.9
         version: 3.0.9
@@ -158,7 +158,7 @@ importers:
         version: 2.4.10
       '@commitlint/cli':
         specifier: ^20.5.0
-        version: 20.5.0(@types/node@25.3.4)(conventional-commits-parser@6.3.0)(typescript@6.0.2)
+        version: 20.5.0(@types/node@25.5.0)(conventional-commits-parser@6.3.0)(typescript@6.0.2)
       '@commitlint/config-conventional':
         specifier: ^20.5.0
         version: 20.5.0
@@ -206,7 +206,7 @@ importers:
         version: 0.182.0
       commitizen:
         specifier: ^4.3.1
-        version: 4.3.1(@types/node@25.3.4)(typescript@6.0.2)
+        version: 4.3.1(@types/node@25.5.0)(typescript@6.0.2)
       copy-webpack-plugin:
         specifier: ^14.0.0
         version: 14.0.0(webpack@5.105.3(@swc/core@1.15.5))
@@ -983,15 +983,15 @@ packages:
     peerDependencies:
       cesium: ^1.118.2
 
-  '@cesium/engine@23.0.1':
-    resolution: {integrity: sha512-67Wki33c2mgAH/xKVTai35ZxCTgZ7oFCW1SQAqsfLb/zCBCA24+QZKjL02n2fO6Hlpq6ds6JZRBi44DRcNP9FA==}
+  '@cesium/engine@24.0.0':
+    resolution: {integrity: sha512-zJ2gl0tyw/FFhBtvp6UYw+0JQJb2J9EiTJYvVSndc6+6qPR5GHLFzFjA1msLLxucfcpc7uI9R2pXNEPluheR/g==}
     engines: {node: '>=20.19.0'}
 
   '@cesium/wasm-splats@0.1.0-alpha.2':
     resolution: {integrity: sha512-t9pMkknv31hhIbLpMa8yPvmqfpvs5UkUjgqlQv9SeO8VerCXOYnyP8/486BDaFrztM0A7FMbRjsXtNeKvqQghA==}
 
-  '@cesium/widgets@14.4.1':
-    resolution: {integrity: sha512-2zT5JECBE59n4ow1RRRvhwlhjSb7a7gmo38bc6yewiKiVnTmYaavLuabA3+CnTihK71UD/HxjPzwPF0GCl2UGg==}
+  '@cesium/widgets@14.5.0':
+    resolution: {integrity: sha512-h/hKVooXyOtUQJUtrfyBFGMIXb+Q3RLwqE6FzXfzyC0JQuuThLXCz8nRzCPbyiRuAR/aAYT/jbbhQrUxfiWqhQ==}
     engines: {node: '>=20.19.0'}
 
   '@chevrotain/cst-dts-gen@11.0.3':
@@ -2465,8 +2465,8 @@ packages:
   '@slorber/remark-comment@1.0.0':
     resolution: {integrity: sha512-RCE24n7jsOj1M0UPvIQCHTe7fI0sFL4S2nwKVWwHyVr/wI/H8GosgsJGyhnsZoGFnD/P2hLf1mSbrrgSLN93NA==}
 
-  '@spz-loader/core@0.3.0':
-    resolution: {integrity: sha512-sbStwMHb/MIE29st7rRuMYWqhX1UmLSFzdpyGtUZUXLkFNIuYKblzjQdtiet8bau8sUf21uL1DQ451zuySGmcA==}
+  '@spz-loader/core@0.3.1':
+    resolution: {integrity: sha512-8qJ1WIBXaJu8HjnJAjYniE0kYcr0kCe5Hp7kDzYiGVvvd7zyrOBwbF5imoW5mvwx1Qba0hxGEK5R9jEoaHKJFA==}
     engines: {node: '>=16', pnpm: '>=8'}
 
   '@stackblitz/sdk@1.11.0':
@@ -3378,8 +3378,8 @@ packages:
   '@types/node@25.0.3':
     resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
 
-  '@types/node@25.3.4':
-    resolution: {integrity: sha512-NB1qVMIPsjfYtrY+9cCTj2VqLBh/TIDmsZXtmM2Xsn+W2yMlkA9Q1Okpr9W3f1fyGgvelw8ojumDsv8Vc0xufQ==}
+  '@types/node@25.5.0':
+    resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
 
   '@types/offscreencanvas@2019.7.3':
     resolution: {integrity: sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==}
@@ -3541,8 +3541,8 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@zip.js/zip.js@2.8.23':
-    resolution: {integrity: sha512-RB+RLnxPJFPrGvQ9rgO+4JOcsob6lD32OcF0QE0yg24oeW9q8KnTTNlugcDaIveEcCbclobJcZP+fLQ++sH0bw==}
+  '@zip.js/zip.js@2.8.26':
+    resolution: {integrity: sha512-RQ4h9F6DOiHxpdocUDrOl6xBM+yOtz+LkUol47AVWcfebGBDpZ7w7Xvz9PS24JgXvLGiXXzSAfdCdVy1tPlaFA==}
     engines: {bun: '>=0.7.0', deno: '>=1.0.0', node: '>=18.0.0'}
 
   accepts@1.3.8:
@@ -3889,8 +3889,8 @@ packages:
   cesium-navigation-es6@3.0.9:
     resolution: {integrity: sha512-tRMABMc4Le6fMxPvlC+pw6UyP7pm7tG1QrwRepIGzoRQDqO9o6f0SOt1zdbghDn8blY2u8sNWInfs5RaQ/+VEA==}
 
-  cesium@1.139.1:
-    resolution: {integrity: sha512-Wj7OGuozqHgkj+Ij0B9j+YUQxiviEKf4AKfOC8bp84UcyyY9r92EfRWXiePP4Or6MI7OaM3YkGtGSaLRXhNvLg==}
+  cesium@1.140.0:
+    resolution: {integrity: sha512-3RvW0rvZWuXiS6regtNE5u9vt0uXohgpsRBIo6Qc922IIIamkitYiEdr4fg+u4qX4EoK9xS3BosCza7iPOExEQ==}
     engines: {node: '>=20.19.0'}
 
   chalk@2.4.2:
@@ -4683,9 +4683,8 @@ packages:
   dompurify@3.3.1:
     resolution: {integrity: sha512-qkdCKzLNtrgPFP1Vo+98FRzJnBRGe4ffyCea9IwHB1fyxPOeNTHpLKYGd4Uk9xvNoH0ZoOjwZxNptyMwqrId1Q==}
 
-  dompurify@3.3.2:
-    resolution: {integrity: sha512-6obghkliLdmKa56xdbLOpUZ43pAR6xFy1uOrxBaIDjT+yaRuuybLjGS9eVBoSR/UPU5fq3OXClEHLJNGvbxKpQ==}
-    engines: {node: '>=20'}
+  dompurify@3.3.3:
+    resolution: {integrity: sha512-Oj6pzI2+RqBfFG+qOaOLbFXLQ90ARpcGG6UePL82bJLtdsa6CYJD7nmiU8MW9nQNOtCHV3lZ/Bzq1X0QYbBZCA==}
 
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
@@ -9478,19 +9477,19 @@ snapshots:
 
   '@braintree/sanitize-url@7.1.1': {}
 
-  '@cesium-china/cesium-map@1.0.0(cesium@1.139.1)':
+  '@cesium-china/cesium-map@1.0.0(cesium@1.140.0)':
     dependencies:
-      cesium: 1.139.1
+      cesium: 1.140.0
 
-  '@cesium/engine@23.0.1':
+  '@cesium/engine@24.0.0':
     dependencies:
       '@cesium/wasm-splats': 0.1.0-alpha.2
-      '@spz-loader/core': 0.3.0
+      '@spz-loader/core': 0.3.1
       '@tweenjs/tween.js': 25.0.0
-      '@zip.js/zip.js': 2.8.23
+      '@zip.js/zip.js': 2.8.26
       autolinker: 4.1.5
       bitmap-sdf: 1.0.4
-      dompurify: 3.3.2
+      dompurify: 3.3.3
       draco3d: 1.5.7
       earcut: 3.0.2
       grapheme-splitter: 1.0.4
@@ -9508,9 +9507,9 @@ snapshots:
 
   '@cesium/wasm-splats@0.1.0-alpha.2': {}
 
-  '@cesium/widgets@14.4.1':
+  '@cesium/widgets@14.5.0':
     dependencies:
-      '@cesium/engine': 23.0.1
+      '@cesium/engine': 24.0.0
       nosleep.js: 0.12.0
 
   '@chevrotain/cst-dts-gen@11.0.3':
@@ -9643,11 +9642,11 @@ snapshots:
   '@colors/colors@1.5.0':
     optional: true
 
-  '@commitlint/cli@20.5.0(@types/node@25.3.4)(conventional-commits-parser@6.3.0)(typescript@6.0.2)':
+  '@commitlint/cli@20.5.0(@types/node@25.5.0)(conventional-commits-parser@6.3.0)(typescript@6.0.2)':
     dependencies:
       '@commitlint/format': 20.5.0
       '@commitlint/lint': 20.5.0
-      '@commitlint/load': 20.5.0(@types/node@25.3.4)(typescript@6.0.2)
+      '@commitlint/load': 20.5.0(@types/node@25.5.0)(typescript@6.0.2)
       '@commitlint/read': 20.5.0(conventional-commits-parser@6.3.0)
       '@commitlint/types': 20.5.0
       tinyexec: 1.0.4
@@ -9696,14 +9695,14 @@ snapshots:
       '@commitlint/rules': 20.5.0
       '@commitlint/types': 20.5.0
 
-  '@commitlint/load@20.5.0(@types/node@25.3.4)(typescript@6.0.2)':
+  '@commitlint/load@20.5.0(@types/node@25.5.0)(typescript@6.0.2)':
     dependencies:
       '@commitlint/config-validator': 20.5.0
       '@commitlint/execute-rule': 20.0.0
       '@commitlint/resolve-extends': 20.5.0
       '@commitlint/types': 20.5.0
       cosmiconfig: 9.0.1(typescript@6.0.2)
-      cosmiconfig-typescript-loader: 6.2.0(@types/node@25.3.4)(cosmiconfig@9.0.1(typescript@6.0.2))(typescript@6.0.2)
+      cosmiconfig-typescript-loader: 6.2.0(@types/node@25.5.0)(cosmiconfig@9.0.1(typescript@6.0.2))(typescript@6.0.2)
       is-plain-obj: 4.1.0
       lodash.mergewith: 4.6.2
       picocolors: 1.1.1
@@ -11003,7 +11002,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -11749,7 +11748,7 @@ snapshots:
       micromark-util-character: 1.2.0
       micromark-util-symbol: 1.1.0
 
-  '@spz-loader/core@0.3.0': {}
+  '@spz-loader/core@0.3.1': {}
 
   '@stackblitz/sdk@1.11.0': {}
 
@@ -13186,7 +13185,7 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
 
   '@types/bonjour@3.5.13':
     dependencies:
@@ -13194,7 +13193,7 @@ snapshots:
 
   '@types/cesium-china__cesium-map@1.0.0':
     dependencies:
-      cesium: 1.139.1
+      cesium: 1.140.0
 
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
@@ -13203,7 +13202,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
 
   '@types/d3-array@3.2.2': {}
 
@@ -13384,7 +13383,7 @@ snapshots:
 
   '@types/http-proxy@1.17.17':
     dependencies:
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
@@ -13414,7 +13413,7 @@ snapshots:
 
   '@types/node-forge@1.3.14':
     dependencies:
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
 
   '@types/node@17.0.45': {}
 
@@ -13422,7 +13421,7 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/node@25.3.4':
+  '@types/node@25.5.0':
     dependencies:
       undici-types: 7.18.2
 
@@ -13628,7 +13627,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@zip.js/zip.js@2.8.23': {}
+  '@zip.js/zip.js@2.8.26': {}
 
   accepts@1.3.8:
     dependencies:
@@ -14001,12 +14000,12 @@ snapshots:
 
   cesium-navigation-es6@3.0.9:
     dependencies:
-      cesium: 1.139.1
+      cesium: 1.140.0
 
-  cesium@1.139.1:
+  cesium@1.140.0:
     dependencies:
-      '@cesium/engine': 23.0.1
-      '@cesium/widgets': 14.4.1
+      '@cesium/engine': 24.0.0
+      '@cesium/widgets': 14.5.0
 
   chalk@2.4.2:
     dependencies:
@@ -14170,10 +14169,10 @@ snapshots:
 
   commander@8.3.0: {}
 
-  commitizen@4.3.1(@types/node@25.3.4)(typescript@6.0.2):
+  commitizen@4.3.1(@types/node@25.5.0)(typescript@6.0.2):
     dependencies:
       cachedir: 2.3.0
-      cz-conventional-changelog: 3.3.0(@types/node@25.3.4)(typescript@6.0.2)
+      cz-conventional-changelog: 3.3.0(@types/node@25.5.0)(typescript@6.0.2)
       dedent: 0.7.0
       detect-indent: 6.1.0
       find-node-modules: 2.1.3
@@ -14307,9 +14306,9 @@ snapshots:
     dependencies:
       layout-base: 2.0.1
 
-  cosmiconfig-typescript-loader@6.2.0(@types/node@25.3.4)(cosmiconfig@9.0.1(typescript@6.0.2))(typescript@6.0.2):
+  cosmiconfig-typescript-loader@6.2.0(@types/node@25.5.0)(cosmiconfig@9.0.1(typescript@6.0.2))(typescript@6.0.2):
     dependencies:
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
       cosmiconfig: 9.0.1(typescript@6.0.2)
       jiti: 2.6.1
       typescript: 6.0.2
@@ -14499,16 +14498,16 @@ snapshots:
 
   cytoscape@3.33.1: {}
 
-  cz-conventional-changelog@3.3.0(@types/node@25.3.4)(typescript@6.0.2):
+  cz-conventional-changelog@3.3.0(@types/node@25.5.0)(typescript@6.0.2):
     dependencies:
       chalk: 2.4.2
-      commitizen: 4.3.1(@types/node@25.3.4)(typescript@6.0.2)
+      commitizen: 4.3.1(@types/node@25.5.0)(typescript@6.0.2)
       conventional-commit-types: 3.0.0
       lodash.map: 4.6.0
       longest: 2.0.1
       word-wrap: 1.2.5
     optionalDependencies:
-      '@commitlint/load': 20.5.0(@types/node@25.3.4)(typescript@6.0.2)
+      '@commitlint/load': 20.5.0(@types/node@25.5.0)(typescript@6.0.2)
     transitivePeerDependencies:
       - '@types/node'
       - typescript
@@ -14861,7 +14860,7 @@ snapshots:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
-  dompurify@3.3.2:
+  dompurify@3.3.3:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -15969,7 +15968,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -15977,13 +15976,13 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -17754,7 +17753,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 25.3.4
+      '@types/node': 25.5.0
       long: 5.3.2
 
   proxy-addr@2.0.7:
