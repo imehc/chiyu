@@ -117,8 +117,8 @@ importers:
         specifier: ^2.3.0
         version: 2.4.1(react@19.2.3)
       proj4:
-        specifier: ^2.20.6
-        version: 2.20.6
+        specifier: ^2.20.8
+        version: 2.20.8
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -7156,8 +7156,8 @@ packages:
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
-  proj4@2.20.6:
-    resolution: {integrity: sha512-w6d8YDpF3cRQP0O93hft7a0aMpadDLtP461h6FC0hJByI/KLbm1mRcsn6XDPymgB4owottJCwWM/RInHp6dYbA==}
+  proj4@2.20.8:
+    resolution: {integrity: sha512-1C8sfT4xY4PAPwk0MroFBTGF4R4bzDXdmPQTGYVLsoNssrZ9odzObxS2dTeGBty8jW8KO7h16C1Hs2JP+ctfFw==}
 
   promise-worker-transferable@1.0.4:
     resolution: {integrity: sha512-bN+0ehEnrXfxV2ZQvU2PetO0n4gqBD4ulq3MI1WOPLgr7/Mg9yRQkX5+0v1vagr74ZTsl7XtzlaYDo2EuCeYJw==}
@@ -17726,7 +17726,7 @@ snapshots:
 
   process-nextick-args@2.0.1: {}
 
-  proj4@2.20.6:
+  proj4@2.20.8:
     dependencies:
       mgrs: 1.0.0
       wkt-parser: 1.5.5
@@ -18361,7 +18361,7 @@ snapshots:
     dependencies:
       but-unzip: 0.1.7
       parsedbf: 2.0.0
-      proj4: 2.20.6
+      proj4: 2.20.8
 
   side-channel-list@1.0.0:
     dependencies:
