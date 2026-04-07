@@ -129,8 +129,8 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1(react@19.2.3)
       react-globe.gl:
-        specifier: ^2.37.0
-        version: 2.37.0(react@19.2.3)
+        specifier: ^2.37.1
+        version: 2.37.1(react@19.2.3)
       shpjs:
         specifier: ^6.2.0
         version: 6.2.0
@@ -7267,8 +7267,8 @@ packages:
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
 
-  react-globe.gl@2.37.0:
-    resolution: {integrity: sha512-nN1FDOJBhFvWfKrOY0SnkDuA8wk9FSTBN0HFfAdTqqcFM5R+OXBIxK0BM6t8n3oNVYpEJVxEzjYFwLyk4BC7Cw==}
+  react-globe.gl@2.37.1:
+    resolution: {integrity: sha512-/YvnaB+ID+WTBTx5Qa67fGkGhco2jPlKg4jbXNTNWSl22/it7GrfByZ4nksgUDy4176VWuHh4BFvQg+hziSk8Q==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '*'
@@ -17852,7 +17852,7 @@ snapshots:
 
   react-fast-compare@3.2.2: {}
 
-  react-globe.gl@2.37.0(react@19.2.3):
+  react-globe.gl@2.37.1(react@19.2.3):
     dependencies:
       globe.gl: 2.45.2
       prop-types: 15.8.1
