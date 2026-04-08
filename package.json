@@ -73,7 +73,7 @@
 		"@commitlint/cli": "^20.5.0",
 		"@commitlint/config-conventional": "^20.5.0",
 		"@docusaurus/module-type-aliases": "3.9.2",
-		"@docusaurus/tsconfig": "3.9.2",
+		"@docusaurus/tsconfig": "3.10.0",
 		"@docusaurus/types": "3.9.2",
 		"@tailwindcss/postcss": "^4.2.2",
 		"@types/cesium-china__cesium-map": "^1.0.0",
