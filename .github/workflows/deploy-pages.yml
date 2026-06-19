@@ -19,7 +19,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6 #检出代码仓库。
+        uses: actions/checkout@v7 #检出代码仓库。
         with:
           ref: main # 确保检出最新的 main 分支代码
 
