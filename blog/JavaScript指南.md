@@ -8,7 +8,7 @@ summary: ''
 
 实用的JavaScript编程技巧和解决方案
 
-<!-- truncate -->
+{/* truncate */}
 
 ## 对象数组去重
 

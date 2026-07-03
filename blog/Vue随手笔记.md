@@ -8,7 +8,7 @@ summary: 'Vue 开发实用技巧：watch 监听器的完整用法、实例内与
 
 # Vue 随手笔记
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Watch 监听器
 

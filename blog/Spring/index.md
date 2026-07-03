@@ -14,7 +14,7 @@ summary: 'Spring 框架核心技术详解：IoC 控制反转、AOP 面向切面�
 
 `Spring` 是一个 `Java` 框架，使用 `Java` 语言开发的，轻量级的，开源的框架。可以在 `J2SE`、`J2EE` 项目中使用。
 
-<!-- truncate -->
+{/* truncate */}
 
 **Spring 核心技术**：`IoC`、`AOP`
 
@@ -165,12 +165,12 @@ a.buy();
 **引用类型 Set 注入**：
 
 ```xml
-<!-- 引用类型 set 注入 -->
+{/* 引用类型 set 注入 */}
 <bean id="myStudent" class="com.bjpowernode.ba02.Student">
     <property name="name" value="李四"/>
     <property name="age" value="22" />
-    <!-- 引用类型的赋值 -->
-    <property name="school" ref="mySchool" /><!-- setSchool(mySchool) -->
+    {/* 引用类型的赋值 */}
+    <property name="school" ref="mySchool" />{/* setSchool(mySchool) */}
 </bean>
 ```
 
@@ -179,21 +179,21 @@ a.buy();
 **构造注入**：`Spring` 调用类中的**有参数构造方法**，在创建对象的同时给属性赋值。
 
 ```xml
-<!-- 构造注入，使用 name 属性 -->
+{/* 构造注入，使用 name 属性 */}
 <bean id="myStudent" class="com.bjpowernode.ba03.Student">
     <constructor-arg name="myage" value="22" />
     <constructor-arg name="myname" value="李四"/>
     <constructor-arg name="mySchool" ref="mySchool"/>
 </bean>
 
-<!-- 构造注入，使用 index（参数的位置，构造方法参数从左往右位置是 0,1,2） -->
+{/* 构造注入，使用 index（参数的位置，构造方法参数从左往右位置是 0,1,2） */}
 <bean id="myStudent2" class="com.bjpowernode.ba03.Student">
     <constructor-arg index="1" value="28"/>
     <constructor-arg index="0" value="张三"/>
     <constructor-arg index="2" ref="mySchool" />
 </bean>
 
-<!-- 构造注入，省略 index 属性 -->
+{/* 构造注入，省略 index 属性 */}
 <bean id="myStudent3" class="com.bjpowernode.ba03.Student">
     <constructor-arg value="张峰"/>
     <constructor-arg value="28"/>
@@ -208,12 +208,12 @@ a.buy();
 **① byName（按名称注入）**：`Java` 类中引用类型属性名称和 `Spring` 容器中 `bean` 的 `id` 名称一样的，且数据类型也是一样的，这些 `bean` 能够赋值给引用类型。
 
 ```xml
-<!-- byName 自动注入 -->
+{/* byName 自动注入 */}
 <bean id="myStudent" class="com.bjpowernode.ba04.Student" autowire="byName">
     <property name="name" value="李四"/>
     <property name="age" value="22" />
-    <!-- 引用类型的赋值（已省略） -->
-    <!-- <property name="school" ref="mySchool" /> -->
+    {/* 引用类型的赋值（已省略） */}
+    {/* <property name="school" ref="mySchool" /> */}
 </bean>
 ```
 
@@ -222,12 +222,12 @@ a.buy();
 > ⚠️ **注意**：在 `XML` 配置文件中，符合条件的对象，**只能有一个**。多余一个会报错。
 
 ```xml
-<!-- byType 自动注入 -->
+{/* byType 自动注入 */}
 <bean id="myStudent" class="com.bjpowernode.ba05.Student" autowire="byType">
     <property name="name" value="张三"/>
     <property name="age" value="26" />
-    <!-- 引用类型的赋值（已省略） -->
-    <!-- <property name="school" ref="mySchool" /> -->
+    {/* 引用类型的赋值（已省略） */}
+    {/* <property name="school" ref="mySchool" /> */}
 </bean>
 ```
 
@@ -259,15 +259,15 @@ a.buy();
 **语法**：
 
 ```xml
-<!-- 总的文件（xml） -->
+{/* 总的文件（xml） */}
 <import resource="其他的文件的路径1"/>
 <import resource="其他的文件的路径2"/>
 
-<!-- 
+{/* 
 关键字 "classpath:"：表示类路径，也就是类文件（class 文件）所在的目录。
 Spring 到类路径中加载文件。
 什么时候使用 classpath：在一个文件中要使用其他的文件，需要使用 classpath
--->
+*/}
 ```
 
 #### 2.4.2 基于注解的 DI
@@ -885,18 +885,18 @@ public Object myAround(ProceedingJoinPoint pjp) {
 **例子**：
 
 ```xml
-<!-- Spring 配置文件 -->
-<!-- 声明事务的控制 -->
-<!-- 声明事务管理器 -->
+{/* Spring 配置文件 */}
+{/* 声明事务的控制 */}
+{/* 声明事务管理器 */}
 <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <!-- 指定数据源 DataSource -->
+    {/* 指定数据源 DataSource */}
     <property name="dataSource" ref="myDataSource" />
 </bean>
 
-<!-- 
+{/* 
     开启事务注解驱动：告诉框架使用注解管理事务
     transaction-manager: 指定事务管理器的 id
--->
+*/}
 <tx:annotation-driven transaction-manager="transactionManager" />
 ```
 
@@ -959,21 +959,21 @@ public void buy(Integer goodsId, Integer num) { }
 **声明式事务配置**：
 
 ```xml
-<!-- 声明式事务：不用写代码 -->
-<!-- 1. 声明事务管理器 -->
+{/* 声明式事务：不用写代码 */}
+{/* 1. 声明事务管理器 */}
 <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
     <property name="dataSource" ref="myDataSource" />
 </bean>
 
-<!-- 
+{/* 
     2. 声明业务方法的事务属性（隔离级别、传播行为、超时）
        id: 给业务方法配置事务段代码起个名称，唯一值
        transaction-manager: 事务管理器的 id
--->
+*/}
 <tx:advice id="serviceAdvice" transaction-manager="transactionManager">
-    <!-- 给具体的业务方法增加事务的说明 -->
+    {/* 给具体的业务方法增加事务的说明 */}
     <tx:attributes>
-        <!--
+        {/*
            给具体的业务方法，说明他需要的事务属性
            name: 业务方法名称
                  配置 name 的值：1. 业务方法的名称；2. 带有部分通配符(*)的方法名称；3. 使用 *
@@ -982,12 +982,12 @@ public void buy(Integer goodsId, Integer num) { }
            read-only: 是否只读，默认是 false
            timeout: 超时时间
            rollback-for: 指定回滚的异常类列表，使用的异常全限定名称
-        -->
+        */}
         <tx:method name="buy" propagation="REQUIRED" isolation="DEFAULT"
                    read-only="false" timeout="20"
                    rollback-for="java.lang.NullPointerException,com.bjpowernode.excetion.NotEnougthException"/>
 
-        <!-- 在业务方法有命名规则后，可以对一些方法使用事务 -->
+        {/* 在业务方法有命名规则后，可以对一些方法使用事务 */}
         <tx:method name="add*" propagation="REQUIRES_NEW" 
                    rollback-for="java.lang.Exception" />
         <tx:method name="modify*" propagation="REQUIRED" 
@@ -995,20 +995,20 @@ public void buy(Integer goodsId, Integer num) { }
         <tx:method name="remove*" propagation="REQUIRED" 
                    rollback-for="java.lang.Exception" />
 
-        <!-- 以上方法以外的 * : querySale, findSale, searchSale -->
+        {/* 以上方法以外的 * : querySale, findSale, searchSale */}
         <tx:method name="*" propagation="SUPPORTS" read-only="true" />
     </tx:attributes>
 </tx:advice>
 
-<!-- 声明切入点表达式：表示哪些包中的类，类中的方法参与事务 -->
+{/* 声明切入点表达式：表示哪些包中的类，类中的方法参与事务 */}
 <aop:config>
-    <!-- 
+    {/* 
         声明切入点表达式
         expression: 切入点表达式，表示哪些类和类中的方法要参与事务
         id: 切入点表达式的名称，唯一值
-    -->
+    */}
     <aop:pointcut id="servicePointcut" expression="execution(* *..service..*.*(..))" />
-    <!-- 关联切入点表达式和事务通知 -->
+    {/* 关联切入点表达式和事务通知 */}
     <aop:advisor advice-ref="serviceAdvice" pointcut-ref="servicePointcut" />
 </aop:config>
 ```
@@ -1062,11 +1062,11 @@ public void buy(Integer goodsId, Integer num) { }
 
 ```xml
 <context-param>
-    <!--
+    {/*
       contextConfigLocation：名称是固定的，表示自定义 Spring 配置文件的路径
-    -->
+    */}
     <param-name>contextConfigLocation</param-name>
-    <!-- 自定义配置文件的路径 -->
+    {/* 自定义配置文件的路径 */}
     <param-value>classpath:spring-beans.xml</param-value>
 </context-param>
 <listener>

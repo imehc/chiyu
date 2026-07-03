@@ -8,7 +8,7 @@ summary: 'Webpack 基础配置、Loader、Plugin、DevServer、性能优化（HM
 
 ## Webpack 基础
 
-<!-- truncate -->
+{/* truncate */}
 
 ### 安装
 
@@ -92,10 +92,10 @@ module.exports = {
 
 ### 打包 HTML 资源
 
-<!--
+{/*
 loader：下载 → 使用（配置 loader）
 plugins：下载 → 引入 → 使用
--->
+*/}
 
 ```bash
 npm i html-webpack-plugin -D
@@ -231,12 +231,12 @@ module.exports = {
 
 ## DevServer 开发服务器
 
-<!--
+{/*
 开发服务器 devServer：用来自动化（自动编译，自动打开浏览器，自动刷新浏览器）
 特点：只会在内存中编译打包，不会有任何输出
 启动 devServer 指令为：npx webpack-dev-server
 需要安装 webpack-dev-server：npm i webpack-dev-server -D
--->
+*/}
 
 ```bash
 npm i webpack-dev-server -D
@@ -346,12 +346,12 @@ module.exports = {
 
 ### 提取 CSS 成单独文件
 
-<!--
+{/*
 需要单独下载插件
 npm i mini-css-extract-plugin -D
 css 兼容性处理需要安装以下插件
 npm i postcss-loader postcss-preset-env -D
--->
+*/}
 
 ```bash
 npm i mini-css-extract-plugin -D
@@ -385,7 +385,7 @@ module.exports = {
           // 作用：提取 js 中的 css 成单独文件
           'css-loader', // 将 css 文件整合到 js 文件中
           /*
-          CSS 兼容性处理：postcss --> postcss-loader postcss-preset-env
+          CSS 兼容性处理：postcss */} postcss-loader postcss-preset-env
           帮 postcss 找到 package.json 中 browserslist 里面的配置，通过配置加载指定的 css 兼容性样式
           
           "browserslist": {
@@ -432,10 +432,10 @@ module.exports = {
 
 ### 压缩 CSS
 
-<!--
+{/*
 需要下载插件
 npm i optimize-css-assets-webpack-plugin -D
--->
+*/}
 
 ```bash
 npm i optimize-css-assets-webpack-plugin -D
@@ -495,10 +495,10 @@ module.exports = {
 
 ### JS 语法检查（ESLint）
 
-<!--
+{/*
 需要安装如下插件
 npm i eslint-config-airbnb-base eslint eslint-loader eslint-plugin-import -D
--->
+*/}
 
 ```bash
 npm i eslint-config-airbnb-base eslint eslint-loader eslint-plugin-import -D
@@ -526,7 +526,7 @@ module.exports = {
           "eslintConfig": {
             "extends": "airbnb-base"
           }
-        airbnb --> eslint-config-airbnb-base eslint eslint-plugin-import
+        airbnb */} eslint-config-airbnb-base eslint eslint-plugin-import
       */
       {
         test: /\\.js$/,
@@ -550,7 +550,7 @@ module.exports = {
 
 ### JS 兼容性处理
 
-<!--
+{/*
 需要安装如下插件
 npm i babel-loader @babel/preset-env @babel/core -D
 
@@ -561,7 +561,7 @@ npm i @babel/polyfill -D
 
 按需加载需要做兼容性的 js，需要安装如下插件（如使用了这种方案，需要把上面方案的入口文件引入注释掉）
 npm i core-js -D
--->
+*/}
 
 ```bash
 # 基础 babel
@@ -590,11 +590,11 @@ module.exports = {
       // loader 的配置
       /*
       JS 兼容性处理：babel-loader @babel/core @babel/preset-env
-      1. 基本兼容性处理 --> @babel/preset-env
+      1. 基本兼容性处理 */} @babel/preset-env
          问题：只能转换基本语法，如 Promise 高级语法不能转换
-      2. 全部 JS 兼容性处理 --> @babel/polyfill
+      2. 全部 JS 兼容性处理 */} @babel/polyfill
          问题：只要解决部分兼容性问题，但是将所有的兼容性代码引入，体积太大了
-      3. 需要做兼容性处理的就做：按需加载 --> core-js（如果使用第三种方案就不能使用第二种方案）
+      3. 需要做兼容性处理的就做：按需加载 */} core-js（如果使用第三种方案就不能使用第二种方案）
       */
       {
         test: /\\.js$/,
@@ -749,7 +749,7 @@ module.exports = {
         use: [...commonCssLoader, 'less-loader'],
       },
       {
-        // 需要在 package.json 配置 eslintConfig --> airbnb
+        // 需要在 package.json 配置 eslintConfig */} airbnb
         test: /\\.js$/, // 格式校验
         exclude: /node_modules/,
         enforce: 'pre', // 优先执行
@@ -896,7 +896,7 @@ HMR: hot module replacement 热模块替换/模块热替换
 作用：一个模块发生变化，只会重新打包这一个模块（而不是打包所有模块），极大提升构建速度
 
   样式文件：可以使用 HMR 功能，因为 style-loader 内部实现了
-  JS 文件：默认不能使用 HMR 功能 --> 需要修改 JS 代码，添加支持 HMR 功能的代码
+  JS 文件：默认不能使用 HMR 功能 */} 需要修改 JS 代码，添加支持 HMR 功能的代码
     注意：HMR 功能对 JS 的处理，只能处理非入口 JS 文件的其他文件
   HTML 文件：默认不能使用 HMR 功能，同时会导致问题，HTML 文件不能热更新了
     解决：修改 entry 入口，将 html 文件引入
@@ -968,13 +968,13 @@ Source Map：一种提供源代码到构建后代码映射技术
     source-map
     cheap-module-source-map
     cheap-source-map
-  --> eval-source-map / eval-cheap-module-source-map
+  */} eval-source-map / eval-cheap-module-source-map
 
 生产环境：源代码要不要隐藏？调试要不要更友好
   （内联会让代码体积变大，所以在生产环境不用内联）
   nosources-source-map    全部隐藏
   hidden-source-map       只隐藏源代码
-  --> source-map / cheap-module-source-map
+  */} source-map / cheap-module-source-map
 */
 ```
 
@@ -1111,7 +1111,7 @@ module.exports = {
     chunkhash：根据 chunk 生成的 hash 值，如果打包来源于同一个 chunk，那么 hash 值就一样
       问题：js 和 css 的 hash 值还是一样，因为 css 是在 js 中被引入的，所以同属一个 chunk
     contenthash：根据文件的内容生成 hash 值，不同文件 hash 值一定不会相同
-    --> 让代码上线运行缓存更好的使用
+    */} 让代码上线运行缓存更好的使用
 */
 
 const { resolve } = require('path')
@@ -1402,14 +1402,14 @@ module.exports = {
 
 ### 懒加载 / 预加载
 
-<!-- 懒加载和预加载的概念说明 -->
+{/* 懒加载和预加载的概念说明 */}
 
 ### PWA（渐进式 Web 应用）
 
-<!--
+{/*
 需要下载插件
 npm i workbox-webpack-plugin -D
--->
+*/}
 
 ```bash
 npm i workbox-webpack-plugin -D
@@ -1425,7 +1425,7 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
 
 /*
 PWA：渐进式网络开发应用程序（离线可访问）
-  workbox --> workbox-webpack-plugin
+  workbox */} workbox-webpack-plugin
 */
 
 process.env.NODE_ENV = 'production'
@@ -1553,8 +1553,8 @@ module.exports = {
      "browser": true  // 支持浏览器全局变量
    }
 2. SW 代码必须运行在服务器上
-   --> Node.js
-   --> npm i serve -g
+   */} Node.js
+   */} npm i serve -g
        serve -s build 启动服务器，将 build 目录下所有资源作为静态资源暴露出去
 */
 
@@ -1576,10 +1576,10 @@ if ('serviceWorker' in navigator) {
 
 ### 多进程打包
 
-<!--
+{/*
 安装以下插件
 npm i thread-loader -D
--->
+*/}
 
 ```bash
 npm i thread-loader -D
@@ -1751,10 +1751,10 @@ module.exports = {
 
 ### DLL（动态链接库）
 
-<!--
+{/*
 需要安装以下插件
 npm i add-asset-html-webpack-plugin -D
--->
+*/}
 
 ```bash
 npm i add-asset-html-webpack-plugin -D
@@ -1766,15 +1766,15 @@ npm i add-asset-html-webpack-plugin -D
 使用 DLL 技术，对某些库（第三方库：jQuery、React、Vue...）进行单独打包
   当你运行 webpack 时，默认查找 webpack.config.js 配置文件
   需求：需要运行 webpack.dll.js 文件
-    --> webpack --config webpack.dll.js
+    */} webpack --config webpack.dll.js
 */
 const { resolve } = require('path')
 const webpack = require('webpack')
 
 module.exports = {
   entry: {
-    // 最终打包生成的 [name] --> jquery
-    // ['jquery'] --> 要打包的库是 jquery
+    // 最终打包生成的 [name] */} jquery
+    // ['jquery'] */} 要打包的库是 jquery
     jquery: ['jquery'],
   },
   output: {
@@ -1783,7 +1783,7 @@ module.exports = {
     library: '[name]_[hash]', // 打包的库里面向外暴露出去的内容叫什么名字
   },
   plugins: [
-    // 打包生成一个 manifest.json --> 提供和 jquery 映射
+    // 打包生成一个 manifest.json */} 提供和 jquery 映射
     new webpack.DllPlugin({
       name: '[name]_[hash]', // 映射库的暴露的内容名称
       path: resolve(__dirname, 'dll/manifest.json'), // 输出文件路径
@@ -1864,19 +1864,19 @@ module.exports = {
 // webpack.config.js
 /*
 entry：入口起点
-  1. string --> './src/index.js'（用的较多）
+  1. string */} './src/index.js'（用的较多）
      单入口
        打包形成一个 chunk，输出一个 bundle 文件。此时 chunk 的名称默认是 main
   2. array（不常用）
      多入口
        所有文件最终只会形成一个 chunk，输出只有一个 bundle 文件
-       --> 只有在 HMR 功能中让 html 热更新生效
+       */} 只有在 HMR 功能中让 html 热更新生效
   3. object
      多入口
        有几个入口文件就形成几个 chunk，输出几个 bundle 文件
        此时 chunk 的名称就是 key
 
-  --> 特殊用法
+  */} 特殊用法
     {
       // 所有文件最终只会形成一个 chunk，输出只有一个 bundle 文件
       index: ['./src/index.js', './src/count.js'],
@@ -1924,7 +1924,7 @@ module.exports = {
     filename: 'js/[name].js',
     // 输出文件目录（将来所有资源输出的公共目录）
     path: resolve(__dirname, 'build'),
-    // 所有输出资源的引入公共路径前缀 --> 'imgs/a.jpg' --> '/imgs/a.jpg'
+    // 所有输出资源的引入公共路径前缀 */} 'imgs/a.jpg' */} '/imgs/a.jpg'
     publicPath: '/', // 一般应用于生产环境
     chunkFilename: '[name]_chunk.js', // 非入口 chunk 的名称
     library: '[name]', // 整个库向外暴露的变量名
@@ -2054,7 +2054,7 @@ module.exports = {
     clientLogLevel: 'none', // 不显示启动服务器日志信息
     quiet: true, // 除了一些基本启动信息以外，其他内容都不显示
     overlay: false, // 如果出错，不要全屏提示
-    // 服务器代理 --> 解决开发环境跨域问题
+    // 服务器代理 */} 解决开发环境跨域问题
     proxy: {
       // 一旦 devServer（5000）服务器接收到 /api/xxx 的请求，就会把请求转发到另一个服务器（3000）
       '/api': {
@@ -2109,7 +2109,7 @@ module.exports = {
       name: true, // 可以使用命名规则
       // 分割 chunk 的组
       cacheGroups: {
-        // node_modules 文件会被打包到 vendors 组的 chunk 中 --> vendors~xxx.js
+        // node_modules 文件会被打包到 vendors 组的 chunk 中 */} vendors~xxx.js
         // 满足上面的公共规则，如：大小超过 30kb，至少被引用一次
         vendors: {
           test: /[\\\\/]node_modules[\\\\/]/,

@@ -10,7 +10,7 @@ summary: 'React 高级特性详解：代码分割、Context 状态管理、错�
 
 `React.lazy` 函数允许你定义一个动态导入的组件，实现代码分割和懒加载。
 
-<!-- truncate -->
+{/* truncate */}
 
 ### 基本用法
 
@@ -32,7 +32,7 @@ function MyComponent() {
 }
 ```
 
-<!-- fallback 属性接收组件加载过程中想要展示的 React 元素 -->
+{/* fallback 属性接收组件加载过程中想要展示的 React 元素 */}
 
 ### 命名导出的处理
 
@@ -70,7 +70,7 @@ const MyContext = React.createContext(defaultValue);
 
 创建一个 `Context` 对象。当 `React` 渲染一个订阅了这个 `Context` 对象的组件时，这个组件会从组件树中离自身最近的那个匹配的 `Provider` 中读取到当前的 `context` 值。
 
-<!-- 只有当组件所处的树中没有匹配到 Provider 时，defaultValue 参数才会生效 -->
+{/* 只有当组件所处的树中没有匹配到 Provider 时，defaultValue 参数才会生效 */}
 
 ### Context.Provider
 
@@ -324,14 +324,14 @@ class MyComponent extends React.Component {
 const node = this.myRef.current;
 ```
 
-<!-- 
+{/* 
 当 ref 属性用于 HTML 元素时，构造函数中使用 React.createRef() 创建的 ref 
 接收底层 DOM 元素作为其 current 属性
 
 当 ref 属性用于自定义 class 组件时，ref 对象接收组件的挂载实例作为其 current 属性
 
 默认情况下，不能在函数组件使用 ref 属性，因为它们没有实例
--->
+*/}
 
 ### 回调 Refs
 
@@ -362,7 +362,7 @@ const ref = React.createRef();
 
 ## Hooks
 
-<!-- Hook 是 React 16.8 的新增特性，可以在不编写 class 的情况下使用 state 以及其它的 React 特性 -->
+{/* Hook 是 React 16.8 的新增特性，可以在不编写 class 的情况下使用 state 以及其它的 React 特性 */}
 
 ```jsx
 import React, { useState } from 'react';
@@ -499,7 +499,7 @@ const mapDispatchToProps = {
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(TopHeader));
 ```
 
-<!-- 如果需要响应的事件不在组件内部，就可以使用原始方法 -->
+{/* 如果需要响应的事件不在组件内部，就可以使用原始方法 */}
 
 ```js
 import { store } from '../封装的redux路径';

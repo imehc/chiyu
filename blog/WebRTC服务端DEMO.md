@@ -12,7 +12,7 @@ summary: WebRTC服务端DEMO
 
 这是一个基于 Python 的 WebRTC 视频流服务器，可以将本地视频文件通过 WebRTC 协议实时传输到浏览器客户端。DEMO使用了 aiohttp 作为 Web 服务器框架，aiortc 作为 WebRTC 协议实现。
 
-<!-- truncate -->
+{/* truncate */}
 
 ## 核心技术栈
 

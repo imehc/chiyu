@@ -12,7 +12,7 @@ summary: 'Vue3 组合式 API、响应式原理、生命周期、新特性等核�
 - 通过 `Proxy`（代理）：拦截对象中任意属性的变化，包括：属性值的读写、属性的添加、属性的删除等。
 - 通过 `Reflect`（反射）：对代理对象的属性进行操作。
 
-<!-- truncate -->
+{/* truncate */}
 
 MDN 文档中描述的 `Proxy` 与 `Reflect`：
 - `Proxy`：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy

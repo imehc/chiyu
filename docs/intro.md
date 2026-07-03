@@ -19,10 +19,12 @@ slug: /
 #### Canvas 2D
 - 原生 Canvas API 绘图示例
 - 粒子效果、图像处理等
-<!-- 
-### Backend 后端开发
 
-### Desktop 桌面应用
+{/* 
+    ### Backend 后端开发
 
-### Client 客户端开发 -->
+    ### Desktop 桌面应用
+
+    ### Client 客户端开发 
+    */}
 

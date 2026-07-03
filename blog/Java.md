@@ -8,7 +8,7 @@ summary: '使用 javadoc 工具生成 Java 代码注释文档的基本命令'
 
 # Java 文档生成工具
 
-<!-- truncate -->
+{/* truncate */}
 
 ## 生成注释文档
 

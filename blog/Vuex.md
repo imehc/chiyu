@@ -10,13 +10,13 @@ summary: 'Vuex 五大核心概念详解：State、Getter、Mutation、Action、M
 
 五个核心：`state`、`getter`、`mutation`、`action`、`module`
 
-<!-- truncate -->
+{/* truncate */}
 
 ---
 
 ## State
 
-<!-- 单一状态树，页面显示所需的数据从该对象中进行读取。 -->
+{/* 单一状态树，页面显示所需的数据从该对象中进行读取。 */}
 
 ### 基础配置
 
@@ -134,7 +134,7 @@ export default {
 </script>
 ```
 
-<!-- 当映射的计算属性与 state 的子节点名称相同，可以简写 -->
+{/* 当映射的计算属性与 state 的子节点名称相同，可以简写 */}
 
 ```js
 // 页面路径：pages/index/index.vue
@@ -160,7 +160,7 @@ export default {
 </script>
 ```
 
-<!-- 为了能够使用 this 获取组件自己的 data 数据，必须使用常规函数 -->
+{/* 为了能够使用 this 获取组件自己的 data 数据，必须使用常规函数 */}
 
 ```js
 // 页面路径：pages/index/index.vue
@@ -192,7 +192,7 @@ export default {
 </script>
 ```
 
-<!-- 使用对象展开运算符 -->
+{/* 使用对象展开运算符 */}
 
 ```js
 // 页面路径：pages/index/index.vue
@@ -225,11 +225,11 @@ export default {
 
 ## Getter
 
-<!-- 可以认为是 store 的计算属性，对 state 的加工，是派生出来的数据 -->
+{/* 可以认为是 store 的计算属性，对 state 的加工，是派生出来的数据 */}
 
-<!-- 在 store 上注册 getter，getter 接收以下参数：
+{/* 在 store 上注册 getter，getter 接收以下参数：
      state，如果在模块中定义则为模块的局部状态
-     getter，等同于 store.getters -->
+     getter，等同于 store.getters */}
 
 ```js
 // 页面路径：store/index.js
@@ -292,7 +292,7 @@ export default {
 </script>
 ```
 
-<!-- getter 在通过属性访问时是作为 Vue 的响应式的一部分缓存其中的 -->
+{/* getter 在通过属性访问时是作为 Vue 的响应式的一部分缓存其中的 */}
 
 #### 2. 通过 `this.$store` 访问
 
@@ -321,8 +321,8 @@ export default {
 
 #### 3. 通过方法访问
 
-<!-- 通过让 getter 返回一个函数，来实现给 getter 传参，这对 store 里的数组进行查询是非常有用的。
-     注意：通过方法访问，不会缓存结果 -->
+{/* 通过让 getter 返回一个函数，来实现给 getter 传参，这对 store 里的数组进行查询是非常有用的。
+     注意：通过方法访问，不会缓存结果 */}
 
 ```js
 // 页面路径：pages/index/index.vue
@@ -347,7 +347,7 @@ export default {
 
 #### 4. 通过 `mapGetters` 辅助函数访问
 
-<!-- mapGetters 辅助函数仅仅是将 store 中的 getter 映射到局部计算属性 -->
+{/* mapGetters 辅助函数仅仅是将 store 中的 getter 映射到局部计算属性 */}
 
 ```js
 // 页面路径：pages/index/index.vue
@@ -373,7 +373,7 @@ export default {
 </script>
 ```
 
-<!-- 如果你想将一个 getter 属性另取一个名字，使用对象形式 -->
+{/* 如果你想将一个 getter 属性另取一个名字，使用对象形式 */}
 
 ```js
 // 页面路径：pages/index/index.vue
@@ -401,7 +401,7 @@ export default {
 
 ## Mutation
 
-<!-- Vuex 中 store 数据改变的唯一方法就是 mutation -->
+{/* Vuex 中 store 数据改变的唯一方法就是 mutation */}
 
 ```js
 // 页面路径：store/index.js
@@ -425,9 +425,9 @@ const store = new Vuex.Store({
 export default store
 ```
 
-<!-- 不能直接调用一个 mutation handler，这个选项更像是事件注册。
+{/* 不能直接调用一个 mutation handler，这个选项更像是事件注册。
      当触发一个类型为 add 的 mutation 时，调用此函数。
-     要唤醒一个 mutation handler，需要以相应的 type 调用 store.commit 方法。 -->
+     要唤醒一个 mutation handler，需要以相应的 type 调用 store.commit 方法。 */}
 
 ### 调用 Mutation
 
@@ -460,7 +460,7 @@ export default {
 
 ### 传入参数
 
-<!-- 你可以向 store.commit 传入额外的参数，即 mutation 的载荷（payload） -->
+{/* 你可以向 store.commit 传入额外的参数，即 mutation 的载荷（payload） */}
 
 ```js
 // 页面路径：store/index.js
@@ -510,7 +510,7 @@ export default {
 </script>
 ```
 
-<!-- 在 mutation 传参（载荷）也可以传递一个对象 -->
+{/* 在 mutation 传参（载荷）也可以传递一个对象 */}
 
 ```js
 // 页面路径：store/index.js
@@ -596,7 +596,7 @@ export default {
 </script>
 ```
 
-<!-- 当使用对象风格的提交方式，整个对象都作为载荷传给 mutation 函数，因此 handler 保持不变 -->
+{/* 当使用对象风格的提交方式，整个对象都作为载荷传给 mutation 函数，因此 handler 保持不变 */}
 
 ```js
 mutations: {
@@ -655,22 +655,22 @@ const store = new Vuex.Store({
 export default store
 ```
 
-<!-- 以新对象替换对象，可以使用展开运算符 -->
+{/* 以新对象替换对象，可以使用展开运算符 */}
 
 ```js
 state.obj = { ...state.obj, newProp: 123 }
 ```
 
-<!-- Mutation 必须是同步函数 -->
+{/* Mutation 必须是同步函数 */}
 
 ---
 
 ## Action
 
-<!-- action 类似于 mutation。
+{/* action 类似于 mutation。
      action 提交的是 mutation，通过 mutation 来改变 state，而不是直接改变状态。
      action 可以包含任意异步操作。
-     通俗来说，就是 mutation 处理同步，action 处理异步 -->
+     通俗来说，就是 mutation 处理同步，action 处理异步 */}
 
 ### 注册 Action
 
@@ -701,11 +701,11 @@ const store = new Vuex.Store({
 export default store
 ```
 
-<!-- action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，
+{/* action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，
      因此你可以调用 context.commit 提交一个 mutation，
-     或者通过 context.state 和 context.getters 来获取 state 和 getters。 -->
+     或者通过 context.state 和 context.getters 来获取 state 和 getters。 */}
 
-<!-- 可以通过 ES6+ 语法的参数解构来简化代码 -->
+{/* 可以通过 ES6+ 语法的参数解构来简化代码 */}
 
 ```js
 actions: {
@@ -747,7 +747,7 @@ export default {
 </script>
 ```
 
-<!-- action 支持以载荷形式分发 -->
+{/* action 支持以载荷形式分发 */}
 
 ```js
 // 页面路径：store/index.js
@@ -803,7 +803,7 @@ export default {
 </script>
 ```
 
-<!-- action 支持以对象形式分发 -->
+{/* action 支持以对象形式分发 */}
 
 ```js
 methods: {
@@ -817,7 +817,7 @@ methods: {
 }
 ```
 
-<!-- action 可以执行任意的同步和异步操作 -->
+{/* action 可以执行任意的同步和异步操作 */}
 
 ```js
 // 页面路径：store/index.js
@@ -879,7 +879,7 @@ export default {
 </script>
 ```
 
-<!-- mapActions 也支持传入参数（载荷） -->
+{/* mapActions 也支持传入参数（载荷） */}
 
 ```js
 methods: {
@@ -891,7 +891,7 @@ methods: {
 }
 ```
 
-<!-- mapActions 也支持传递一个对象 -->
+{/* mapActions 也支持传递一个对象 */}
 
 ```js
 methods: {
@@ -904,8 +904,8 @@ methods: {
 
 ### 组合 Action
 
-<!-- store.dispatch 可以处理被触发的 action 的处理函数返回的 Promise，
-     并且 store.dispatch 仍旧返回 Promise -->
+{/* store.dispatch 可以处理被触发的 action 的处理函数返回的 Promise，
+     并且 store.dispatch 仍旧返回 Promise */}
 
 ```js
 actions: {
@@ -920,7 +920,7 @@ actions: {
 }
 ```
 
-<!-- 现在你可以在组件中使用 -->
+{/* 现在你可以在组件中使用 */}
 
 ```js
 store.dispatch('actionA').then(() => {
@@ -928,7 +928,7 @@ store.dispatch('actionA').then(() => {
 })
 ```
 
-<!-- 在另外一个 action 中也可以 -->
+{/* 在另外一个 action 中也可以 */}
 
 ```js
 actions: {
@@ -941,7 +941,7 @@ actions: {
 }
 ```
 
-<!-- 最后，如果我们利用 async / await，我们可以如下组合 action -->
+{/* 最后，如果我们利用 async / await，我们可以如下组合 action */}
 
 ```js
 // 假设 getData() 和 getOtherData() 返回的是 Promise
@@ -956,14 +956,14 @@ actions: {
 }
 ```
 
-<!-- 一个 store.dispatch 在不同模块中可以触发多个 action 函数。
-     在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。 -->
+{/* 一个 store.dispatch 在不同模块中可以触发多个 action 函数。
+     在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。 */}
 
 ---
 
 ## Module
 
-<!-- 将 store 分割成模块。每个模块拥有自己的 state、mutation、action、getter、
-     甚至是嵌套子模块——从上至下进行同样方式的分割 -->
+{/* 将 store 分割成模块。每个模块拥有自己的 state、mutation、action、getter、
+     甚至是嵌套子模块——从上至下进行同样方式的分割 */}
 
 参考文档：https://uniapp.dcloud.io/vue-vuex?id=module

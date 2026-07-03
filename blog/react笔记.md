@@ -8,7 +8,7 @@ summary: 'React 状态管理方案详解：Redux 基础、Redux-Thunk 异步处�
 
 ## Redux 基础
 
-<!-- truncate -->
+{/* truncate */}
 
 ### 安装 Redux
 
@@ -97,7 +97,7 @@ store.subscribe(() => this.setState(store.getState()));
 
 #### 技巧 1：Action 类型统一管理
 
-<!-- 类型可以放在一个单独的文件管理，方便统一维护 -->
+{/* 类型可以放在一个单独的文件管理，方便统一维护 */}
 
 ```jsx
 // store/actionTypes.js
@@ -108,7 +108,7 @@ export const DELETE_ITEM = 'deleteItem';
 
 #### 技巧 2：Action Creator 统一管理
 
-<!-- action 提交也可以放到一个文件统一管理，提高可读性 -->
+{/* action 提交也可以放到一个文件统一管理，提高可读性 */}
 
 ```jsx
 // store/actionCreators.js
@@ -136,13 +136,13 @@ export { changeInputAction, addItemAction, deleteItemAction };
 
 ## Redux-Thunk 中间件
 
-<!-- 
+{/* 
 dispatch 的加强，中间件可以做：
 - 日志记录
 - 创建崩溃报告
 - 调用异步接口
 - 路由处理
--->
+*/}
 
 ### 安装
 
@@ -154,8 +154,8 @@ yarn add redux-thunk
 
 #### 1. 引入 `applyMiddleware` 和 `compose`
 
-<!-- 如果使用中间件，就必须引入 applyMiddleware -->
-<!-- compose：增强函数，用于组合多个增强器 -->
+{/* 如果使用中间件，就必须引入 applyMiddleware */}
+{/* compose：增强函数，用于组合多个增强器 */}
 
 ```jsx
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -213,7 +213,7 @@ export const getTodoList = () => {
 
 ## Redux-Saga 中间件
 
-<!-- Redux-Saga 是一个用于管理 Redux 应用副作用（如数据获取、订阅等）的库 -->
+{/* Redux-Saga 是一个用于管理 Redux 应用副作用（如数据获取、订阅等）的库 */}
 
 ### 安装
 
@@ -283,7 +283,7 @@ sagaMiddleware.run(mySagas);
 
 ## React-Redux 连接器
 
-<!-- 简化 Redux 流程，提供 Provider 和 connect 两个核心 API -->
+{/* 简化 Redux 流程，提供 Provider 和 connect 两个核心 API */}
 
 ### 安装
 
@@ -293,7 +293,7 @@ yarn add react-redux
 
 ### Provider 提供器
 
-<!-- Provider 用于将 Redux store 注入到 React 组件树中 -->
+{/* Provider 用于将 Redux store 注入到 React 组件树中 */}
 
 ```jsx
 import React from 'react';
@@ -314,7 +314,7 @@ ReactDOM.render(App, document.getElementById('root'));
 
 ### Connect 连接器
 
-<!-- connect 用于连接 React 组件和 Redux store -->
+{/* connect 用于连接 React 组件和 Redux store */}
 
 ```jsx
 import { connect } from 'react-redux';  // 引入连接器
@@ -362,6 +362,6 @@ export default connect(stateToProps, dispatchToProps)(TodoList);
 
 ## React Router
 
-<!-- React 官方推荐的路由解决方案 -->
+{/* React 官方推荐的路由解决方案 */}
 
 （内容待补充...）

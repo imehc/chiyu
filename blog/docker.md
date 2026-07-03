@@ -8,7 +8,7 @@ summary: 'Docker 容器与镜像管理完全指南：涵盖容器生命周期管
 
 # Docker 基础命令完全指南
 
-<!-- truncate -->
+{/* truncate */}
 
 ## 一、容器生命周期管理
 

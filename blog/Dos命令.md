@@ -8,7 +8,7 @@ summary: 'Windows DOS 常用命令（端口管理、服务启停）与 MySQL 数
 
 ## DOS 命令
 
-<!-- truncate -->
+{/* truncate */}
 
 ### 端口管理
 
@@ -26,7 +26,7 @@ netstat -ano | findstr "端口号"
 
 #### 关闭端口
 
-<!-- 进程号就是查看端口号时靠右的那个数字 -->
+{/* 进程号就是查看端口号时靠右的那个数字 */}
 
 ```cmd
 taskkill -PID 进程号 -F
@@ -46,7 +46,7 @@ taskkill /PID 进程号 /F
 net start mysql
 ```
 
-<!-- 如果出现服务名无效，则需要输入 mysqld --install 再次启动即可 -->
+{/* 如果出现服务名无效，则需要输入 mysqld --install 再次启动即可 */}
 
 如果提示"服务名无效"，先安装服务：
 

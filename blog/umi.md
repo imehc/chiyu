@@ -10,7 +10,7 @@ summary: 'Umi 企业级 React 应用框架的快速上手、CLI 创建项目、�
 
 `Umi` 是一个可插拔的企业级 `React` 应用框架，基于 `React` 和 `dva` 构建，提供了开箱即用的工程化能力。
 
-<!-- truncate -->
+{/* truncate */}
 
 ---
 
@@ -42,7 +42,7 @@ mkdir my-app
 umi g page 名称
 ```
 
-<!-- 使用 --typescript --less 来选择性地指定文件类型 -->
+{/* 使用 --typescript --less 来选择性地指定文件类型 */}
 
 ```bash
 umi g page home --typescript --less
@@ -68,7 +68,7 @@ umi dev
 yarn global add @umijs/create-umi-app
 ```
 
-<!-- 在命令行输入 create-umi-app -v 查看版本号，判断是否安装成功 -->
+{/* 在命令行输入 create-umi-app -v 查看版本号，判断是否安装成功 */}
 
 ### 创建新项目
 
@@ -80,7 +80,7 @@ mkdir myapp && cd myapp
 create-umi-app
 ```
 
-<!-- 如果命令行出现日志，说明新建项目完成 -->
+{/* 如果命令行出现日志，说明新建项目完成 */}
 
 或者使用 `yarn create` 一步完成：
 
@@ -112,13 +112,13 @@ umi dev
 
 ### 全局布局
 
-<!-- 存在 ./src/layouts/index 时，会自动使用它作为全局布局 -->
+{/* 存在 ./src/layouts/index 时，会自动使用它作为全局布局 */}
 
 当项目存在 `./src/layouts/index.tsx`（或 `.jsx`）时，`Umi` 会自动将其作为全局布局组件包裹所有页面。
 
 ### 数据流（dva）
 
-<!-- umi 中启动 dva 时，约定 ./src/models/ 目录下的 model 文件将被视为 model 模块 -->
+{/* umi 中启动 dva 时，约定 ./src/models/ 目录下的 model 文件将被视为 model 模块 */}
 
 `Umi` 集成 `dva` 作为数据流方案：
 
@@ -127,7 +127,7 @@ umi dev
 
 ### 运行时配置
 
-<!-- umi 的运行时配置，都在 src/app.ts 中 -->
+{/* umi 的运行时配置，都在 src/app.ts 中 */}
 
 `Umi` 的运行时配置统一在 `src/app.ts` 中管理：
 

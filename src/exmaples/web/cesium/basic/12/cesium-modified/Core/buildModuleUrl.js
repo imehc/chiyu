@@ -78,7 +78,7 @@ function getCesiumBaseUrl() {
 
 function buildModuleUrlFromRequireToUrl(moduleID) {
 	//moduleID will be non-relative, so require it relative to this module, in Core.
-	return tryMakeAbsolute(require.toUrl(`../${moduleID}`));
+	return tryMakeAbsolute(eval('require').toUrl(`../${moduleID}`));
 }
 
 function buildModuleUrlFromBaseUrl(moduleID) {
@@ -113,7 +113,7 @@ function buildModuleUrl(relativeUrl) {
 			typeof define === "object" &&
 			defined(define.amd) &&
 			!define.amd.toUrlUndefined &&
-			defined(require.toUrl)
+			typeof require !== "undefined"
 		) {
 			implementation = buildModuleUrlFromRequireToUrl;
 		} else {

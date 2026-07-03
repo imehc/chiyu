@@ -8,7 +8,7 @@ summary: 'Linux 系统常用命令速查手册：文件操作、目录管理、�
 
 # 常用 Linux 命令速查
 
-<!-- truncate -->
+{/* truncate */}
 
 ## 一、文件与目录操作
 

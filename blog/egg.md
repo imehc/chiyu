@@ -10,7 +10,7 @@ summary: 'Egg.js 项目初始化、目录结构、Router 路由配置、View 模
 
 `Egg.js` 是阿里开源的企业级 `Node.js` 框架，基于 `Koa` 开发，专为构建中大型应用设计，提供了一套完整的 `MVC` 架构解决方案。
 
-<!-- truncate -->
+{/* truncate */}
 
 ---
 
@@ -99,7 +99,7 @@ module.exports = app => {
 npm i egg-view-ejs --save
 ```
 
-<!-- npm 地址：https://github.com/eggjs/egg-view-ejs -->
+{/* npm 地址：https://github.com/eggjs/egg-view-ejs */}
 
 ### 配置插件
 
@@ -171,10 +171,10 @@ module.exports = (appInfo) => {
 在 `app` 目录下新建 `view` 文件夹，创建 `user.html`：
 
 ```html
-<!-- app/view/user.html -->
+{/* app/view/user.html */}
 ...
 <h2>
-  <!-- ejs 语法 -->
+  {/* ejs 语法 */}
   用户 --- <%= data.name %>
 </h2>
 ```
@@ -204,7 +204,7 @@ class HomeController extends Controller {
 module.exports = HomeController;
 ```
 
-<!-- 注意：静态资源放在 public 文件夹下，如图片、css、js 等，然后在 html 引入或者引用即可 -->
+{/* 注意：静态资源放在 public 文件夹下，如图片、css、js 等，然后在 html 引入或者引用即可 */}
 
 ---
 
