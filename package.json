@@ -34,7 +34,7 @@
 		"@react-three/fiber": "^9.5.0",
 		"@react-three/postprocessing": "^3.0.4",
 		"@react-three/rapier": "^2.2.0",
-		"@stackblitz/sdk": "^1.11.0",
+		"@stackblitz/sdk": "^1.11.1",
 		"@terraformer/wkt": "^2.2.2",
 		"@theatre/core": "^0.7.2",
 		"@theatre/r3f": "^0.7.2",
