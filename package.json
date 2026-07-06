@@ -93,7 +93,7 @@
 		"dotenv": "^17.4.2",
 		"husky": "^9.1.7",
 		"postcss": "^8.5.8",
-		"tailwindcss": "^4.2.2",
+		"tailwindcss": "^4.3.2",
 		"typescript": "~6.0.2"
 	},
 	"browserslist": {
