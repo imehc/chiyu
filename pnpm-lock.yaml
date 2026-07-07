@@ -129,8 +129,8 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1(react@19.2.3)
       react-globe.gl:
-        specifier: ^2.37.1
-        version: 2.37.1(react@19.2.3)
+        specifier: ^2.38.0
+        version: 2.38.0(react@19.2.3)
       shpjs:
         specifier: ^6.2.0
         version: 6.2.0
@@ -5288,6 +5288,10 @@ packages:
     resolution: {integrity: sha512-oR7iZBjD60ltBcRlHFvlEzKGL8PMfk2Xl19vSfu1SN4SWXAs3NB3kfelanL+wj5XgG2rTQiNtPQncCR2O9oj+w==}
     engines: {node: '>=12'}
 
+  globe.gl@2.46.1:
+    resolution: {integrity: sha512-h+OvX52EBIPLtM0/2JkM+JZ9gPAhPJ4y3+hxUwD5Ey/O0Zk2ockuTiJ71bZbnNBGmNiIZzA5Vr3TMT0b3d35IQ==}
+    engines: {node: '>=12'}
+
   glsl-noise@0.0.0:
     resolution: {integrity: sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==}
 
@@ -7243,8 +7247,8 @@ packages:
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
 
-  react-globe.gl@2.37.1:
-    resolution: {integrity: sha512-/YvnaB+ID+WTBTx5Qa67fGkGhco2jPlKg4jbXNTNWSl22/it7GrfByZ4nksgUDy4176VWuHh4BFvQg+hziSk8Q==}
+  react-globe.gl@2.38.0:
+    resolution: {integrity: sha512-NQkMy5BGD269lkdjm9BJ2PEK81++y9H82+j4/QuWVlfXPJPTVfzaxnkC3MvaiGmpus8P6czq58OfMeYvn/4Xqg==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '*'
@@ -7261,8 +7265,8 @@ packages:
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
 
-  react-kapsule@2.5.7:
-    resolution: {integrity: sha512-kifAF4ZPD77qZKc4CKLmozq6GY1sBzPEJTIJb0wWFK6HsePJatK3jXplZn2eeAt3x67CDozgi7/rO8fNQ/AL7A==}
+  react-kapsule@2.6.0:
+    resolution: {integrity: sha512-HzLJoYb1n1kfwjXbqFFcRR0EA6oPsJ64tNdDmCSaL/bz2o9wUZRSb0cMe//grLFeF9EVoL4CD/e6ozLyzEv+PQ==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16.13.1'
@@ -7905,6 +7909,12 @@ packages:
 
   three-render-objects@1.41.1:
     resolution: {integrity: sha512-0H7l7yREPVKfO3HL7RjPQ67T0phHgnyMeEc4ww/OCEfK6jbsm7psEcrR0SGFqGDyS/pDQTPi4DyPbS/xlHRJKw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      three: '>=0.179'
+
+  three-render-objects@1.42.0:
+    resolution: {integrity: sha512-KYfkPrYGEbIK8ChFocWqOF1aAN80FBUBWVYB8mB2oBpVuVN+52FvvngVYB5ieFANQu7Rt21rPYZ/xKaAgVWWRQ==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.179'
@@ -15671,6 +15681,15 @@ snapshots:
       three-globe: 2.45.2(three@0.182.0)
       three-render-objects: 1.41.1(three@0.182.0)
 
+  globe.gl@2.46.1:
+    dependencies:
+      '@tweenjs/tween.js': 25.0.0
+      accessor-fn: 1.5.3
+      kapsule: 1.16.3
+      three: 0.182.0
+      three-globe: 2.45.2(three@0.182.0)
+      three-render-objects: 1.42.0(three@0.182.0)
+
   glsl-noise@0.0.0: {}
 
   gopd@1.2.0: {}
@@ -17973,12 +17992,12 @@ snapshots:
 
   react-fast-compare@3.2.2: {}
 
-  react-globe.gl@2.37.1(react@19.2.3):
+  react-globe.gl@2.38.0(react@19.2.3):
     dependencies:
-      globe.gl: 2.45.3
+      globe.gl: 2.46.1
       prop-types: 15.8.1
       react: 19.2.3
-      react-kapsule: 2.5.7(react@19.2.3)
+      react-kapsule: 2.6.0(react@19.2.3)
 
   react-is@16.13.1: {}
 
@@ -17988,7 +18007,7 @@ snapshots:
     dependencies:
       react: 19.2.3
 
-  react-kapsule@2.5.7(react@19.2.3):
+  react-kapsule@2.6.0(react@19.2.3):
     dependencies:
       jerrypick: 1.1.2
       react: 19.2.3
@@ -18759,6 +18778,15 @@ snapshots:
       three: 0.182.0
 
   three-render-objects@1.41.1(three@0.182.0):
+    dependencies:
+      '@tweenjs/tween.js': 25.0.0
+      accessor-fn: 1.5.3
+      float-tooltip: 1.7.5
+      kapsule: 1.16.3
+      polished: 4.3.1
+      three: 0.182.0
+
+  three-render-objects@1.42.0(three@0.182.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
