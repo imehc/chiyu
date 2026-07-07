@@ -96,8 +96,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0
       globe.gl:
-        specifier: ^2.45.3
-        version: 2.45.3
+        specifier: ^2.46.1
+        version: 2.46.1
       gsap:
         specifier: ^3.15.0
         version: 3.15.0
@@ -5284,8 +5284,8 @@ packages:
     resolution: {integrity: sha512-Y1zNGV+pzQdh7H39l9zgB4PJqjRNqydvdYCDG4HFXM4XuvSaQQlEc91IU1yALL8gUTDomgBAfz3XJdmUS+oo0w==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  globe.gl@2.45.3:
-    resolution: {integrity: sha512-oR7iZBjD60ltBcRlHFvlEzKGL8PMfk2Xl19vSfu1SN4SWXAs3NB3kfelanL+wj5XgG2rTQiNtPQncCR2O9oj+w==}
+  globe.gl@2.46.1:
+    resolution: {integrity: sha512-h+OvX52EBIPLtM0/2JkM+JZ9gPAhPJ4y3+hxUwD5Ey/O0Zk2ockuTiJ71bZbnNBGmNiIZzA5Vr3TMT0b3d35IQ==}
     engines: {node: '>=12'}
 
   glsl-noise@0.0.0:
@@ -7110,8 +7110,8 @@ packages:
   potpack@1.0.2:
     resolution: {integrity: sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==}
 
-  preact@10.29.1:
-    resolution: {integrity: sha512-gQCLc/vWroE8lIpleXtdJhTFDogTdZG9AjMUpVkDf2iTCNwYNWA+u16dL41TqUDJO4gm2IgrcMv3uTpjd4Pwmg==}
+  preact@10.29.4:
+    resolution: {integrity: sha512-GMpwh9+NJ8tSmqwIaVyFRQkiKfBEzQ+k7r7tle4W+kaJ+7wJiB9hFz9BixAomMtenPPSBfM4bZhXozGxhf0uFQ==}
 
   pretty-error@4.0.0:
     resolution: {integrity: sha512-AoJ5YMAcXKYxKhuJGdcvse+Voc6v1RgnsR3nWcYU7q4t6z0Q6T86sv5Zq8VIRbOWWFpvdGE83LtdSMNd+6Y0xw==}
@@ -7903,8 +7903,8 @@ packages:
     peerDependencies:
       three: '>= 0.159.0'
 
-  three-render-objects@1.41.1:
-    resolution: {integrity: sha512-0H7l7yREPVKfO3HL7RjPQ67T0phHgnyMeEc4ww/OCEfK6jbsm7psEcrR0SGFqGDyS/pDQTPi4DyPbS/xlHRJKw==}
+  three-render-objects@1.42.0:
+    resolution: {integrity: sha512-KYfkPrYGEbIK8ChFocWqOF1aAN80FBUBWVYB8mB2oBpVuVN+52FvvngVYB5ieFANQu7Rt21rPYZ/xKaAgVWWRQ==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.179'
@@ -15488,7 +15488,7 @@ snapshots:
     dependencies:
       d3-selection: 3.0.0
       kapsule: 1.16.3
-      preact: 10.29.1
+      preact: 10.29.4
 
   follow-redirects@1.15.11(debug@4.4.3):
     optionalDependencies:
@@ -15662,14 +15662,14 @@ snapshots:
       merge2: 1.4.1
       slash: 4.0.0
 
-  globe.gl@2.45.3:
+  globe.gl@2.46.1:
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
       kapsule: 1.16.3
       three: 0.182.0
       three-globe: 2.45.2(three@0.182.0)
-      three-render-objects: 1.41.1(three@0.182.0)
+      three-render-objects: 1.42.0(three@0.182.0)
 
   glsl-noise@0.0.0: {}
 
@@ -17828,7 +17828,7 @@ snapshots:
 
   potpack@1.0.2: {}
 
-  preact@10.29.1: {}
+  preact@10.29.4: {}
 
   pretty-error@4.0.0:
     dependencies:
@@ -17975,7 +17975,7 @@ snapshots:
 
   react-globe.gl@2.37.1(react@19.2.3):
     dependencies:
-      globe.gl: 2.45.3
+      globe.gl: 2.46.1
       prop-types: 15.8.1
       react: 19.2.3
       react-kapsule: 2.5.7(react@19.2.3)
@@ -18758,7 +18758,7 @@ snapshots:
     dependencies:
       three: 0.182.0
 
-  three-render-objects@1.41.1(three@0.182.0):
+  three-render-objects@1.42.0(three@0.182.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
