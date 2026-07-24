@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/imehc/imehc.github.io/compare/v1.1.2...v1.2.0) (2026-07-24)
+
+
+### Features
+
+* 添加一些常用命令 ([58858ae](https://github.com/imehc/imehc.github.io/commit/58858ae443e7ce4861b66a547a92ba351e122a47))
+* 添加清理AI工具本地对话记录 ([904d543](https://github.com/imehc/imehc.github.io/commit/904d5436f552b2f7c5fb0fe3224b2b8621bca1d9))
+* 调整默认重定向地址 ([771bfac](https://github.com/imehc/imehc.github.io/commit/771bface757086878d37d93e49d5815ce6b6ab7a))
+
 ## [1.1.2](https://github.com/imehc/imehc.github.io/compare/v1.1.1...v1.1.2) (2026-07-03)
 
 
