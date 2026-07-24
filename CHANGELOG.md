@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/imehc/imehc.github.io/compare/v1.1.1...v1.1.2) (2026-07-03)
+
+
+### Bug Fixes
+
+* 更新pnpm工作区配置并修改Cesium模块URL处理 ([a8d2fa1](https://github.com/imehc/imehc.github.io/commit/a8d2fa104e20ab03233170eba2d37e919d12df50))
+
 ## [1.1.1](https://github.com/imehc/imehc.github.io/compare/v1.1.0...v1.1.1) (2026-02-25)
 
 
