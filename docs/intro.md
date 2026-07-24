@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-slug: /
+slug: /intro
 ---
 
 # 学习笔记
