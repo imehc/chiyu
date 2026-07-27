@@ -95,7 +95,7 @@
 		"raw-loader": "^4.0.2",
 		"postcss": "^8.5.23",
 		"tailwindcss": "^4.3.2",
-		"typescript": "~6.0.3"
+		"typescript": "~7.0.2"
 	},
 	"browserslist": {
 		"production": [
