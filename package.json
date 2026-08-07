@@ -63,7 +63,7 @@
 		"shpjs": "^6.2.0",
 		"sonner": "^2.0.7",
 		"supercluster": "^8.0.1",
-		"three": "^0.182.0",
+		"three": "^0.185.1",
 		"three-globe": "^2.45.2",
 		"urijs": "^1.19.11",
 		"zustand": "^5.0.14"
@@ -85,7 +85,7 @@
 		"@types/shpjs": "^3.4.7",
 		"@types/supercluster": "^7.1.3",
 		"@types/terraformer__wkt": "^2.0.3",
-		"@types/three": "^0.182.0",
+		"@types/three": "^0.185.4",
 		"commitizen": "^4.3.2",
 		"copy-webpack-plugin": "^14.0.0",
 		"cz-git": "^1.13.1",

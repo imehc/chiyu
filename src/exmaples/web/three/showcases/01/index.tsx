@@ -16,7 +16,7 @@ import {
 	TextureLoader,
 	WebGLRenderer,
 } from "three";
-import { DRACOLoader } from "three/addons/Addons.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { HDRLoader } from "three/addons/loaders/HDRLoader.js";
