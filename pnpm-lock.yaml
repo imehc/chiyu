@@ -48,8 +48,8 @@ importers:
         specifier: ^9.7.0
         version: 9.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
       '@react-three/postprocessing':
-        specifier: ^3.0.4
-        version: 3.0.4(@react-three/fiber@9.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/three@0.185.4)(react@19.2.8)(three@0.185.1)
+        specifier: ^3.0.5
+        version: 3.0.5(@react-three/fiber@9.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/three@0.185.4)(postprocessing@6.39.4(three@0.185.1))(react@19.2.8)(three@0.185.1)
       '@react-three/rapier':
         specifier: ^2.2.0
         version: 2.2.0(@react-three/fiber@9.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(react@19.2.8)(three@0.185.1)
@@ -2349,12 +2349,13 @@ packages:
       react-native:
         optional: true
 
-  '@react-three/postprocessing@3.0.4':
-    resolution: {integrity: sha512-e4+F5xtudDYvhxx3y0NtWXpZbwvQ0x1zdOXWTbXMK6fFLVDd4qucN90YaaStanZGS4Bd5siQm0lGL/5ogf8iDQ==}
+  '@react-three/postprocessing@3.0.5':
+    resolution: {integrity: sha512-rqxoH8cjq51w5yZ7Re3WNPVVDdSsuVwEYA+Nl90/nFLv0MIxYGjMkqhc6akp5+VLNwZD2aqOd8KcwuZW7NeUKQ==}
     peerDependencies:
-      '@react-three/fiber': ^9.0.0
-      react: ^19.0
-      three: '>= 0.156.0'
+      '@react-three/fiber': '>=9.7.0'
+      postprocessing: ^6.36.0
+      react: ^19.2.0
+      three: '>= 0.182.0'
 
   '@react-three/rapier@2.2.0':
     resolution: {integrity: sha512-mVsqbKXlGZoN+XrqdhzFZUQmy8pibEOVzl4k7LC+LHe84bQnYBSagy1Hvbda6bL1PJDdTFyiDiBk5buKFinNIQ==}
@@ -5338,7 +5339,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-directory@5.0.0:
     resolution: {integrity: sha512-1pgFdhK3J2LeM+dVf2Pd424yHx2ou338lC0ErNP2hPx4j8eW1Sp0XqSjNxtk6Tc4Kr5wlWtSvz8cn2yb7/SG/w==}
@@ -6219,12 +6220,6 @@ packages:
       '@types/three': '>=0.134.0'
       three: '>=0.134.0'
 
-  maath@0.6.0:
-    resolution: {integrity: sha512-dSb2xQuP7vDnaYqfoKzlApeRcR2xtN8/f7WV/TMAkBC8552TwTLtOO0JTcSygkYMjNDPoo6V01jTw/aPi4JrMw==}
-    peerDependencies:
-      '@types/three': '>=0.144.0'
-      three: '>=0.144.0'
-
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -6629,8 +6624,8 @@ packages:
   mute-stream@0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
 
-  n8ao@1.10.3:
-    resolution: {integrity: sha512-JFRk4WgUAUWO2KdJTqmBT02dP9kG7rE2oQbBy64E9+YwQ3d96KB9QBanqNy/NnYUfUTYU6Z/5OS5t/yLey7+6Q==}
+  n8ao@2.0.1:
+    resolution: {integrity: sha512-MoP1QKUdj4/3cKEnhFl917t0eQwWGER1l43ckz5mNOPyYWGRDGQbVoTOQz/VBvy01in6QVNG+AL6Xxx5AjZBYA==}
     peerDependencies:
       postprocessing: '>=6.30.0'
       three: '>=0.137'
@@ -8420,6 +8415,7 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8n@1.5.1:
@@ -12016,11 +12012,11 @@ snapshots:
       - '@types/react'
       - immer
 
-  '@react-three/postprocessing@3.0.4(@react-three/fiber@9.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/three@0.185.4)(react@19.2.8)(three@0.185.1)':
+  '@react-three/postprocessing@3.0.5(@react-three/fiber@9.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1))(@types/three@0.185.4)(postprocessing@6.39.4(three@0.185.1))(react@19.2.8)(three@0.185.1)':
     dependencies:
       '@react-three/fiber': 9.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(three@0.185.1)
-      maath: 0.6.0(@types/three@0.185.4)(three@0.185.1)
-      n8ao: 1.10.3(postprocessing@6.39.4(three@0.185.1))(three@0.185.1)
+      maath: 0.10.8(@types/three@0.185.4)(three@0.185.1)
+      n8ao: 2.0.1(postprocessing@6.39.4(three@0.185.1))(three@0.185.1)
       postprocessing: 6.39.4(three@0.185.1)
       react: 19.2.8
       three: 0.185.1
@@ -16692,11 +16688,6 @@ snapshots:
       '@types/three': 0.185.4
       three: 0.185.1
 
-  maath@0.6.0(@types/three@0.185.4)(three@0.185.1):
-    dependencies:
-      '@types/three': 0.185.4
-      three: 0.185.1
-
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -17378,7 +17369,7 @@ snapshots:
 
   mute-stream@0.0.8: {}
 
-  n8ao@1.10.3(postprocessing@6.39.4(three@0.185.1))(three@0.185.1):
+  n8ao@2.0.1(postprocessing@6.39.4(three@0.185.1))(three@0.185.1):
     dependencies:
       postprocessing: 6.39.4(three@0.185.1)
       three: 0.185.1
