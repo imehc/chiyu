@@ -62,7 +62,7 @@
 		"react-globe.gl": "^2.38.0",
 		"shpjs": "^6.2.0",
 		"sonner": "^2.0.8",
-		"supercluster": "^8.0.1",
+		"supercluster": "^9.0.0",
 		"three": "^0.185.1",
 		"three-globe": "^2.45.2",
 		"urijs": "^1.19.11",
