@@ -211,8 +211,8 @@ importers:
         specifier: ^14.0.0
         version: 14.0.0(webpack@5.109.2(@swc/core@1.15.47)(postcss@8.5.26))
       cz-git:
-        specifier: ^1.13.1
-        version: 1.13.1
+        specifier: ^1.13.2
+        version: 1.13.2
       daisyui:
         specifier: ^5.7.15
         version: 5.7.16
@@ -4513,8 +4513,8 @@ packages:
     resolution: {integrity: sha512-U466fIzU5U22eES5lTNiNbZ+d8dfcHcssH4o7QsdWaCcRs/feIPCxKYSWkYBNs5mny7MvEfwpTLWjvbm94hecw==}
     engines: {node: '>= 10'}
 
-  cz-git@1.13.1:
-    resolution: {integrity: sha512-xeMA5ci+gkBY6uKmqc6nzhG/Q4pmK1DKbVVUgByOTBgregoiYE0f3otEF0ADelyEWH4vNsO1W2o7QZYEe7Nwlw==}
+  cz-git@1.13.2:
+    resolution: {integrity: sha512-OZDo8EYvFGNqYUY3y45DLVJAgAKBFRUTQi57Mdo83vGuDfHNWt0u7g6q/VRv3JEDDNNdouC9swKMYQ0QhpUKTQ==}
     engines: {node: '>=v12.20.0'}
 
   d3-array@2.12.1:
@@ -14959,7 +14959,7 @@ snapshots:
       - '@types/node'
       - typescript
 
-  cz-git@1.13.1: {}
+  cz-git@1.13.2: {}
 
   d3-array@2.12.1:
     dependencies:
