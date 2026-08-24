@@ -214,8 +214,8 @@ importers:
         specifier: ^1.13.2
         version: 1.13.2
       daisyui:
-        specifier: ^5.7.17
-        version: 5.7.17
+        specifier: ^5.7.20
+        version: 5.7.20
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -4676,8 +4676,8 @@ packages:
   dagre-d3-es@7.0.14:
     resolution: {integrity: sha512-P4rFMVq9ESWqmOgK+dlXvOtLwYg0i7u0HBGJER0LZDJT2VHIPAMZ/riPxqJceWMStH5+E61QxFra9kIS3AqdMg==}
 
-  daisyui@5.7.17:
-    resolution: {integrity: sha512-w5U5FdL9hH4/zh8eLXytWQt3c0DgHS1WDw+1yuQykT8nSIE9Vc5wkJVeDymD1JlRDLANDawvN4iIGVaxgV6Cjw==}
+  daisyui@5.7.20:
+    resolution: {integrity: sha512-qoL9qXXo/K/MzcteD1SvZOSeBaL8F9qBJvwX3KEpiVHQLzIEtGkNl/ZznSI7J0d+qnQJa2dAAFzTFDAx9df1rw==}
 
   dat.gui@0.7.9:
     resolution: {integrity: sha512-sCNc1OHobc+Erc1HqiswYgHdVNpSJUlk/Hz8vzOCsER7rl+oF/4+v8GXFUyCgtXpoCX6+bnmg07DedLvBLwYKQ==}
@@ -15128,7 +15128,7 @@ snapshots:
       d3: 7.9.0
       lodash-es: 4.18.1
 
-  daisyui@5.7.17: {}
+  daisyui@5.7.20: {}
 
   dat.gui@0.7.9: {}
 
