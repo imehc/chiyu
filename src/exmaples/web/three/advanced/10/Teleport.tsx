@@ -53,7 +53,7 @@ export const Teleport = () => {
 				4,
 				delta * 2,
 			);
-			autoRotate && (pivotY.current.rotation.y += delta / 2);
+			if (autoRotate) pivotY.current.rotation.y += delta / 2;
 		} else {
 			offset.current.position.z = MathUtils.lerp(
 				offset.current.position.z,
@@ -65,10 +65,9 @@ export const Teleport = () => {
 		if (!circleEffectRef.current) return;
 
 		pivotY.current.position.lerp(to, delta * 2);
-		(circleEffectRef.current.material as MeshBasicMaterial).opacity > 0.02
-			? ((circleEffectRef.current.material as MeshBasicMaterial).opacity -=
-					delta * 0.5)
-			: (circleEffectRef.current.visible = false);
+		const material = circleEffectRef.current.material as MeshBasicMaterial;
+		if (material.opacity > 0.02) material.opacity -= delta * 0.5;
+		else circleEffectRef.current.visible = false;
 	});
 
 	return (

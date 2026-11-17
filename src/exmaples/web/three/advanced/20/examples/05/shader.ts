@@ -51,5 +51,5 @@ export const dayNightShader = {
           float blendFactor = smoothstep(-0.1, 0.1, intensity);
           gl_FragColor = mix(nightColor, dayColor, blendFactor);
         }
-      `
+      `,
 };

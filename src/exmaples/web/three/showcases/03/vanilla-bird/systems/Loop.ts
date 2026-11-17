@@ -1,3 +1,4 @@
+import styles from "@site/src/exmaples/web/componets/Container.module.css";
 import type { Camera, Object3D, Scene, WebGLRenderer } from "three";
 import { Clock } from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -13,12 +14,18 @@ class Loop {
 	private readonly stats = new Stats();
 	public updatables: Updatable[];
 
-	constructor(camera: Camera, scene: Scene, renderer: WebGLRenderer) {
+	constructor(
+		camera: Camera,
+		scene: Scene,
+		renderer: WebGLRenderer,
+		container: HTMLElement,
+	) {
 		this.camera = camera;
 		this.scene = scene;
 		this.renderer = renderer;
 		this.updatables = [];
-		document.body.appendChild(this.stats.dom);
+		this.stats.dom.classList.add(styles.stats);
+		container.appendChild(this.stats.dom);
 	}
 
 	public start() {
@@ -33,6 +40,12 @@ class Loop {
 
 	public stop() {
 		this.renderer.setAnimationLoop(null);
+	}
+
+	public dispose() {
+		this.stop();
+		this.stats.dom.remove();
+		this.updatables.length = 0;
 	}
 
 	/**

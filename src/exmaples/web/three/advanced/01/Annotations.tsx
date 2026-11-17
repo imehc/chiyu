@@ -1,11 +1,15 @@
+import type { OrbitControls } from "@react-three/drei";
 import { Html } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { Easing, Tween } from "@tweenjs/tween.js";
+import type { ComponentRef, RefObject } from "react";
 import { useState } from "react";
 import annotations from "./annotations.json";
 import { tweenGroup } from "./index";
 
-export const Annotations: React.FC<any> = ({ controls }) => {
+export const Annotations: React.FC<{
+	controls: RefObject<ComponentRef<typeof OrbitControls> | null>;
+}> = ({ controls }) => {
 	const { camera } = useThree();
 	const [selected, setSelected] = useState(-1);
 
@@ -30,6 +34,7 @@ export const Annotations: React.FC<any> = ({ controls }) => {
 								fill="rgba(0,0,0,.66)"
 								onPointerUp={() => {
 									setSelected(i);
+									if (!controls.current) return;
 									// change target
 									const targetTween = new Tween(
 										controls.current.target,
@@ -72,11 +77,9 @@ export const Annotations: React.FC<any> = ({ controls }) => {
 							</text>
 						</svg>
 						{a.description && i === selected && (
-							<div
-								id={`desc_${i}`}
-								className="annotationDescription"
-								dangerouslySetInnerHTML={{ __html: a.description }}
-							/>
+							<div id={`desc_${i}`} className="annotationDescription">
+								<p>{a.description}</p>
+							</div>
 						)}
 					</Html>
 				);

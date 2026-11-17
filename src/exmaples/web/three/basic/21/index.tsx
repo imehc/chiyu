@@ -1,5 +1,6 @@
 import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Leva } from "leva";
 import Container from "../../../componets/Container";
 import { Model } from "./Model";
 
@@ -18,7 +19,7 @@ import { Model } from "./Model";
  */
 const Demo21: React.FC = () => {
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas shadows camera={{ position: [0, 0, 1.66] }}>
 				<Environment preset="forest" />
 				<Model />

@@ -6,7 +6,7 @@ import {
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Group } from "@tweenjs/tween.js";
-import { Suspense, useRef } from "react";
+import { type ComponentRef, Suspense, useRef } from "react";
 import Container from "../../../componets/Container";
 import { Model } from "./Scan";
 
@@ -17,7 +17,7 @@ export const tweenGroup = new Group();
  * 摄影测量
  */
 export const Demo2v15 = () => {
-	const ref = useRef<any>(null);
+	const ref = useRef<ComponentRef<typeof OrbitControls>>(null);
 	return (
 		<Container>
 			<Canvas shadows camera={{ position: [4, 0, 3] }}>

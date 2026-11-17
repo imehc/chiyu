@@ -4,7 +4,6 @@ import { csvParseRows } from "d3";
 import Globe, { type GlobeInstance } from "globe.gl";
 import { useEffect, useEffectEvent, useRef } from "react";
 import { airportParse, type Plane, routeParse } from "./helper";
-import indexBy from './index-array-by'
 
 const COUNTRY = "United States";
 const OPACITY = 0.22;
@@ -27,21 +26,20 @@ export default function USOutboundInternationalAirlineRoutesComponent() {
 					.then((res) => res.text())
 					.then((d) => csvParseRows(d, routeParse)),
 			]);
-			const byIata = indexBy(airports, "iata", false);
+			const byIata = new Map(
+				airports.map((airport) => [airport.iata, airport]),
+			);
 
 			const filteredRoutes = routes
-				.filter(
-					(d) =>
-						Object.hasOwn(byIata, d.srcIata) &&
-						Object.hasOwn(byIata, d.dstIata),
-				) // exclude unknown airports
+				.filter((d) => byIata.has(d.srcIata) && byIata.has(d.dstIata)) // exclude unknown airports
 				.filter((d) => d.stops === "0") // non-stop flights only
-				.map((d) =>
-					Object.assign(d, {
-						srcAirport: byIata[d.srcIata],
-						dstAirport: byIata[d.dstIata],
-					}),
-				)
+				.flatMap((d) => {
+					const srcAirport = byIata.get(d.srcIata);
+					const dstAirport = byIata.get(d.dstIata);
+					return srcAirport && dstAirport
+						? [{ ...d, srcAirport, dstAirport }]
+						: [];
+				})
 				.filter(
 					(d) =>
 						d.srcAirport.country === COUNTRY &&

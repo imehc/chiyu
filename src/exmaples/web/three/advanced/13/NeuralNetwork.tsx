@@ -154,6 +154,7 @@ export default function NeuralNetwork() {
 				<bufferGeometry ref={particlesRef}>
 					<bufferAttribute
 						attach="attributes-position"
+						args={[particlePositions, 3]}
 						count={particleCount}
 						array={particlePositions}
 						itemSize={3}
@@ -171,12 +172,14 @@ export default function NeuralNetwork() {
 				<bufferGeometry ref={linesGeometryRef}>
 					<bufferAttribute
 						attach="attributes-position"
+						args={[positions, 3]}
 						count={positions.length / 3}
 						array={positions}
 						itemSize={3}
 					/>
 					<bufferAttribute
 						attach="attributes-color"
+						args={[colors, 3]}
 						count={colors.length / 3}
 						array={colors}
 						itemSize={3}

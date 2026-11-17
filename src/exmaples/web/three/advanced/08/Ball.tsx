@@ -14,10 +14,10 @@ export const Ball: React.FC<{
 	const angularVelocity = useMemo(() => new Vector3(), []);
 
 	useFrame((_, delta) => {
-		keyMap["KeyW"] && (angularVelocity.x -= delta * 5);
-		keyMap["KeyS"] && (angularVelocity.x += delta * 5);
-		keyMap["KeyA"] && (angularVelocity.z += delta * 5);
-		keyMap["KeyD"] && (angularVelocity.z -= delta * 5);
+		if (keyMap.KeyW) angularVelocity.x -= delta * 5;
+		if (keyMap.KeyS) angularVelocity.x += delta * 5;
+		if (keyMap.KeyA) angularVelocity.z += delta * 5;
+		if (keyMap.KeyD) angularVelocity.z -= delta * 5;
 
 		q.setFromAxisAngle(angularVelocity, delta).normalize();
 		if (!ref.current) return;

@@ -1,5 +1,6 @@
-import { Environment, Stats } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
 import Container from "../../../componets/Container";
 import { Scene } from "./Scene";
 import { Teleport } from "./Teleport";

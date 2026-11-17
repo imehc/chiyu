@@ -10,6 +10,7 @@ export default function Bird() {
 	const initializedRef = useRef(false); // 防止重复初始化
 
 	useEffect(() => {
+		let disposed = false;
 		const container = containerRef.current;
 		if (!container || initializedRef.current) return;
 
@@ -18,7 +19,7 @@ export default function Bird() {
 		// 动态导入Model类，只在客户端加载
 		import("./vanilla-bird").then(({ Model }) => {
 			// 再次检查，防止竞态条件
-			if (modelRef.current) {
+			if (disposed || modelRef.current) {
 				return;
 			}
 
@@ -28,6 +29,7 @@ export default function Bird() {
 
 			// 初始化并加载鸟模型
 			model.init().then(() => {
+				if (disposed) return;
 				setIsLoading(false);
 				// 启动渲染循环
 				model.start();
@@ -36,6 +38,7 @@ export default function Bird() {
 
 		// 清理函数
 		return () => {
+			disposed = true;
 			if (modelRef.current) {
 				modelRef.current.stop();
 				modelRef.current.dispose();

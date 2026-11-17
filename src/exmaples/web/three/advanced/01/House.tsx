@@ -11,7 +11,7 @@ export const House: React.FC<GroupProps> = (props) => {
 	const { nodes, materials } = useGLTF(
 		"/models/house-water-transformed.glb",
 	) as unknown as GLTFResult;
-	Object.keys(materials).forEach((m) => {
+	Object.keys(materials).forEach((m: string) => {
 		if (!["sink_faiance", "white_409", "Ceramic"].includes(m)) {
 			if ("flatShading" in materials[m]) {
 				materials[m].flatShading = true;

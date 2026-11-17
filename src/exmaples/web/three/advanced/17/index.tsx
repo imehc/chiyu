@@ -3,7 +3,7 @@ import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import { geoMercator } from "d3";
 import type { FeatureCollection, Position } from "geojson";
 import type React from "react";
-import { Suspense, useCallback, useMemo } from "react";
+import { Suspense, useCallback, useEffect, useMemo } from "react";
 import {
 	AxesHelper,
 	BufferGeometry,
@@ -45,6 +45,7 @@ const ThreeMap: React.FC = () => {
 
 					{/* 透视相机配置 */}
 					<PerspectiveCamera
+						makeDefault
 						fov={40}
 						aspect={2}
 						far={10000}
@@ -56,7 +57,7 @@ const ThreeMap: React.FC = () => {
 					<ambientLight color={0xffffff} intensity={1} />
 
 					{/* 地图数据渲染 */}
-					<Map />
+					<RegionMap />
 				</Suspense>
 			</Canvas>
 		</Container>
@@ -72,7 +73,7 @@ const ThreeMap: React.FC = () => {
  * 3. 创建立体几何体（ExtrudeGeometry）表示地区
  * 4. 添加边框线条（Line）表示地区边界
  */
-const Map: React.FC = () => {
+const RegionMap: React.FC = () => {
 	const { scene } = useThree();
 
 	// D3.js 地理投影配置
@@ -97,51 +98,58 @@ const Map: React.FC = () => {
 	// 绘制立体拉伸几何体（表示地区的立体感）
 	const drawExtrudeMesh = useCallback<
 		(polygon: Position[], color: string) => Mesh
-	>((polygon, color) => {
-		// Shape: 用于定义 2D 形状的轮廓
-		const shape = new Shape();
+	>(
+		(polygon, color) => {
+			// Shape: 用于定义 2D 形状的轮廓
+			const shape = new Shape();
 
-		// 遍历多边形的所有顶点
-		polygon.forEach((row, i) => {
-			// 投影转换：将地理坐标转换为屏幕坐标
-			const [x, y] = [row[0], row[1]];
+			// 遍历多边形的所有顶点
+			polygon.forEach((row, i) => {
+				// 投影转换：将地理坐标转换为屏幕坐标
+				const projected = projection([row[0], row[1]]);
+				if (!projected) return;
+				const [x, y] = projected;
 
-			// 第一个点使用 moveTo，其他点使用 lineTo
-			if (i === 0) {
-				shape.moveTo(x, -y);
-			}
-			shape.lineTo(x, -y);
-		});
+				// 第一个点使用 moveTo，其他点使用 lineTo
+				if (i === 0) {
+					shape.moveTo(x, -y);
+				}
+				shape.lineTo(x, -y);
+			});
 
-		// ExtrudeGeometry: 将 2D 形状拉伸成 3D 几何体
-		// depth: 拉伸高度（10个单位）
-		// bevelEnabled: 禁用倒角效果
-		const geometry = new ExtrudeGeometry(shape, {
-			depth: 10,
-			bevelEnabled: false,
-		});
+			// ExtrudeGeometry: 将 2D 形状拉伸成 3D 几何体
+			// depth: 拉伸高度（10个单位）
+			// bevelEnabled: 禁用倒角效果
+			const geometry = new ExtrudeGeometry(shape, {
+				depth: 10,
+				bevelEnabled: false,
+			});
 
-		// 基础网格材质
-		const material = new MeshBasicMaterial({
-			color: color, // 颜色（蓝色或黄色）
-			transparent: true, // 启用透明度
-			opacity: 0.5, // 透明度值
-		});
+			// 基础网格材质
+			const material = new MeshBasicMaterial({
+				color: color, // 颜色（蓝色或黄色）
+				transparent: true, // 启用透明度
+				opacity: 0.5, // 透明度值
+			});
 
-		return new Mesh(geometry, material);
-	}, []);
+			return new Mesh(geometry, material);
+		},
+		[projection],
+	);
 
 	// 绘制边框线条（表示地区边界）
 	const lineDraw = useCallback<(polygon: Position[], color: string) => Line>(
 		(polygon, color) => {
 			// BufferGeometry: 用于存储顶点数据的高效数据结构
 			const lineGeometry = new BufferGeometry();
-			const pointsArray = [];
+			const pointsArray: Vector3[] = [];
 
 			// 遍历多边形顶点，创建 3D 点
 			polygon.forEach((row) => {
 				// 使用 D3.js 投影转换地理坐标
-				const [x, y] = projection(row as [number, number])!;
+				const projected = projection([row[0], row[1]]);
+				if (!projected) return;
+				const [x, y] = projected;
 				// 创建三维点（Z 坐标设为 9，位于拉伸几何体上方）
 				pointsArray.push(new Vector3(x, -y, 9));
 			});
@@ -160,11 +168,14 @@ const Map: React.FC = () => {
 	);
 
 	// 处理地理数据
-	const operationData = useMemo(() => {
+	useEffect(() => {
 		if (!loader) return;
 
 		// 解析 GeoJSON 数据
-		const jsondata = JSON.parse(loader as string) as FeatureCollection;
+		const jsondata = JSON.parse(loader as string) as FeatureCollection<
+			GeoJSON.Geometry,
+			{ name: string }
+		>;
 		const features = jsondata.features;
 
 		// 遍历所有地区特征
@@ -173,11 +184,11 @@ const Map: React.FC = () => {
 			const province = new Object3D() as ExpantedObject3D;
 
 			// 存储地区名称信息
-			province.properties = feature.properties!.name;
+			province.properties = feature.properties.name;
 
 			// 根据地区名称设置不同的颜色
 			// 特殊处理的地区：重庆市和上海市显示为蓝色
-			const color = ["重庆市", "上海市"].includes(feature.properties!.name)
+			const color = ["重庆市", "上海市"].includes(feature.properties.name)
 				? "blue"
 				: "yellow";
 
@@ -220,6 +231,21 @@ const Map: React.FC = () => {
 
 		// 将地图添加到场景
 		scene.add(map);
+		return () => {
+			scene.remove(map);
+			map.traverse((object) => {
+				if (object instanceof Mesh || object instanceof Line) {
+					object.geometry.dispose();
+					const materials = Array.isArray(object.material)
+						? object.material
+						: [object.material];
+					materials.forEach((material) => {
+						material.dispose();
+					});
+				}
+			});
+			map.clear();
+		};
 	}, [drawExtrudeMesh, lineDraw, loader, map, scene]);
 
 	// 显示坐标轴辅助器（用于调试）

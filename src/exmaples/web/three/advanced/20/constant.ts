@@ -126,5 +126,7 @@ export function transformGuiParam(type?: "basic" | "detachment") {
 
 /** 当前组件 */
 export function currentComponent(name: string) {
-	return allComp?.[name]?.component || null;
+	return Object.hasOwn(allComp, name)
+		? allComp[name as GlobeCompKey].component
+		: null;
 }

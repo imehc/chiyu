@@ -1,5 +1,7 @@
-import { Circle, OrbitControls, Stats } from "@react-three/drei";
+import { Circle, OrbitControls } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { Leva } from "leva";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Container from "../../../componets/Container";
 
@@ -10,7 +12,7 @@ const Demo16: React.FC = () => {
 	const gltf = useLoader(GLTFLoader, "/models/monkey.glb");
 
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas camera={{ position: [-0.5, 1, 2] }} shadows>
 				<directionalLight position={[3.3, 1.0, 4.4]} castShadow />
 				<primitive

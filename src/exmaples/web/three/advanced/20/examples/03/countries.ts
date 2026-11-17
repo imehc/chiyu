@@ -57,9 +57,7 @@ async function fetchCountriesData(useSimpleMerge = false) {
 				};
 			} else {
 				// 使用 turf.union 合并几何形状
-				const merged = union(
-					featureCollection([chinaFeature, taiwanFeature]),
-				);
+				const merged = union(featureCollection([chinaFeature, taiwanFeature]));
 
 				if (merged) {
 					// 合并 GDP 和人口数据

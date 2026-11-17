@@ -54,18 +54,23 @@ export default function MoonLandingSitesComponent() {
 			.labelText("label")
 			.labelSize(1.7)
 			.labelDotRadius(0.4)
-			.labelDotOrientation((d: MoonLandingSite) =>
-				labelsTopOrientation.has(d.label) ? "top" : "bottom",
+			.labelDotOrientation((d) =>
+				labelsTopOrientation.has((d as MoonLandingSite).label)
+					? "top"
+					: "bottom",
 			)
-			.labelColor((d: MoonLandingSite) => colorScale(d.agency))
-			.labelLabel(
-				(d: MoonLandingSite) => `
+			.labelColor((d) => colorScale((d as MoonLandingSite).agency))
+			.labelLabel((site) => {
+				const d = site as MoonLandingSite;
+				return `
 				<div><b>${d.label}</b></div>
 				<div>${d.agency} - ${d.program} Program</div>
 				<div>Landing on <i>${new Date(d.date).toLocaleDateString()}</i></div>
-			`,
-			)
-			.onLabelClick((d: MoonLandingSite) => window.open(d.url, "_blank"));
+			`;
+			})
+			.onLabelClick((d) => {
+				window.open((d as MoonLandingSite).url, "_blank");
+			});
 
 		loadData(world);
 

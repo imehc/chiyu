@@ -1,6 +1,8 @@
-import { Environment, OrbitControls, Stats } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useRef } from "react";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { Leva } from "leva";
+import { type ComponentRef, useRef } from "react";
 import Container from "../../../componets/Container";
 import { Arena } from "./Arena";
 import { Tween } from "./Tween";
@@ -9,9 +11,9 @@ import { Tween } from "./Tween";
  * 更改相机位置及其面向位置
  */
 const Demo2v05 = () => {
-	const ref = useRef(null);
+	const ref = useRef<ComponentRef<typeof OrbitControls>>(null);
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas camera={{ position: [10, 10, 10] }} shadows>
 				<directionalLight
 					intensity={1}

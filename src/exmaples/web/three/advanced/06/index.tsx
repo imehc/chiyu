@@ -1,6 +1,6 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useControls } from "leva";
+import { Leva, useControls } from "leva";
 import { useMemo } from "react";
 import Container from "../../../componets/Container";
 
@@ -21,7 +21,7 @@ const Demo2v06 = () => {
 	const greenBall = useControls("Green", options);
 
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas camera={{ position: [1, 2, 3] }}>
 				<directionalLight position={[1, 1, 1]} intensity={Math.PI} />
 				<mesh

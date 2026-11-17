@@ -17,7 +17,7 @@ type Object = Record<string, unknown>;
 
 /**
  * 根据一个或多个键访问器对数组进行索引，创建嵌套对象结构或扁平化数组表示。
- * 
+ *
  * @template T 输入列表中对象的类型
  * @param {T[]} list - 需要被索引的输入数组。默认为空数组。
  * @param {KeyAccessor<T> | KeyAccessor<T>[]} keyAccessors - 定义如何访问索引键的键访问器或键访问器数组。

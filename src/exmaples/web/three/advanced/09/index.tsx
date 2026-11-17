@@ -1,7 +1,5 @@
-import { Stats } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useRef } from "react";
-import type { GridHelper } from "three";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
 import Container from "../../../componets/Container";
 import { Box } from "./Box";
 import { Rig } from "./Rig";
@@ -10,7 +8,6 @@ import { Rig } from "./Rig";
  * 鼠标滑动
  */
 const Demo2v09 = () => {
-	const ref = useRef<GridHelper>(null);
 	return (
 		<Container>
 			<Canvas camera={{ position: [0, 0, 6] }}>

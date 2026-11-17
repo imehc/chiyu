@@ -10,7 +10,7 @@ export default function CloudsComponent() {
 	const [width, height] = useContainerSize(containerRef);
 
 	useEffect(() => {
-		const { current: el } = containerRef
+		const { current: el } = containerRef;
 		if (!el || !width || !height) return;
 
 		const world = new Globe(el, { animateIn: false })
@@ -47,7 +47,7 @@ export default function CloudsComponent() {
 			if (animationFrameRef.current) {
 				cancelAnimationFrame(animationFrameRef.current);
 			}
-			world?._destructor()
+			world?._destructor();
 		};
 	}, [width, height]);
 

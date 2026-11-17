@@ -34,69 +34,69 @@ let demoSheet: ISheet;
  * - 加载预设的动画状态配置
  */
 export const TheatreContent: React.FC = () => {
-  const [isReady, setIsReady] = React.useState(false);
+	const [isReady, setIsReady] = React.useState(false);
 
-  useEffect(() => {
-    // 从 demoProjectState 获取或创建项目
-    // getProject: 获取或创建一个 Theatre 项目
-    // 第二个参数是初始状态配置
-    demoSheet = getProject("Demo Project", { state: demoProjectState }).sheet(
-      "Demo Sheet",
-    );
+	useEffect(() => {
+		// 从 demoProjectState 获取或创建项目
+		// getProject: 获取或创建一个 Theatre 项目
+		// 第二个参数是初始状态配置
+		demoSheet = getProject("Demo Project", { state: demoProjectState }).sheet(
+			"Demo Sheet",
+		);
 
-    // 当项目加载完成后，开始播放动画序列
-    demoSheet.project.ready.then(() => {
-      console.log("Project loaded!");
+		// 当项目加载完成后，开始播放动画序列
+		demoSheet.project.ready.then(() => {
+			console.log("Project loaded!");
 
-      // 播放动画序列
-      demoSheet.sequence.play();
+			// 播放动画序列
+			demoSheet.sequence.play();
 
-      // 标记为就绪
-      setIsReady(true);
-    });
-  }, []);
+			// 标记为就绪
+			setIsReady(true);
+		});
+	}, []);
 
-  // 项目初始化中
-  if (!isReady) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-lg">Initializing Theatre.js...</p>
-      </div>
-    );
-  }
+	// 项目初始化中
+	if (!isReady) {
+		return (
+			<div className="flex items-center justify-center h-full">
+				<p className="text-lg">Initializing Theatre.js...</p>
+			</div>
+		);
+	}
 
-  return (
-    <Canvas gl={{ preserveDrawingBuffer: true }}>
-      {/* SheetProvider: 为子组件提供动画表单上下文 */}
-      <SheetProvider sheet={demoSheet}>
-        {/* PerspectiveCamera: 可编辑的透视相机
+	return (
+		<Canvas gl={{ preserveDrawingBuffer: true }}>
+			{/* SheetProvider: 为子组件提供动画表单上下文 */}
+			<SheetProvider sheet={demoSheet}>
+				{/* PerspectiveCamera: 可编辑的透视相机
             theatreKey: 在 Theatre 编辑器中的对象标识符
             makeDefault: 设置为默认相机 */}
-        <PerspectiveCamera
-          theatreKey="Camera"
-          makeDefault
-          position={[5, 5, -5]}
-          fov={75}
-        />
+				<PerspectiveCamera
+					theatreKey="Camera"
+					makeDefault
+					position={[5, 5, -5]}
+					fov={75}
+				/>
 
-        {/* 环境光 - 提供整体光线 */}
-        <ambientLight />
+				{/* 环境光 - 提供整体光线 */}
+				<ambientLight />
 
-        {/* e.pointLight: 可编辑的点光源
+				{/* e.pointLight: 可编辑的点光源
             theatreKey: 在 Theatre 编辑器中可编辑位置 */}
-        <e.pointLight theatreKey="Light" position={[10, 10, 10]} />
+				<e.pointLight theatreKey="Light" position={[10, 10, 10]} />
 
-        {/* e.mesh: 可编辑的网格对象
+				{/* e.mesh: 可编辑的网格对象
             theatreKey: 在 Theatre 编辑器中可编辑位置、旋转、缩放等属性
             可以通过 Theatre.js 编辑器创建关键帧动画 */}
-        <e.mesh theatreKey="Cube">
-          {/* 立方体几何体 */}
-          <boxGeometry args={[1, 1, 1]} />
+				<e.mesh theatreKey="Cube">
+					{/* 立方体几何体 */}
+					<boxGeometry args={[1, 1, 1]} />
 
-          {/* 标准 PBR 材质 */}
-          <meshStandardMaterial color="orange" />
-        </e.mesh>
-      </SheetProvider>
-    </Canvas>
-  );
+					{/* 标准 PBR 材质 */}
+					<meshStandardMaterial color="orange" />
+				</e.mesh>
+			</SheetProvider>
+		</Canvas>
+	);
 };

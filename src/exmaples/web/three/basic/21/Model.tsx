@@ -5,7 +5,6 @@ Command: npx gltfjsx@6.2.15 ./public/models/shoe-draco.glb -o ./src/demo/21/Mode
 
 import { useGLTF } from "@react-three/drei";
 import { useControls } from "leva";
-import type React from "react";
 import { type JSX, useEffect, useState } from "react";
 import {
 	Color,
@@ -39,11 +38,6 @@ type GLTFResult = GLTF & {
 	};
 };
 
-type ContextType = Record<
-	string,
-	React.ForwardRefExoticComponent<JSX.IntrinsicElements["mesh"]>
->;
-
 export function Model(props: JSX.IntrinsicElements["group"]) {
 	const [hovered, setHovered] = useState(false);
 	const { nodes, materials } = useGLTF(
@@ -73,6 +67,7 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
 	});
 
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: R3F group is a scene object, not a DOM element.
 		<group
 			{...props}
 			dispose={null}
@@ -82,7 +77,7 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
 				e.stopPropagation();
 				document
 					.getElementById(
-						"Shoe." + ((e.object as unknown as Mesh).material as Material).name,
+						`Shoe.${((e.object as unknown as Mesh).material as Material).name}`,
 					)
 					?.focus();
 			}}

@@ -5,6 +5,8 @@ import type { Feature, Point } from "geojson";
 import Globe, { type GlobeInstance } from "globe.gl";
 import { useEffect, useEffectEvent, useRef } from "react";
 
+type Earthquake = Feature<Point, { mag: number; title: string }>;
+
 export default function RecentEarthquakesComponent() {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [width, height] = useContainerSize(containerRef);
@@ -36,9 +38,9 @@ export default function RecentEarthquakesComponent() {
 			.width(width)
 			.height(height)
 			.globeImageUrl("/three-globe/example/img/earth-night.png")
-			.hexBinPointLat((d) => ((d as Feature).geometry as Point).coordinates[1])
-			.hexBinPointLng((d) => ((d as Feature).geometry as Point).coordinates[0])
-			.hexBinPointWeight((d) => (d as Feature).properties.mag)
+			.hexBinPointLat((d) => (d as Earthquake).geometry.coordinates[1])
+			.hexBinPointLng((d) => (d as Earthquake).geometry.coordinates[0])
+			.hexBinPointWeight((d) => (d as Earthquake).properties.mag)
 			.hexAltitude(({ sumWeight }) => sumWeight * 0.0025)
 			.hexTopColor((d) => weightColor(d.sumWeight))
 			.hexSideColor((d) => weightColor(d.sumWeight))
@@ -49,9 +51,10 @@ export default function RecentEarthquakesComponent() {
 						.slice()
 						.sort(
 							(a, b) =>
-								(b as Feature).properties.mag - (a as Feature).properties.mag,
+								(b as Earthquake).properties.mag -
+								(a as Earthquake).properties.mag,
 						)
-						.map((d) => (d as Feature).properties.title)
+						.map((d) => (d as Earthquake).properties.title)
 						.join("</li><li>")}
 					</li></ul>
 				`,

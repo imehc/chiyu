@@ -8,7 +8,7 @@ export default function HeatMapComponent() {
 	const [width, height] = useContainerSize(containerRef);
 
 	useEffect(() => {
-		const { current: el } = containerRef
+		const { current: el } = containerRef;
 		if (!el || !width || !height) return;
 		const world = new Globe(el)
 			.width(width)
@@ -23,8 +23,8 @@ export default function HeatMapComponent() {
 			.enablePointerInteraction(false);
 
 		return () => {
-			world?._destructor()
-		}
+			world?._destructor();
+		};
 	}, [width, height]);
 
 	return <ContainerWrapper ref={containerRef} />;

@@ -1,7 +1,8 @@
-import { Environment, PointerLockControls, Stats } from "@react-three/drei";
+import { Environment, PointerLockControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { Leva } from "leva";
 import Container from "../../../componets/Container";
-import { Overlay } from "./Overlay";
 import { Physics } from "./Physics";
 
 /**
@@ -9,7 +10,7 @@ import { Physics } from "./Physics";
  */
 const Demo2v07 = () => {
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas shadows>
 				<directionalLight
 					intensity={1}

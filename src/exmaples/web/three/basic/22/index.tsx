@@ -1,5 +1,6 @@
-import { Center, Environment, Stats } from "@react-three/drei";
+import { Center, Environment } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
 import Container from "../../../componets/Container";
 import { Button } from "./Button";
 import { Rig } from "./Rig";

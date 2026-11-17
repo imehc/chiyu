@@ -21,9 +21,7 @@ function createGlobeData() {
 export default function GlobeComponent() {
 	const globe = useMemo(() => {
 		const g = new Globe()
-			.globeImageUrl(
-				"/three-globe/example/img/earth-night.png",
-			)
+			.globeImageUrl("/three-globe/example/img/earth-night.png")
 			.pointsData(createGlobeData())
 			.pointAltitude("size")
 			.pointColor("color");
@@ -38,8 +36,8 @@ export default function GlobeComponent() {
 	useEffect(() => {
 		return () => {
 			globe?._destructor();
-		}
-	}, [globe])
+		};
+	}, [globe]);
 
 	return <primitive object={globe} />;
 }

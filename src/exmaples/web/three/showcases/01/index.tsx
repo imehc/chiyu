@@ -16,8 +16,8 @@ import {
 	TextureLoader,
 	WebGLRenderer,
 } from "three";
-import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { HDRLoader } from "three/addons/loaders/HDRLoader.js";
 // import { useControls } from 'leva';
@@ -59,22 +59,18 @@ export const CarColor: FC = () => {
 	}, []);
 
 	const camera = useMemo(() => {
-		const aspectRatio = typeof window !== 'undefined'
-			? window.innerWidth / window.innerHeight
-			: 1;
-		const tmp = new PerspectiveCamera(
-			40,
-			aspectRatio,
-			0.3,
-			100,
-		);
+		const aspectRatio =
+			typeof window !== "undefined"
+				? window.innerWidth / window.innerHeight
+				: 1;
+		const tmp = new PerspectiveCamera(40, aspectRatio, 0.3, 100);
 		tmp.position.set(-5, 1.4, -4.5);
 		return tmp;
 	}, []);
 
 	const renderer = useMemo(() => {
-		if (typeof window === 'undefined') {
-			return null as any;
+		if (typeof window === "undefined") {
+			return null;
 		}
 		const tmp = new WebGLRenderer({ antialias: true });
 		//设置设备像素比。通常用于避免HiDPI设备上绘图模糊
@@ -225,10 +221,10 @@ export const CarColor: FC = () => {
 			renderer.setSize(width, height);
 		};
 
-		window.addEventListener('resize', handleResize);
+		window.addEventListener("resize", handleResize);
 
 		return () => {
-			window.removeEventListener('resize', handleResize);
+			window.removeEventListener("resize", handleResize);
 			renderer.dispose();
 			container.removeChild(renderer.domElement);
 			scene.remove(grid);
@@ -246,9 +242,7 @@ export const CarColor: FC = () => {
 
 	return (
 		<Container>
-			<div
-				className="tw:relative tw:overflow-hidden tw:overscroll-none tw:w-full tw:h-full tw:bg-[#333] tw:text-[#bbb] tw:text-sm"
-			>
+			<div className="tw:relative tw:overflow-hidden tw:overscroll-none tw:w-full tw:h-full tw:bg-[#333] tw:text-[#bbb] tw:text-sm">
 				<div className="tw:absolute tw:top-0 tw:left-0 tw:w-full tw:p-4 tw:text-center tw:z-10">
 					<div className="tw:inline-block tw:mx-2.5">
 						<input

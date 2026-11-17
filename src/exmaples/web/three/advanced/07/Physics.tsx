@@ -109,7 +109,7 @@ export const Physics = () => {
 			</group>
 			{Constants.balls.map(({ position }, i) => (
 				<SphereCollider
-					key={i}
+					key={position.join(",")}
 					id={i}
 					radius={Constants.radius}
 					octree={octree}

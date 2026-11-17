@@ -40,7 +40,7 @@ export default function WorldPopulationComponent() {
 			.heatmapColorSaturation(2.8)
 			.enablePointerInteraction(false);
 
-		getWorldPopulation(world)
+		getWorldPopulation(world);
 
 		return () => {
 			world?._destructor();

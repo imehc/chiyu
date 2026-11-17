@@ -23,9 +23,9 @@ export const useOctreeHelper = (octree: Octree) => {
 		visible: {
 			value: false,
 			onChange: (v) => {
-				scene.getObjectByName("octreeHelper")!.visible = v;
-				if (document.getElementById("Octree Helper.visible"))
-					document.getElementById("Octree Helper.visible")!.blur();
+				const helper = scene.getObjectByName("octreeHelper");
+				if (helper) helper.visible = v;
+				document.getElementById("Octree Helper.visible")?.blur();
 			},
 		},
 	});

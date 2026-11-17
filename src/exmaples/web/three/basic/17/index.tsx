@@ -1,5 +1,6 @@
-import { Environment, OrbitControls, Stats } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Container from "../../../componets/Container";
 
@@ -18,8 +19,8 @@ const Demo17: React.FC = () => {
 					// files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/meadow_2_1k.hdr"
 					files="/imgs/venice_sunset_1k.hdr"
 					background
-				// 模糊背景
-				// blur={0.5}
+					// 模糊背景
+					// blur={0.5}
 				/>
 				<directionalLight position={[3.3, 1.0, 4.4]} intensity={4} />
 				<primitive object={gltf.scene} position={[0, 1, 0]} />

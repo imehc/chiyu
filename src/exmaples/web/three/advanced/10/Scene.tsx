@@ -31,27 +31,27 @@ export const Scene = () => {
 				<Selectable
 					geometry={nodes.Cube.geometry}
 					material={materials.Material}
-					position={[8, 1, 8] as any}
+					position={[8, 1, 8]}
 				/>
 				<Selectable
 					geometry={nodes.Cylinder.geometry}
-					material={nodes.Cylinder.material as any}
-					position={[8, 1, -8] as any}
+					material={nodes.Cylinder.material}
+					position={[8, 1, -8]}
 				/>
 				<Selectable
 					geometry={nodes.Icosphere.geometry}
-					material={nodes.Icosphere.material as any}
-					position={[-8, 1, -8] as any}
+					material={nodes.Icosphere.material}
+					position={[-8, 1, -8]}
 				/>
 				<Selectable
 					geometry={nodes.Cone.geometry}
-					material={nodes.Cone.material as any}
-					position={[-8, 1, 8] as any}
+					material={nodes.Cone.material}
+					position={[-8, 1, 8]}
 				/>
 				<Selectable
 					geometry={nodes.Suzanne.geometry}
-					material={nodes.Suzanne.material as any}
-					position={[0, 1, 0] as any}
+					material={nodes.Suzanne.material}
+					position={[0, 1, 0]}
 				/>
 			</Selection>
 		</group>

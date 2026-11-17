@@ -1,10 +1,9 @@
-import { Stats } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
 import { useRef } from "react";
 import type { GridHelper } from "three";
 import Container from "../../../componets/Container";
 import { Ball } from "./Ball";
-import { Overlay } from "./Overlay";
 
 /**
  * 无限滚动

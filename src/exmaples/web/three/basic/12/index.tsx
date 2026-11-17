@@ -1,5 +1,7 @@
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { Leva } from "leva";
 import {
 	MeshBasicMaterial,
 	MeshNormalMaterial,
@@ -14,7 +16,7 @@ import { Polyhedron } from "./Polyhedron";
  */
 const Demo12: React.FC = () => {
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas camera={{ position: [-1, 4, 2.5] }}>
 				<directionalLight position={[1, 1, 1]} />
 				<Polyhedron

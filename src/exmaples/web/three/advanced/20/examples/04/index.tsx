@@ -31,13 +31,14 @@ export default function ChoroplethCountriesComponent() {
 			.polygonCapColor((feat) => colorScale(getVal(feat as Features)))
 			.polygonSideColor(() => "rgba(0, 100, 0, 0.15)")
 			.polygonStrokeColor(() => "#111")
-			.polygonLabel(
-				({ properties: d }: { properties: Features["properties"] }) => `
+			.polygonLabel((feature) => {
+				const { properties: d } = feature as Features;
+				return `
           <b>${d.ADMIN} (${d.ISO_A2}):</b> <br />
           GDP: <i>${d.GDP_MD_EST}</i> M$<br/>
           Population: <i>${d.POP_EST}</i>
-        `,
-			)
+        `;
+			})
 			.onPolygonHover((hoverD) =>
 				world
 					.polygonAltitude((d) => (d === hoverD ? 0.12 : 0.06))

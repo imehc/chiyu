@@ -1,13 +1,15 @@
+import type { OrbitControls } from "@react-three/drei";
 import { useGLTF } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { Easing, Tween } from "@tweenjs/tween.js";
 import { button, useControls } from "leva";
+import type { ComponentRef, RefObject } from "react";
 import type { GLTFResult } from "../../types/use_gltf";
 import annotations from "./annotations.json";
 import { tweenGroup } from "./Tween";
 
 interface Props {
-	controls: any;
+	controls: RefObject<ComponentRef<typeof OrbitControls> | null>;
 }
 
 export const Arena: React.FC<Props> = ({ controls }) => {
@@ -55,7 +57,7 @@ export const Arena: React.FC<Props> = ({ controls }) => {
 
 	return (
 		<group dispose={null}>
-			{/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: Three.js mesh receives raycast events rather than DOM interactions. */}
 			<mesh
 				geometry={nodes.Cube004.geometry}
 				material={materials["Material.001"]}
@@ -65,6 +67,7 @@ export const Arena: React.FC<Props> = ({ controls }) => {
 				receiveShadow
 				material-envMapIntensity={0.4}
 				onDoubleClick={({ point }) => {
+					if (!controls.current) return;
 					const targetTween = new Tween(controls.current.target, tweenGroup)
 						.to(
 							{

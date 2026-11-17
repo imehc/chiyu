@@ -1,4 +1,6 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import { GUI } from "dat.gui";
+import { gsap } from "gsap";
 import {
 	Mesh,
 	type PerspectiveCamera,
@@ -8,7 +10,7 @@ import {
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { loadBirds } from "./components/birds";
 import { createCamera } from "./components/camera";
-import { createAxesHelper, createGridHelper } from "./components/helpers";
+import { createAxesHelper } from "./components/helpers";
 import { createLights } from "./components/lights";
 import { createScene } from "./components/scene";
 import { Train } from "./components/Train";
@@ -23,18 +25,19 @@ export class Model {
 	private readonly renderer: WebGLRenderer;
 	private readonly loop: Loop;
 	private readonly controls: OrbitControls;
-	private readonly gui = new GUI();
-	private guiVisible = false;
-	private handleKeyPress: (e: KeyboardEvent) => void;
+	private readonly gui: GUI;
+	private readonly resizer: Resizer;
+	private disposed = false;
 
 	constructor(container: HTMLElement) {
 		if (!container) {
 			throw new Error("You have to pass a element");
 		}
+		this.gui = mountExampleGui(new GUI({ autoPlace: false }), container);
 		this.camera = createCamera();
 		this.scene = createScene();
 		this.renderer = createRenderer();
-		this.loop = new Loop(this.camera, this.scene, this.renderer);
+		this.loop = new Loop(this.camera, this.scene, this.renderer, container);
 
 		container.append(this.renderer.domElement);
 
@@ -45,39 +48,26 @@ export class Model {
 		});
 
 		const { ambientLight, mainLight } = createLights();
-		const train = new Train();
+		new Train();
 
 		// this.loop.updatables.push(controls, train);
 
 		this.scene.add(ambientLight, mainLight /**train */);
 
-		const resizer = new Resizer(container, this.camera, this.renderer);
-		resizer.onResize = () => {
+		this.resizer = new Resizer(container, this.camera, this.renderer);
+		this.resizer.onResize = () => {
 			// 添加动画后会自动刷新，所以可以移除该函数
 			this.render(); // 处理变化时需重新执行，避免物体拉升变形
 		};
 
 		this.scene.add(createAxesHelper() /**createGridHelper() */);
-		// 默认隐藏调试控制器
-		this.gui.hide();
-		// 设置 GUI 的位置 确保不被遮挡
-		this.gui.domElement.style.marginTop = "64px"
-
-		// 添加键盘事件监听器（仅在客户端环境）
-		this.handleKeyPress = (e: KeyboardEvent) => {
-			if (e.key.toLowerCase() === "h") {
-				this.toggleGUI();
-			}
-		};
-		if (typeof window !== "undefined") {
-			window.addEventListener("keydown", this.handleKeyPress);
-		}
 	}
 
 	/**
 	 * 按需渲染
 	 */
 	public render() {
+		if (this.disposed) return;
 		this.renderer.render(this.scene, this.camera);
 	}
 
@@ -85,6 +75,7 @@ export class Model {
 	 * 循环运行
 	 */
 	public start() {
+		if (this.disposed) return;
 		this.loop.start();
 	}
 
@@ -95,20 +86,10 @@ export class Model {
 		this.loop.stop();
 	}
 
-	/**
-	 * 切换GUI显示/隐藏
-	 */
-	private toggleGUI() {
-		this.guiVisible = !this.guiVisible;
-		if (this.guiVisible) {
-			this.gui.show();
-		} else {
-			this.gui.hide();
-		}
-	}
-
 	public async init() {
-		const { parrot, flamingo, stork } = await loadBirds(this.gui);
+		const birds = await loadBirds(this.gui, () => this.disposed);
+		if (!birds) return;
+		const { parrot, flamingo, stork } = birds;
 
 		this.controls.target.copy(parrot.position); // 把目标移到前鸟的中心
 
@@ -120,35 +101,26 @@ export class Model {
 	 * 执行销毁方法
 	 */
 	public dispose() {
-		// 移除键盘事件监听器（仅在客户端环境）
-		if (typeof window !== "undefined") {
-			window.removeEventListener("keydown", this.handleKeyPress);
-		}
+		if (this.disposed) return;
+		this.disposed = true;
+		this.loop.dispose();
+		this.resizer.dispose();
+		this.controls.dispose();
+		this.gui.destroy();
 
-		// 销毁GUI
-		try {
-			// 移除GUI的DOM元素
-			const guiDom = this.gui.domElement.parentElement;
-			if (guiDom && guiDom.parentElement) {
-				guiDom.parentElement.removeChild(guiDom);
-			}
-			this.gui.destroy();
-		} catch (e) {
-			console.warn("GUI cleanup error:", e);
-		}
-
-		// 销毁场景中的对象
-		while (this.scene.children.length) {
-			const child = this.scene.children[0];
-			this.scene.remove(child);
-			// 进行特定对象的清理
-			if (child instanceof Mesh) {
-				child.geometry.dispose();
-				child.material.dispose();
-			}
-		}
+		this.scene.traverse((object) => {
+			gsap.killTweensOf(object.position);
+			if (!(object instanceof Mesh)) return;
+			object.geometry.dispose();
+			const materials = Array.isArray(object.material)
+				? object.material
+				: [object.material];
+			for (const material of materials) material.dispose();
+		});
+		this.scene.clear();
 		// 销毁渲染器等
 		this.renderer.dispose();
+		this.renderer.domElement.remove();
 	}
 }
 

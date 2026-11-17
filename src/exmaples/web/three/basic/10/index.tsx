@@ -1,5 +1,6 @@
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
 import { BoxGeometry, DodecahedronGeometry, SphereGeometry } from "three";
 import Container from "../../../componets/Container";
 import { Polyhedron } from "./Polyhedron";

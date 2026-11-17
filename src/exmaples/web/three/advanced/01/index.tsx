@@ -1,7 +1,8 @@
-import { Environment, OrbitControls, Stats } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
 import { Group } from "@tweenjs/tween.js";
-import { Suspense, useRef } from "react";
+import { type ComponentRef, Suspense, useRef } from "react";
 import Container from "../../../componets/Container";
 import { Annotations } from "./Annotations";
 import { House } from "./House";
@@ -22,7 +23,7 @@ const Tween = () => {
  * 房子
  */
 const Demo2v01: React.FC = () => {
-	const ref = useRef(null);
+	const ref = useRef<ComponentRef<typeof OrbitControls>>(null);
 	const position = [8, 2, 3] as [number, number, number];
 
 	return (

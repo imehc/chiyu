@@ -1,6 +1,7 @@
-import { Environment, OrbitControls, Stats } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { useControls } from "leva";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { Leva, useControls } from "leva";
 import { useEffect, useRef } from "react";
 import { type Mesh, TextureLoader } from "three";
 import Container from "../../../componets/Container";
@@ -10,7 +11,7 @@ import Container from "../../../componets/Container";
  */
 export const Demo2v14 = () => {
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas shadows camera={{ position: [0, 0, 2.75] }}>
 				<Environment files="/imgs/venice_sunset_1k.hdr" />
 				<directionalLight

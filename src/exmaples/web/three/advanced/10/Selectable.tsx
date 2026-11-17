@@ -1,13 +1,13 @@
 import { Select } from "@react-three/postprocessing";
 import type React from "react";
 import { useState } from "react";
-import type { BufferGeometry, MeshStandardMaterial, Vector3 } from "three";
+import type { BufferGeometry, Material } from "three";
 import { useStore } from "./use_store";
 
 interface Props {
 	geometry: BufferGeometry;
-	material: MeshStandardMaterial;
-	position: Vector3;
+	material: Material | Material[];
+	position: [number, number, number];
 }
 
 export const Selectable: React.FC<Props> = ({
@@ -20,7 +20,7 @@ export const Selectable: React.FC<Props> = ({
 
 	return (
 		<Select enabled={hovered}>
-			{/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
+			{/** biome-ignore lint/a11y/noStaticElementInteractions: Three.js mesh receives raycast events rather than DOM interactions. */}
 			<mesh
 				onPointerOver={(e) => {
 					e.stopPropagation();
@@ -29,7 +29,7 @@ export const Selectable: React.FC<Props> = ({
 				onPointerOut={() => hover(false)}
 				onClick={(e) => {
 					e.stopPropagation();
-					to.set(...(position as unknown as [number, number, number]));
+					to.set(...position);
 					setOrbitmode(true);
 					setTimeout(() => setAutoRotate(true), 1000);
 				}}

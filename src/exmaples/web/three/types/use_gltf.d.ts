@@ -1,6 +1,7 @@
+import type { Mesh, MeshStandardMaterial } from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 export type GLTFResult = GLTF & {
-	nodes: Record<string, THREE.Mesh>;
-	materials: Record<string, THREE.MeshStandardMaterial>;
+	nodes: Record<string, Mesh>;
+	materials: Record<string, MeshStandardMaterial>;
 };

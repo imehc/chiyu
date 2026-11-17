@@ -1,13 +1,13 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
+import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
 import { use, useEffect, useRef } from "react";
 import Globe, { type GlobeMethods } from "react-globe.gl";
 import { countriesPromise } from "./countries";
-import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
 
 /** 多边形 - 使用 react-globe.gl 独立渲染 */
 export default function HexPolygonComponent() {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const globeEl = useRef<GlobeMethods>(null);
+	const globeEl = useRef<GlobeMethods | undefined>(undefined);
 	const countries = use(countriesPromise);
 	const [width, height] = useContainerSize(containerRef);
 
@@ -43,14 +43,15 @@ export default function HexPolygonComponent() {
 							.toString(16)
 							.padStart(6, "0")}`
 					}
-					hexPolygonLabel={({
-						properties: d,
-					}: {
-						properties: { [key: string]: string };
-					}) => `
+					hexPolygonLabel={(feature) => {
+						const { properties: d } = feature as {
+							properties: { ADMIN: string; ISO_A2: string; POP_EST: number };
+						};
+						return `
 						<b>${d.ADMIN} (${d.ISO_A2})</b> <br />
 						Population: <i>${d.POP_EST}</i>
-					`}
+					`;
+					}}
 				/>
 			)}
 		</ContainerWrapper>

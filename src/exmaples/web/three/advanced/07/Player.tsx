@@ -25,7 +25,7 @@ export const Player: React.FC<Props> = ({ ballCount, octree, colliders }) => {
 	);
 
 	const { camera } = useThree();
-	let clicked = 0;
+	const clicked = useRef(0);
 
 	const throwBall = useCallback<
 		(
@@ -54,8 +54,14 @@ export const Player: React.FC<Props> = ({ ballCount, octree, colliders }) => {
 	);
 
 	const onPointerDown = useCallback(() => {
-		throwBall(camera, capsule, playerDirection, playerVelocity, clicked++);
-	}, [camera, capsule, clicked, playerDirection, playerVelocity, throwBall]);
+		throwBall(
+			camera,
+			capsule,
+			playerDirection,
+			playerVelocity,
+			clicked.current++,
+		);
+	}, [camera, capsule, playerDirection, playerVelocity, throwBall]);
 
 	useEffect(() => {
 		document.addEventListener("pointerdown", onPointerDown);
@@ -110,26 +116,26 @@ export const Player: React.FC<Props> = ({ ballCount, octree, colliders }) => {
 			// 定义速度增量,是否在地面上影响速度
 			const speedDelta = delta * (playerOnFloor ? 25 : 8);
 			// A键左移,获取右向量取反乘速度累加到速度上
-			keyboard["KeyA"] &&
+			keyboard.KeyA &&
 				playerVelocity.add(
 					getSideVector(camera, playerDirection).multiplyScalar(-speedDelta),
 				);
 			// D键右移,获取右向量乘速度累加到速度上
-			keyboard["KeyD"] &&
+			keyboard.KeyD &&
 				playerVelocity.add(
 					getSideVector(camera, playerDirection).multiplyScalar(speedDelta),
 				);
-			keyboard["KeyW"] &&
+			keyboard.KeyW &&
 				playerVelocity.add(
 					getForwardVector(camera, playerDirection).multiplyScalar(speedDelta),
 				);
-			keyboard["KeyS"] &&
+			keyboard.KeyS &&
 				playerVelocity.add(
 					getForwardVector(camera, playerDirection).multiplyScalar(-speedDelta),
 				);
 			if (playerOnFloor) {
 				// 如果在地面,空格跳跃使速度上升
-				if (keyboard["Space"]) {
+				if (keyboard.Space) {
 					playerVelocity.y = 15;
 				}
 			}

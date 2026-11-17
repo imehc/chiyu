@@ -4,7 +4,13 @@ import {
 	useGLTF,
 	useTexture,
 } from "@react-three/drei";
-import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
+import {
+	Canvas,
+	extend,
+	type ThreeElement,
+	useFrame,
+	useThree,
+} from "@react-three/fiber";
 import {
 	BallCollider,
 	CuboidCollider,
@@ -15,14 +21,15 @@ import {
 	useRopeJoint,
 	useSphericalJoint,
 } from "@react-three/rapier";
-import { useControls } from "leva";
+import { Leva, useControls } from "leva";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import {
 	CatmullRomCurve3,
 	type Mesh,
 	type MeshPhysicalMaterial,
 	RepeatWrapping,
+	Vector2,
 	Vector3,
 } from "three";
 import Container from "../../../componets/Container";
@@ -32,10 +39,10 @@ useGLTF.preload("/card/tag.glb");
 useTexture.preload("/card/band.jpeg");
 
 declare module "@react-three/fiber" {
-  interface ThreeElements {
-    meshLineGeometry: any;
-    meshLineMaterial: any;
-  }
+	interface ThreeElements {
+		meshLineGeometry: ThreeElement<typeof MeshLineGeometry>;
+		meshLineMaterial: ThreeElement<typeof MeshLineMaterial>;
+	}
 }
 
 /**
@@ -44,7 +51,7 @@ declare module "@react-three/fiber" {
 export const Demo0302 = () => {
 	const { debug } = useControls({ debug: false });
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
 				<ambientLight intensity={Math.PI} />
 				<Physics
@@ -92,7 +99,7 @@ export const Demo0302 = () => {
 };
 
 const Band = () => {
-	const band = useRef<Mesh>(null),
+	const band = useRef<Mesh<MeshLineGeometry, MeshLineMaterial>>(null),
 		fixed = useRef<RapierRigidBody>(null),
 		j1 = useRef<RapierRigidBody>(null),
 		j2 = useRef<RapierRigidBody>(null),
@@ -120,6 +127,10 @@ const Band = () => {
 	const { nodes, materials } = useGLTF("/card/tag.glb");
 	const texture = useTexture("/card/band.jpeg");
 	const { width, height } = useThree((state) => state.size);
+	const lineMaterialParameters = useMemo(
+		() => ({ resolution: new Vector2(width, height) }),
+		[width, height],
+	);
 	const curve = useMemo(() => {
 		return new CatmullRomCurve3([
 			new Vector3(),
@@ -131,44 +142,68 @@ const Band = () => {
 	const [dragged, drag] = useState<false | Vector3>(false);
 	const [hovered, hover] = useState(false);
 
-	useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-	useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-	useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
-	useSphericalJoint(j3, card, [
-		[0, 0, 0],
-		[0, 1.45, 0],
-	]);
+	// Rapier checks nullable refs at runtime; its declarations still assume React 18 refs.
+	useRopeJoint(
+		fixed as RefObject<RapierRigidBody>,
+		j1 as RefObject<RapierRigidBody>,
+		[[0, 0, 0], [0, 0, 0], 1],
+	);
+	useRopeJoint(
+		j1 as RefObject<RapierRigidBody>,
+		j2 as RefObject<RapierRigidBody>,
+		[[0, 0, 0], [0, 0, 0], 1],
+	);
+	useRopeJoint(
+		j2 as RefObject<RapierRigidBody>,
+		j3 as RefObject<RapierRigidBody>,
+		[[0, 0, 0], [0, 0, 0], 1],
+	);
+	useSphericalJoint(
+		j3 as RefObject<RapierRigidBody>,
+		card as RefObject<RapierRigidBody>,
+		[
+			[0, 0, 0],
+			[0, 1.45, 0],
+		],
+	);
 
 	useEffect(() => {
 		if (hovered) {
 			document.body.style.cursor = dragged ? "grabbing" : "grab";
-			return () => void (document.body.style.cursor = "auto");
+			return () => {
+				document.body.style.cursor = "auto";
+			};
 		}
 	}, [hovered, dragged]);
 
-	useFrame((state, delta) => {
+	useFrame((state) => {
 		if (dragged) {
 			vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
 			dir.copy(vec).sub(state.camera.position).normalize();
 			vec.add(dir.multiplyScalar(state.camera.position.length()));
-			[card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
+			[card, j1, j2, j3, fixed].forEach((ref) => {
+				ref.current?.wakeUp();
+			});
 			card.current?.setNextKinematicTranslation({
 				x: vec.x - dragged.x,
 				y: vec.y - dragged.y,
 				z: vec.z - dragged.z,
 			});
 		}
-		if (fixed.current) {
-			// Calculate catmul curve
-			curve.points[0].copy(j3.current!.translation() as Vector3);
-			curve.points[1].copy(j2.current!.translation() as Vector3);
-			curve.points[2].copy(j1.current!.translation() as Vector3);
-			curve.points[3].copy(fixed.current!.translation() as Vector3);
-			(band.current!.geometry as any).setPoints(curve.getPoints(32));
-			// Tilt it back towards the screen
-			ang.copy(card.current!.angvel() as Vector3);
-			rot.copy(card.current!.rotation() as unknown as Vector3);
-			card.current!.setAngvel(
+		const bodies = [j3.current, j2.current, j1.current, fixed.current];
+		const cardBody = card.current;
+		const bandMesh = band.current;
+		if (cardBody && bandMesh && bodies.every((body) => body !== null)) {
+			// Calculate Catmull-Rom curve from initialized physics bodies.
+			bodies.forEach((body, index) => {
+				if (body) curve.points[index].copy(body.translation());
+			});
+			bandMesh.geometry.setPoints(curve.getPoints(32));
+			// Tilt it back towards the screen.
+			ang.copy(cardBody.angvel());
+			const rotation = cardBody.rotation();
+			rot.set(rotation.x, rotation.y, rotation.z);
+			cardBody.setAngvel(
 				{ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z },
 				false,
 			);
@@ -203,20 +238,20 @@ const Band = () => {
 						position={[0, -1.2, -0.05]}
 						onPointerOver={() => hover(true)}
 						onPointerOut={() => hover(false)}
-						onPointerUp={(e) => (
-							(e.target as unknown as Element)?.releasePointerCapture(
+						onPointerUp={(e) => {
+							(e.target as unknown as Element).releasePointerCapture(
 								e.pointerId,
-							),
-							drag(false)
-						)}
-						onPointerDown={(e) => (
-							(e.target as unknown as Element)?.setPointerCapture(e.pointerId),
+							);
+							drag(false);
+						}}
+						onPointerDown={(e) => {
+							const body = card.current;
+							if (!body) return;
+							(e.target as unknown as Element).setPointerCapture(e.pointerId);
 							drag(
-								new Vector3()
-									.copy(e.point)
-									.sub(vec.copy(card.current!.translation() as Vector3)),
-							)
-						)}
+								new Vector3().copy(e.point).sub(vec.copy(body.translation())),
+							);
+						}}
 					>
 						<mesh geometry={(nodes.card as Mesh).geometry}>
 							<meshPhysicalMaterial
@@ -243,10 +278,11 @@ const Band = () => {
 			<mesh ref={band}>
 				<meshLineGeometry />
 				<meshLineMaterial
+					args={[lineMaterialParameters]}
 					color="white"
 					depthTest={false}
 					resolution={[width, height]}
-					useMap
+					useMap={1}
 					map={texture}
 					repeat={[-3, 1]}
 					lineWidth={1}

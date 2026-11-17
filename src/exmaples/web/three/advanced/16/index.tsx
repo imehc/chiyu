@@ -1,8 +1,14 @@
 import { Html, OrbitControls, Sky } from "@react-three/drei";
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import {
+	type ComponentRef,
+	Suspense,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { Box3, type PerspectiveCamera, Vector3 } from "three";
-import type { OrbitControls as OrbitControlsProps } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Container from "../../../componets/Container";
 
@@ -96,9 +102,9 @@ const PreviewModel: React.FC<Props> = (props) => {
  */
 const Model: React.FC<Required<Props>> = ({ url }) => {
 	// GLTFLoader 用于加载GLTF格式的3D模型文件
-	const { scene } = useLoader(GLTFLoader, url, (progress) => { });
+	const { scene } = useLoader(GLTFLoader, url);
 	const { camera } = useThree();
-	const controlsRef = useRef<OrbitControlsProps>(null);
+	const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
 
 	// 计算模型的包围盒（包含模型的最小矩形框）
 	const box = useMemo(() => new Box3().setFromObject(scene), [scene]);
@@ -142,12 +148,11 @@ const Model: React.FC<Required<Props>> = ({ url }) => {
 		<primitive object={scene}>
 			{/* OrbitControls 提供鼠标交互控制（旋转、缩放、移动） */}
 			<OrbitControls
-				ref={controlsRef as any}
+				ref={controlsRef}
 				target={target}
 				enableDamping={true} // 启用阻尼效果，使旋转更平滑
 				dampingFactor={0.1} // 阻尼系数，范围 0-1，值越小阻尼越强
 			/>
 		</primitive>
-
 	);
 };

@@ -1,6 +1,7 @@
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useControls } from "leva";
+import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { Leva, useControls } from "leva";
 import { useMemo } from "react";
 import {
 	BoxGeometry,
@@ -37,7 +38,7 @@ const Demo11: React.FC = () => {
 	const pB = useControls("Polyhedron B", options);
 
 	return (
-		<Container>
+		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas camera={{ position: [1, 2, 3] }}>
 				<Polyhedron
 					position={[-1, 1, 0]}
