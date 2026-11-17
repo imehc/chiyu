@@ -10,7 +10,7 @@ export interface UseFileUploadReturn {
  * 用于处理带隐藏输入框的文件上传的Hook
  */
 export function useFileUpload(
-	onFileLoaded: (dataUrl: string) => void
+	onFileLoaded: (dataUrl: string) => void,
 ): UseFileUploadReturn {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,7 +30,7 @@ export function useFileUpload(
 				reader.readAsDataURL(file);
 			}
 		},
-		[onFileLoaded]
+		[onFileLoaded],
 	);
 
 	const triggerFileUpload = useCallback(() => {

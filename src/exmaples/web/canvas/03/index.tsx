@@ -7,13 +7,13 @@ export default function CanvasTextEditor() {
 	const controllerRef = useRef<TextController | null>(null);
 	const [items, setItems] = useState<TextItem[]>([
 		{ id: 1, text: "Hello", position: { x: 10, y: 10 } },
-        { id: 2, text: "World", position: { x: 10, y: 30 } },
-        { id: 3, text: "Three", position: { x: 10, y: 50 } },
-        { id: 4, text: "Four", position: { x: 10, y: 70 } },
-        { id: 5, text: "Five", position: { x: 10, y: 90 } },
-        { id: 6, text: "Six", position: { x: 10, y: 110 } },
-        { id: 7, text: "Seven", position: { x: 10, y: 130 } },
-        { id: 8, text: "Eight", position: { x: 10, y: 150 } },
+		{ id: 2, text: "World", position: { x: 10, y: 30 } },
+		{ id: 3, text: "Three", position: { x: 10, y: 50 } },
+		{ id: 4, text: "Four", position: { x: 10, y: 70 } },
+		{ id: 5, text: "Five", position: { x: 10, y: 90 } },
+		{ id: 6, text: "Six", position: { x: 10, y: 110 } },
+		{ id: 7, text: "Seven", position: { x: 10, y: 130 } },
+		{ id: 8, text: "Eight", position: { x: 10, y: 150 } },
 	]);
 
 	useEffect(() => {

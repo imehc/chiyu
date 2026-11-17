@@ -55,7 +55,7 @@ export class TextController {
 	private dragState: DragState = { itemId: null, offset: { x: 0, y: 0 } };
 	private selectedItemId: string | number | null = null;
 	private tempDragPosition: Point | null = null;
-	private cursorStyle = 'default';
+	private cursorStyle = "default";
 
 	// 渲染配置
 	private readonly fontSize = 14;
@@ -70,7 +70,11 @@ export class TextController {
 	/**
 	 * 设置 canvas 上下文和尺寸
 	 */
-	setCanvas(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+	setCanvas(
+		ctx: CanvasRenderingContext2D,
+		width: number,
+		height: number,
+	): void {
 		this.ctx = ctx;
 		this.canvasWidth = width;
 		this.canvasHeight = height;
@@ -139,7 +143,10 @@ export class TextController {
 	/**
 	 * 获取拖拽中的位置（如果正在拖拽）或原始位置
 	 */
-	private getDraggedPosition(itemId: string | number, originalPosition: Point): Point {
+	private getDraggedPosition(
+		itemId: string | number,
+		originalPosition: Point,
+	): Point {
 		// 如果正在拖拽且是当前元素，返回临时位置
 		if (this.tempDragPosition && this.dragState.itemId === itemId) {
 			return this.tempDragPosition;
@@ -150,7 +157,11 @@ export class TextController {
 	/**
 	 * 绘制文本项
 	 */
-	private drawTextItem(text: string, position: Point, isSelected: boolean): void {
+	private drawTextItem(
+		text: string,
+		position: Point,
+		isSelected: boolean,
+	): void {
 		if (!this.ctx) return;
 
 		this.ctx.font = `normal ${this.fontSize}px sans-serif`;
@@ -159,19 +170,23 @@ export class TextController {
 		const textHeight = this.fontSize;
 
 		// 绘制矩形背景
-		this.ctx.fillStyle = 'transparent';
+		this.ctx.fillStyle = "transparent";
 		this.ctx.fillRect(
 			position.x,
 			position.y,
 			textWidth + this.padding * 2,
-			textHeight + this.padding * 2
+			textHeight + this.padding * 2,
 		);
 
 		// 绘制文本
 		this.ctx.fillStyle = this.colorToRgba(this.color);
-		this.ctx.textAlign = 'left';
-		this.ctx.textBaseline = 'top';
-		this.ctx.fillText(text, position.x + this.padding, position.y + this.padding);
+		this.ctx.textAlign = "left";
+		this.ctx.textBaseline = "top";
+		this.ctx.fillText(
+			text,
+			position.x + this.padding,
+			position.y + this.padding,
+		);
 
 		// 绘制边框
 		this.ctx.strokeStyle = this.colorToRgba(this.color);
@@ -180,7 +195,7 @@ export class TextController {
 			position.x,
 			position.y,
 			textWidth + this.padding * 2,
-			textHeight + this.padding * 2
+			textHeight + this.padding * 2,
 		);
 
 		// 如果选中，可以添加高亮效果
@@ -203,8 +218,8 @@ export class TextController {
 				itemId: clickedItem.id,
 				offset: {
 					x: clickPoint.x - clickedItem.position.x,
-					y: clickPoint.y - clickedItem.position.y
-				}
+					y: clickPoint.y - clickedItem.position.y,
+				},
 			};
 			this.tempDragPosition = { ...clickedItem.position };
 			return;
@@ -234,8 +249,14 @@ export class TextController {
 				const bounds = this.getTextBounds(item.text, { x: newX, y: newY });
 				if (bounds) {
 					// 确保文本框不超出边界
-					const clampedX = Math.max(0, Math.min(this.canvasWidth - bounds.width, newX));
-					const clampedY = Math.max(0, Math.min(this.canvasHeight - bounds.height, newY));
+					const clampedX = Math.max(
+						0,
+						Math.min(this.canvasWidth - bounds.width, newX),
+					);
+					const clampedY = Math.max(
+						0,
+						Math.min(this.canvasHeight - bounds.height, newY),
+					);
 					this.tempDragPosition = { x: clampedX, y: clampedY };
 					this.render();
 				}
@@ -248,11 +269,12 @@ export class TextController {
 	 */
 	handleMouseUp(): void {
 		// 拖拽结束，将临时位置同步到数据并通知外部
-		if (this.dragState.itemId !== null && this.tempDragPosition) {
+		const position = this.tempDragPosition;
+		if (this.dragState.itemId !== null && position) {
 			const newItems = this.items.map((item) =>
 				item.id === this.dragState.itemId
-					? { ...item, position: { ...this.tempDragPosition! } }
-					: item
+					? { ...item, position: { ...position } }
+					: item,
 			);
 			this.items = newItems;
 
@@ -277,16 +299,16 @@ export class TextController {
 	 */
 	private updateCursorStyle(x: number, y: number): void {
 		if (this.dragState.itemId !== null) {
-			this.cursorStyle = 'grabbing';
+			this.cursorStyle = "grabbing";
 			return;
 		}
 
 		if (this.findClickedItem(x, y) !== null) {
-			this.cursorStyle = 'grab';
+			this.cursorStyle = "grab";
 			return;
 		}
 
-		this.cursorStyle = 'default';
+		this.cursorStyle = "default";
 	}
 
 	/**
@@ -308,7 +330,7 @@ export class TextController {
 	 */
 	private getTextBounds(
 		text: string,
-		position: Point
+		position: Point,
 	): { x: number; y: number; width: number; height: number } | null {
 		if (!this.ctx) return null;
 
@@ -321,7 +343,7 @@ export class TextController {
 			x: position.x,
 			y: position.y,
 			width: textWidth + this.padding * 2,
-			height: textHeight + this.padding * 2
+			height: textHeight + this.padding * 2,
 		};
 	}
 
@@ -330,7 +352,7 @@ export class TextController {
 	 */
 	private isPointInBounds(
 		point: Point,
-		bounds: { x: number; y: number; width: number; height: number }
+		bounds: { x: number; y: number; width: number; height: number },
 	): boolean {
 		return (
 			point.x >= bounds.x &&
@@ -346,7 +368,7 @@ export class TextController {
 	private clampPoint(point: Point): Point {
 		return {
 			x: Math.max(0, Math.min(this.canvasWidth, point.x)),
-			y: Math.max(0, Math.min(this.canvasHeight, point.y))
+			y: Math.max(0, Math.min(this.canvasHeight, point.y)),
 		};
 	}
 

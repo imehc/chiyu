@@ -15,7 +15,7 @@ export function calculateCanvasSize(
 	containerWidth: number,
 	containerHeight: number,
 	imageWidth: number,
-	imageHeight: number
+	imageHeight: number,
 ): CanvasSize {
 	const imageAspect = imageWidth / imageHeight;
 
@@ -53,7 +53,7 @@ export function calculateCanvasSize(
  */
 export function initializeCanvas(
 	canvas: HTMLCanvasElement,
-	image: HTMLImageElement
+	image: HTMLImageElement,
 ): CanvasRenderingContext2D | null {
 	const ctx = canvas.getContext("2d");
 	if (!ctx) return null;
@@ -75,7 +75,7 @@ export function initializeCanvas(
 export function exportCanvas(
 	canvas: HTMLCanvasElement,
 	filename: string,
-	format: "image/png" | "image/jpeg" = "image/png"
+	format: "image/png" | "image/jpeg" = "image/png",
 ): void {
 	const link = document.createElement("a");
 	link.download = filename;
@@ -88,7 +88,7 @@ export function exportCanvas(
  */
 export function applyMosaicEffect(
 	canvas: HTMLCanvasElement,
-	blockSize: number
+	blockSize: number,
 ): boolean {
 	const ctx = canvas.getContext("2d");
 	if (!ctx) return false;

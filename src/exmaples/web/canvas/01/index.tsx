@@ -214,7 +214,10 @@ export default function Canvas01() {
 						{blockSize}px
 					</span>
 				</div>
-				<div ref={containerRef} className="tw:flex tw:flex-1 tw:gap-4 tw:min-h-0">
+				<div
+					ref={containerRef}
+					className="tw:flex tw:flex-1 tw:gap-4 tw:min-h-0"
+				>
 					<div className="tw:flex-1 tw:flex tw:items-center tw:justify-center tw:relative">
 						<canvas
 							ref={originalCanvasRef}
