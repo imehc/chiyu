@@ -3,7 +3,7 @@ title: 'Spring 框架核心教程'
 date: '2021-12-11 12:52'
 tags: ['Java']
 draft: false
-summary: 'Spring 框架核心技术详解：IoC 控制反转、AOP 面向切面编程、Spring 集成 MyBatis、事务管理、Spring Web 应用等完整教程'
+description: 'Spring 框架核心技术详解：IoC 控制反转、AOP 面向切面编程、Spring 集成 MyBatis、事务管理、Spring Web 应用等完整教程'
 ---
 
 # Spring 框架核心教程

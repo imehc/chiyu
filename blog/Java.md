@@ -3,7 +3,7 @@ title: 'Java 文档生成工具'
 date: '2021-08-26 21:38'
 tags: ['Java']
 draft: false
-summary: '使用 javadoc 工具生成 Java 代码注释文档的基本命令'
+description: '使用 javadoc 工具生成 Java 代码注释文档的基本命令'
 ---
 
 # Java 文档生成工具

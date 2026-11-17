@@ -3,7 +3,7 @@ title: 'Umi 框架快速上手与配置指南'
 date: '2021-08-20 17:01'
 tags: ['Umi', 'React']
 draft: false
-summary: 'Umi 企业级 React 应用框架的快速上手、CLI 创建项目、页面生成、开发服务器启动及运行时配置详解'
+description: 'Umi 企业级 React 应用框架的快速上手、CLI 创建项目、页面生成、开发服务器启动及运行时配置详解'
 ---
 
 ## Umi 概述

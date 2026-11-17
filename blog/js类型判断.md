@@ -3,7 +3,7 @@ title: 'JavaScript 类型判断与核心 API 详解'
 date: '2021-09-18 10:44'
 tags: ['JavaScript', '类型判断', 'DOM', 'BOM', '正则表达式', 'Array', 'Object']
 draft: false
-summary: 'JavaScript 类型判断方法（typeof、instanceof、Object.prototype.toString）、Base64 编解码、对象操作、数组方法、二进制位运算、错误处理、DOM 操作等核心知识点'
+description: 'JavaScript 类型判断方法（typeof、instanceof、Object.prototype.toString）、Base64 编解码、对象操作、数组方法、二进制位运算、错误处理、DOM 操作等核心知识点'
 ---
 
 ## 类型判断

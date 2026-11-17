@@ -3,7 +3,7 @@ title: 'Vue3 核心知识详解'
 date: '2021-08-10 17:53'
 tags: ['Vue', 'JavaScript']
 draft: false
-summary: 'Vue3 组合式 API、响应式原理、生命周期、新特性等核心知识点整理'
+description: 'Vue3 组合式 API、响应式原理、生命周期、新特性等核心知识点整理'
 ---
 
 ## Vue3 的响应式

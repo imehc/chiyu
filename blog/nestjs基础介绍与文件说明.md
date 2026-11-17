@@ -3,7 +3,7 @@ title: 'Nestjs基础介绍与文件说明'
 date: '2021-08-07'
 tags: ['Nestjs']
 draft: false
-summary: 'nest入门'
+description: 'NestJS 入门：理解 TypeScript 服务端框架、模块、控制器、服务与项目目录结构。'
 # images: ['/static/images/canada/mountains.jpg', '/static/images/canada/toronto.jpg']
 ---
 

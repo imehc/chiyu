@@ -3,7 +3,7 @@ title: 'Egg.js 企业级 Node.js 框架开发指南'
 date: '2021-08-18 14:43'
 tags: ['Node']
 draft: false
-summary: 'Egg.js 项目初始化、目录结构、Router 路由配置、View 模板渲染、Service 业务逻辑层、静态资源管理等核心开发指南'
+description: 'Egg.js 项目初始化、目录结构、Router 路由配置、View 模板渲染、Service 业务逻辑层、静态资源管理等核心开发指南'
 ---
 
 ## Egg.js 概述

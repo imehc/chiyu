@@ -3,13 +3,13 @@ import { Redirect } from "@docusaurus/router";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
 export default function Home() {
-	const blogUrl = useBaseUrl("/blog");
+	const knowledgeUrl = useBaseUrl("/intro");
 	return (
 		<>
 			<Head>
-				<meta httpEquiv="refresh" content={`0; url=${blogUrl}`} />
+				<meta httpEquiv="refresh" content={`0; url=${knowledgeUrl}`} />
 			</Head>
-			<Redirect to={blogUrl} />
+			<Redirect to={knowledgeUrl} />
 		</>
 	);
 }

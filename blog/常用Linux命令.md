@@ -3,7 +3,7 @@ title: '常用 Linux 命令速查'
 date: '2021-08-26 21:32'
 tags: ['Linux']
 draft: false
-summary: 'Linux 系统常用命令速查手册：文件操作、目录管理、权限控制、进程管理、网络配置等日常运维必备命令'
+description: 'Linux 系统常用命令速查手册：文件操作、目录管理、权限控制、进程管理、网络配置等日常运维必备命令'
 ---
 
 # 常用 Linux 命令速查

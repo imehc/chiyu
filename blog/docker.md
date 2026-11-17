@@ -3,7 +3,7 @@ title: 'Docker 基础命令完全指南'
 date: '2021-12-26 21:51'
 tags: ['Docker']
 draft: false
-summary: 'Docker 容器与镜像管理完全指南：涵盖容器生命周期管理、端口映射、运行模式、镜像操作、Dockerfile 构建等核心命令'
+description: 'Docker 容器与镜像管理完全指南：涵盖容器生命周期管理、端口映射、运行模式、镜像操作、Dockerfile 构建等核心命令'
 ---
 
 # Docker 基础命令完全指南

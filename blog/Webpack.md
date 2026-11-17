@@ -3,7 +3,7 @@ title: 'Webpack 核心配置与优化指南'
 date: '2021-08-04 11:51'
 tags: ['Webpack', 'JavaScript']
 draft: false
-summary: 'Webpack 基础配置、Loader、Plugin、DevServer、性能优化（HMR、Tree Shaking、Code Splitting、缓存等）完整指南'
+description: 'Webpack 基础配置、Loader、Plugin、DevServer、性能优化（HMR、Tree Shaking、Code Splitting、缓存等）完整指南'
 ---
 
 ## Webpack 基础

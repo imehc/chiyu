@@ -1,30 +1,25 @@
 ---
 sidebar_position: 1
 slug: /intro
+title: 知识库
+description: 按前端、后端、应用开发、工程与工具查找学习笔记、实践记录和交互示例。
+hide_table_of_contents: true
+pagination_next: null
+pagination_prev: null
 ---
 
-# 学习笔记
+import { KnowledgeOverview } from '@site/src/components/Knowledge';
 
-这是一个记录技术学习与实践的知识库，涵盖多个开发领域的学习笔记和示例代码。
+# 知识库
 
-## 文档分类
+按开发领域查找学习笔记、实践记录和交互示例。
 
-### Web 前端开发
+<KnowledgeOverview />
 
-#### Three.js
-- **基础**：场景、几何体、材质、灯光、纹理、模型加载
-- **进阶**：相机动画、几何体变形、粒子系统、物理引擎
-- **展示案例**：综合应用示例
+## 从哪里开始
 
-#### Canvas 2D
-- 原生 Canvas API 绘图示例
-- 粒子效果、图像处理等
-
-{/* 
-    ### Backend 后端开发
-
-    ### Desktop 桌面应用
-
-    ### Client 客户端开发 
-    */}
+- **学习前端图形**：从 [Three.js 基本场景](/web/three/basic/basic-scene) 开始，再探索 [Canvas 图像处理](/web/canvas/image-mosaic) 和 [Cesium 地图](/web/cesium/basic/01)。
+- **学习后端框架**：查阅 [Node.js 和 Java 的框架笔记](/knowledge/backend)。
+- **查找部署与命令**：进入 [工程与工具](/knowledge/engineering)。
+- **按时间阅读记录**：浏览 [博客](/blog)，查看实践、踩坑和更新。
 

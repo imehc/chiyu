@@ -2,7 +2,7 @@
 title: 'Swift排错指南'
 date: '2026-08-13'
 draft: false
-summary: ''
+description: '排查 Swift / Xcode 的 SPM 依赖解析、网络代理及构建失败问题。'
 ---
 
 Xcode 拉取 SPM（Swift Package Manager）依赖慢、解析失败的原因与解决方案，包括手动命令行拉取、让 Xcode 走代理、常见报错排查以及构建失败处理。

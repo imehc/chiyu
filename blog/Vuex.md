@@ -3,7 +3,7 @@ title: 'Vuex 核心知识详解'
 date: '2026-01-20'
 tags: ['Vue', 'JavaScript']
 draft: false
-summary: 'Vuex 五大核心概念详解：State、Getter、Mutation、Action、Module 的使用方法与最佳实践'
+description: 'Vuex 五大核心概念详解：State、Getter、Mutation、Action、Module 的使用方法与最佳实践'
 ---
 
 ## Vuex 概述

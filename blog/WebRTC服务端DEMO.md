@@ -3,7 +3,7 @@ title: 'WebRTC 视频流服务端DEMO'
 date: '2025-12-22'
 tags: ['Python','JavaScript']
 draft: false
-summary: WebRTC服务端DEMO
+description: '使用 Python、aiohttp 和 aiortc 将本地视频通过 WebRTC 实时传输到浏览器。'
 ---
 
 # WebRTC 视频流服务端DEMO

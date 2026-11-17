@@ -6,7 +6,7 @@ import { themes as prismThemes } from "prism-react-renderer";
 
 const config: Config = {
 	title: "Chiyu",
-	tagline: "Chiyu learning record",
+	tagline: "开发知识库与实践记录",
 	favicon: "favicon.svg",
 
 	// Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -50,9 +50,11 @@ const config: Config = {
 				hashed: true,
 				language: ["zh", "en"],
 				indexBlog: true,
-				indexPages: true,
+				indexPages: false,
 				indexDocs: true,
 				docsRouteBasePath: "/",
+				blogRouteBasePath: "/blog",
+				explicitSearchResultPath: true,
 				highlightSearchTermsOnTargetPage: true,
 				searchResultLimits: 8,
 				searchResultContextMaxLength: 50,
@@ -76,6 +78,9 @@ const config: Config = {
 				blog: {
 					path: "blog",
 					routeBasePath: "blog",
+					blogTitle: "博客",
+					blogDescription:
+						"按时间阅读前端、后端、应用开发与工程工具的实践、踩坑和更新。",
 					showReadingTime: true,
 					showLastUpdateTime: false,
 					showLastUpdateAuthor: false,
@@ -110,14 +115,14 @@ const config: Config = {
 			},
 			items: [
 				{
-					to: "/blog",
-					label: "博客",
+					type: "docSidebar",
+					sidebarId: "knowledgeSidebar",
+					label: "知识库",
 					position: "left",
 				},
 				{
-					type: "docSidebar",
-					sidebarId: "webSidebar",
-					label: "Web",
+					to: "/blog",
+					label: "博客",
 					position: "left",
 				},
 			],

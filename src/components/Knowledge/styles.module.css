@@ -1,0 +1,67 @@
+.grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+	margin: 1.5rem 0 2rem;
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	padding: 1.5rem;
+	color: var(--ifm-font-color-base);
+	background: var(--ifm-background-surface-color);
+	border: 1px solid var(--ifm-color-emphasis-300);
+	border-radius: 0.75rem;
+}
+
+.card:hover,
+.card:focus-visible {
+	color: var(--ifm-font-color-base);
+	border-color: var(--ifm-color-primary);
+	text-decoration: none;
+}
+
+.card:focus-visible {
+	outline: 2px solid var(--ifm-color-primary);
+	outline-offset: 3px;
+}
+
+.title {
+	margin: 0;
+	font-size: 1.375rem;
+}
+
+.description {
+	margin: 0;
+	color: var(--ifm-color-emphasis-700);
+	flex: 1;
+}
+
+.action {
+	color: var(--ifm-color-primary);
+	font-weight: 600;
+}
+
+.topic {
+	margin-top: 2rem;
+}
+
+.topic h2 {
+	font-size: 1.5rem;
+}
+
+.topic li + li {
+	margin-top: 0.5rem;
+}
+
+@media (max-width: 600px) {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+
+	.card {
+		padding: 1.25rem;
+	}
+}

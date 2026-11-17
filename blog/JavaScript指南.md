@@ -3,7 +3,7 @@ title: 'JavaScript指南'
 date: '2026-02-04'
 tags: ['JavaScript']
 draft: false
-summary: ''
+description: 'JavaScript 实用技巧与解决方案，包括对象数组去重、数据处理和日常编程方法。'
 ---
 
 实用的JavaScript编程技巧和解决方案

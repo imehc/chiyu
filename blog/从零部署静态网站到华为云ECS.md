@@ -3,7 +3,7 @@ title: '将静态网站部署到华为云 ECS'
 date: '2026-10-19'
 tags: ['部署', 'GitHub Actions', 'Nginx', '华为云']
 draft: false
-summary: '从一台已购买好的华为云 ECS 开始，到配置 SSH 密钥、GitHub Actions 自动上传、Nginx 托管静态文件，完整走一遍静态网站的部署流程，并记录几个实际踩到的坑。'
+description: '从一台已购买好的华为云 ECS 开始，到配置 SSH 密钥、GitHub Actions 自动上传、Nginx 托管静态文件，完整走一遍静态网站的部署流程，并记录几个实际踩到的坑。'
 ---
 
 静态网站（文档站、博客、官网、前端构建产物）不需要数据库，也不需要常驻的应用进程。一台最低配的云服务器，加上 Nginx 和一条自动上传的流水线，就足够稳定运行。

@@ -3,7 +3,7 @@ title: 'Vue 随手笔记'
 date: '2021-07-29 10:10'
 tags: ['Vue', 'JavaScript']
 draft: false
-summary: 'Vue 开发实用技巧：watch 监听器的完整用法、实例内与实例外配置、深度监听、简写形式及 npm 版本查询命令'
+description: 'Vue 开发实用技巧：watch 监听器的完整用法、实例内与实例外配置、深度监听、简写形式及 npm 版本查询命令'
 ---
 
 # Vue 随手笔记

@@ -3,7 +3,7 @@ title: '清理 AI 编程工具的本地对话记录（Claude Code / Codex）'
 date: '2026-07-24 16:30'
 tags: ['AI', 'CLI']
 draft: false
-summary: 'Claude Code 和 Codex CLI 会把每次对话完整地明文保存在本地。本文整理它们各自的存储位置，以及如何彻底清除且不留残留，文末附交互式清理脚本。'
+description: 'Claude Code 和 Codex CLI 会把每次对话完整地明文保存在本地。本文整理它们各自的存储位置，以及如何彻底清除且不留残留，文末附交互式清理脚本。'
 ---
 
 import CodeBlock from '@theme/CodeBlock';
