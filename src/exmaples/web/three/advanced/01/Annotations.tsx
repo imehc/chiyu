@@ -9,7 +9,8 @@ import { tweenGroup } from "./index";
 
 export const Annotations: React.FC<{
 	controls: RefObject<ComponentRef<typeof OrbitControls> | null>;
-}> = ({ controls }) => {
+	portal: RefObject<HTMLElement>;
+}> = ({ controls, portal }) => {
 	const { camera } = useThree();
 	const [selected, setSelected] = useState(-1);
 
@@ -17,7 +18,12 @@ export const Annotations: React.FC<{
 		<>
 			{annotations.map((a, i) => {
 				return (
-					<Html key={a.title} position={[a.lookAt.x, a.lookAt.y, a.lookAt.z]}>
+					<Html
+						key={a.title}
+						portal={portal}
+						position={[a.lookAt.x, a.lookAt.y, a.lookAt.z]}
+						style={{ pointerEvents: "auto" }}
+					>
 						<svg
 							height="34"
 							width="34"

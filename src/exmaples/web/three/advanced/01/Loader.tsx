@@ -1,14 +1,14 @@
-import { Html, useProgress } from "@react-three/drei";
+import { useProgress } from "@react-three/drei";
 
-interface Props {
-	position: [number, number, number];
-}
-
-export const Loader: React.FC<Props> = ({ position }) => {
+export const Loader: React.FC = () => {
 	const { progress, active, item, loaded, total } = useProgress();
+	if (!active) return null;
 
 	return (
-		<Html position={position} center>
+		<div
+			role="status"
+			className="tw:absolute tw:inset-0 tw:flex tw:items-center tw:justify-center tw:pointer-events-none"
+		>
 			<div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:p-8 tw:bg-base-300 tw:bg-opacity-95 tw:rounded-2xl tw:backdrop-blur-md tw:shadow-2xl tw:border tw:border-base-content tw:border-opacity-20">
 				{/* Spinning loader */}
 				<div className="tw:relative tw:size-20 tw:mb-6">
@@ -60,6 +60,6 @@ export const Loader: React.FC<Props> = ({ position }) => {
 						animation: spin-reverse 1.5s linear infinite;
 					}
 				`}</style>
-		</Html>
+		</div>
 	);
 };
