@@ -11,7 +11,6 @@ export function mountExampleGui(gui: GUI, scene: HTMLElement): GUI {
 
 	const panel = document.createElement("details");
 	panel.className = styles.panel;
-	panel.open = window.matchMedia("(min-width: 768px)").matches;
 	const summary = document.createElement("summary");
 	summary.textContent = "操作面板";
 	panel.append(summary, gui.domElement);

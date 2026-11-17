@@ -1,12 +1,6 @@
 import ErrorBoundary from "@docusaurus/ErrorBoundary";
 import clsx from "clsx";
-import {
-	forwardRef,
-	type PropsWithChildren,
-	type ReactNode,
-	useEffect,
-	useRef,
-} from "react";
+import { forwardRef, type PropsWithChildren, type ReactNode } from "react";
 import styles from "./Container.module.css";
 
 export interface ContainerProps {
@@ -29,13 +23,7 @@ export default forwardRef<HTMLDivElement, PropsWithChildren<ContainerProps>>(
 		},
 		ref,
 	) => {
-		const panelRef = useRef<HTMLDetailsElement>(null);
 		const hasControls = controls != null;
-		useEffect(() => {
-			if (hasControls && panelRef.current) {
-				panelRef.current.open = window.matchMedia("(min-width: 768px)").matches;
-			}
-		}, [hasControls]);
 
 		return (
 			<div
@@ -75,7 +63,7 @@ export default forwardRef<HTMLDivElement, PropsWithChildren<ContainerProps>>(
 				</div>
 				<div data-example-controls className={styles.controls}>
 					{hasControls && (
-						<details ref={panelRef} className={styles.panel}>
+						<details className={styles.panel}>
 							<summary>操作面板</summary>
 							{controls}
 						</details>
