@@ -1,5 +1,6 @@
-import { config } from "dotenv";
 import path from "node:path";
+import CopyWebpackPlugin from "copy-webpack-plugin";
+import { config } from "dotenv";
 
 // 加载 .env 文件
 config();
@@ -7,17 +8,24 @@ config();
 const cesiumSource = "node_modules/cesium/Build/Cesium";
 const cesiumBaseUrl = "cesiumStatic";
 
-module.exports = async function cesiumPlugin() {
+export default function cesiumPlugin(): Plugin {
 	return {
 		name: "cesium-plugin",
-		configureWebpack(_config: unknown, isServer: boolean, { currentBundler }) {
+		configureWebpack(_config, isServer, { currentBundler }) {
 			// Only apply Cesium configuration for client bundle
 			if (isServer) {
 				return {};
 			}
 
 			// Use rspack's CopyRspackPlugin instead of CopyWebpackPlugin
-			const CopyPlugin = currentBundler.instance.CopyRspackPlugin;
+			const CopyPlugin =
+				currentBundler.name === "rspack"
+					? (
+							currentBundler.instance as unknown as {
+								CopyRspackPlugin: typeof CopyWebpackPlugin;
+							}
+						).CopyRspackPlugin
+					: CopyWebpackPlugin;
 
 			return {
 				plugins: [
@@ -46,10 +54,14 @@ module.exports = async function cesiumPlugin() {
 					// 从 .env 文件读取
 					new currentBundler.instance.DefinePlugin({
 						CESIUM_BASE_URL: JSON.stringify(`/${cesiumBaseUrl}`),
-						CESIUM_ACCESS_TOKEN: JSON.stringify(process.env.CESIUM_ACCESS_TOKEN || ""),
+						CESIUM_ACCESS_TOKEN: JSON.stringify(
+							process.env.CESIUM_ACCESS_TOKEN || "",
+						),
 					}),
 				],
 			};
 		},
 	};
-};
+}
+
+import type { Plugin } from "@docusaurus/types";

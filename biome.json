@@ -1,12 +1,21 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
 	"vcs": {
-		"enabled": false,
+		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": false
+		"useIgnoreFile": true
 	},
 	"files": {
-		"ignoreUnknown": false
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!**/*.md",
+			"!**/*.mdx",
+			"!!static",
+			"!!.claude",
+			"!!.vscode",
+			"!src/exmaples/web/cesium/basic/12/cesium-modified/**/*.js"
+		]
 	},
 	"formatter": {
 		"enabled": true,
@@ -15,13 +24,16 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"preset": "recommended"
 		}
 	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
 		}
+	},
+	"css": {
+		"parser": { "tailwindDirectives": true, "cssModules": true }
 	},
 	"assist": {
 		"enabled": true,

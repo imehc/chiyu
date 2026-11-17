@@ -126,7 +126,10 @@ export default function StackBlitzPlayground({
 	}
 
 	return (
-		<div className="tw:size-full tw:flex tw:justify-center tw:items-center" style={{ height }}>
+		<div
+			className="tw:size-full tw:flex tw:justify-center tw:items-center"
+			style={{ height }}
+		>
 			<div
 				ref={containerRef}
 				style={{ display: loading ? "none" : "block" }}

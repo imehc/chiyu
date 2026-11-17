@@ -1,5 +1,6 @@
 # Dependencies
 /node_modules
+/.pnpm-store
 
 # Production
 /build
@@ -19,3 +20,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local progress notes
+/CLASSIFICATION_PROGRESS.md

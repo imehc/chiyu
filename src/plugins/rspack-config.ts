@@ -1,7 +1,9 @@
-module.exports = async function rspackPlugin(context, options) {
+import type { Plugin } from "@docusaurus/types";
+
+export default function rspackPlugin(): Plugin {
 	return {
 		name: "rspack-plugin",
-		configureWebpack(config, isServer, { currentBundler }) {
+		configureWebpack(_config, _isServer, { currentBundler }) {
 			return {
 				plugins: [new currentBundler.instance.DefinePlugin({})],
 				module: {
@@ -15,4 +17,4 @@ module.exports = async function rspackPlugin(context, options) {
 			};
 		},
 	};
-};
+}

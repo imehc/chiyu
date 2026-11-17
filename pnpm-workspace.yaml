@@ -3,16 +3,16 @@
 # 解析 chunk 失败、所有 Cesium 示例白屏。0.3.0 使用 base64 内联，不受影响。
 # 上游 issue: https://github.com/CesiumGS/cesium/issues/13379
 overrides:
-  '@spz-loader/core': 0.3.0
+  "@spz-loader/core": 0.3.0
 
 allowBuilds:
-  '@swc/core': true
+  "@swc/core": true
   core-js: true
   core-js-pure: true
   es5-ext: true
   protobufjs: true
 onlyBuiltDependencies:
-  - '@swc/core'
+  - "@swc/core"
   - core-js
   - core-js-pure
   - es5-ext
