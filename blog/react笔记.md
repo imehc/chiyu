@@ -3,8 +3,12 @@ title: 'React 生态核心笔记 - Redux 与 Router'
 date: '2021-08-26 10:47'
 tags: ['React']
 draft: false
-summary: 'React 状态管理方案详解：Redux 基础、Redux-Thunk 异步处理、Redux-Saga 中间件、React-Redux 连接器的使用与配置'
+description: 'React 状态管理方案详解：Redux 基础、Redux-Thunk 异步处理、Redux-Saga 中间件、React-Redux 连接器的使用与配置'
 ---
+
+## 适用版本
+
+原笔记采用 Redux 4、Redux Thunk 2、React Redux 7、React Router 5 和 React 17 的写法。Redux Thunk 3 改用 `import { thunk } from 'redux-thunk'`；新项目可使用 Redux Toolkit。React 18/19 使用 `createRoot`，Router 6 及以后使用 `Routes` 和 `element`。
 
 ## Redux 基础
 
@@ -89,8 +93,13 @@ constructor(props) {
 #### 订阅状态变化
 
 ```jsx
-// 订阅状态，提交 action 使用，写在 constructor 中
-store.subscribe(() => this.setState(store.getState()));
+componentDidMount() {
+  this.unsubscribe = store.subscribe(() => this.setState(store.getState()));
+}
+
+componentWillUnmount() {
+  this.unsubscribe();
+}
 ```
 
 ### 代码组织技巧
@@ -362,6 +371,22 @@ export default connect(stateToProps, dispatchToProps)(TodoList);
 
 ## React Router
 
-{/* React 官方推荐的路由解决方案 */}
+下面使用 React Router 5 的 `BrowserRouter`、`Switch` 和 `Route`。`Switch` 渲染第一个匹配的路由，首页使用 `exact` 避免匹配所有地址。
 
-（内容待补充...）
+```jsx
+import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Link to="/">首页</Link>
+      <Link to="/about">关于</Link>
+      <Switch>
+        <Route exact path="/" render={() => <h1>首页</h1>} />
+        <Route path="/about" render={() => <h1>关于</h1>} />
+        <Route render={() => <h1>页面不存在</h1>} />
+      </Switch>
+    </BrowserRouter>
+  );
+}
+```

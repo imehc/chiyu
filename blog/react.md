@@ -3,8 +3,12 @@ title: 'React 高级特性与生态详解'
 date: '2021-07-01 11:03'
 tags: ['React']
 draft: false
-summary: 'React 高级特性详解：代码分割、Context 状态管理、错误边界、Refs 转发、Fragments、Redux 集成与持久化等核心概念'
+description: 'React 高级特性详解：代码分割、Context 状态管理、错误边界、Refs 转发、Fragments、Redux 集成与持久化等核心概念'
 ---
+
+## 适用版本
+
+原笔记采用 React 16.8—17、Redux 4、React Redux 7 和 React Router 5 的写法。React 18/19 的根节点使用 `createRoot`；React 19 的函数组件可直接接收 `ref`，下面保留 `forwardRef` 供旧项目参考。Router 6 及以后使用 `Routes` 和 `element`，不再提供 `withRouter`。
 
 ## React.lazy - 代码分割
 
@@ -15,19 +19,15 @@ summary: 'React 高级特性详解：代码分割、Context 状态管理、错�
 ### 基本用法
 
 ```jsx
-// import React, { lazy, Suspense } from 'react'
-const 组件名称 = React.lazy(() => import('组件路径'));
+import { lazy, Suspense } from 'react';
 
-// 或
-import 组件名称 = React.lazy(() => import('组件路径'));
+const MyWidget = lazy(() => import('./MyWidget'));
 
 function MyComponent() {
   return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <组件名称 />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <MyWidget />
+    </Suspense>
   );
 }
 ```
@@ -293,7 +293,15 @@ function Glossary(props) {
 
 ## 高阶组件（HOC）
 
-（内容待补充...）
+高阶组件接收一个组件，返回包装后的组件，用于复用逻辑和传递额外属性。不要在渲染函数内部创建高阶组件。
+
+```jsx
+function withUser(WrappedComponent) {
+  return function UserComponent(props) {
+    return <WrappedComponent {...props} user={{ name: 'Chiyu' }} />;
+  };
+}
+```
 
 ---
 
@@ -335,7 +343,17 @@ const node = this.myRef.current;
 
 ### 回调 Refs
 
-（内容待补充...）
+回调 ref 在节点挂载时接收 DOM，卸载时接收 `null`。需要保存节点时，可以赋给 `useRef`。
+
+```jsx
+function TextInput() {
+  const inputRef = React.useRef(null);
+  const setInputRef = React.useCallback(node => {
+    inputRef.current = node;
+  }, []);
+  return <input ref={setInputRef} />;
+}
+```
 
 ---
 
@@ -545,7 +563,7 @@ const persistedReducer = persistReducer(persistConfig, reducer); // 包装 reduc
 
 const store = createStore(
   persistedReducer,
-  devToolsEnhancer // redux 扩展工具
+  devToolsEnhancer() // redux 扩展工具
 );
 
 const persistor = persistStore(store); // 持久化存储

@@ -3,8 +3,10 @@ title: 'Windows DOS 命令与 MySQL 基础操作速查'
 date: '2021-08-20 17:02'
 tags: ['DOS', 'MySQL']
 draft: false
-summary: 'Windows DOS 常用命令（端口管理、服务启停）与 MySQL 数据库连接命令速查手册'
+description: 'Windows DOS 常用命令（端口管理、服务启停）与 MySQL 数据库连接命令速查手册'
 ---
+
+适用于 Windows CMD；PowerShell 的写法可能不同。MySQL 服务名以实际安装名称为准。
 
 ## DOS 命令
 
@@ -27,12 +29,6 @@ netstat -ano | findstr "端口号"
 #### 关闭端口
 
 {/* 进程号就是查看端口号时靠右的那个数字 */}
-
-```cmd
-taskkill -PID 进程号 -F
-```
-
-或
 
 ```cmd
 taskkill /PID 进程号 /F
