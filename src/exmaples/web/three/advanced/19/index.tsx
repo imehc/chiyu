@@ -1,9 +1,9 @@
 import {
 	GizmoHelper,
 	GizmoViewport,
-	Html,
 	OrbitControls,
 	PerspectiveCamera,
+	useProgress,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import type React from "react";
@@ -81,13 +81,7 @@ export const ThreeDimensional: React.FC = () => {
 
 			{/* 3D 渲染画布 */}
 			<Canvas gl={{ preserveDrawingBuffer: true }}>
-				<Suspense
-					fallback={
-						<Html className="flex h-full items-center justify-center w-full">
-							<Loading />
-						</Html>
-					}
-				>
+				<Suspense fallback={null}>
 					{/* 主要组件组 */}
 					<group>
 						{/* 轨道控制 - 允许鼠标交互 */}
@@ -127,8 +121,22 @@ export const ThreeDimensional: React.FC = () => {
 					</group>
 				</Suspense>
 			</Canvas>
+			<SceneLoading />
 		</Container>
 	);
 };
+
+function SceneLoading() {
+	const { active } = useProgress();
+	if (!active) return null;
+	return (
+		<div
+			role="status"
+			className="tw:absolute tw:inset-0 tw:pointer-events-none"
+		>
+			<Loading />
+		</div>
+	);
+}
 
 export default ThreeDimensional;
