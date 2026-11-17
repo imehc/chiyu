@@ -1,9 +1,4 @@
-import {
-	Environment,
-	Html,
-	OrbitControls,
-	useProgress,
-} from "@react-three/drei";
+import { Environment, OrbitControls, useProgress } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import Container from "../../../componets/Container";
@@ -17,7 +12,7 @@ export const Demo2v12 = () => {
 	return (
 		<Container>
 			<Canvas shadows camera={{ position: [2.25, 1, 2.25] }}>
-				<Suspense fallback={<Loader />}>
+				<Suspense fallback={null}>
 					<Environment
 						preset="forest"
 						background
@@ -44,6 +39,7 @@ export const Demo2v12 = () => {
 					/>
 				</Suspense>
 			</Canvas>
+			<Loader />
 			{/* <div id="instructions">
 				Models from
 				<a href="https://sweethome3d.com" target="_blank" rel="noreferrer">
@@ -60,11 +56,15 @@ export const Demo2v12 = () => {
 };
 
 function Loader() {
-	const { progress } = useProgress();
+	const { progress, active } = useProgress();
+	if (!active) return null;
 	return (
-		<Html center className="text-white">
+		<div
+			role="status"
+			className="tw:absolute tw:inset-0 tw:flex tw:items-center tw:justify-center tw:pointer-events-none tw:text-white"
+		>
 			{progress.toFixed(2)} % loaded
-		</Html>
+		</div>
 	);
 }
 
