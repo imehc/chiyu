@@ -1,3 +1,4 @@
+import { polygon, area as polygonArea } from "@turf/turf";
 import {
 	ArcType,
 	CallbackProperty,
@@ -36,16 +37,6 @@ interface MeasureToolOptions {
 }
 
 /**
- * 测量结果
- */
-interface MeasureResult {
-	distance?: number;
-	area?: number;
-	height?: number;
-	angle?: number;
-}
-
-/**
  * 测量工具类
  * 支持空间距离、地表距离、地表面积、高度差、三角测量和方位角测量
  */
@@ -55,6 +46,7 @@ class MeasureTool {
 	private handler: ScreenSpaceEventHandlerType | null = null;
 	private measureIds: string[] = [];
 	private bMeasuring = false;
+	private stopPreview?: () => void;
 	private onMeasureStart?: () => void;
 	private onMeasureEnd?: () => void;
 
@@ -70,19 +62,26 @@ class MeasureTool {
 	 * 测量两点之间的直线距离（不考虑地形）
 	 */
 	measureLineSpace(): void {
+		this.finishMeasure();
 		this.bMeasuring = true;
 		this.onMeasureStart?.();
 
 		const positions: Cartesian3[] = [];
 		let poly: Entity | null = null;
+		this.stopPreview = () => {
+			if (positions.length) positions.pop();
+			if (positions.length < 2 && poly) this.viewer.entities.remove(poly);
+		};
 		let distance = 0;
 
 		this.handler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
 		// 监听鼠标移动事件
-		this.handler.setInputAction((movement) => {
+		this.handler.setInputAction((movement: { endPosition: Cartesian2 }) => {
 			// 获取鼠标位置的三维坐标
-			let cartesian = this.viewer.scene.pickPosition(movement.endPosition);
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.endPosition,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.endPosition);
 				if (ray) {
@@ -91,19 +90,19 @@ class MeasureTool {
 			}
 
 			if (cartesian && positions.length >= 2) {
+				positions[positions.length - 1] = cartesian;
 				if (!poly) {
 					// 创建线实体
 					poly = this.createPolyline(positions, Color.CHARTREUSE, 2);
-				} else {
-					positions.pop();
-					positions.push(cartesian);
 				}
 			}
 		}, ScreenSpaceEventType.MOUSE_MOVE);
 
 		// 监听单击事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.position);
+		this.handler.setInputAction((movement: { position: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.position,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.position);
 				if (ray) {
@@ -114,11 +113,14 @@ class MeasureTool {
 			if (cartesian) {
 				if (positions.length === 0) {
 					positions.push(cartesian.clone());
+				} else {
+					positions[positions.length - 1] = cartesian.clone();
 				}
-				positions.push(cartesian);
+				positions.push(cartesian.clone());
+				if (!poly) poly = this.createPolyline(positions, Color.CHARTREUSE, 2);
 
 				// 计算距离增量
-				const distanceAdd = Number.parseFloat(this.getSpaceDistance(positions));
+				const distanceAdd = this.getSpaceDistance(positions);
 				distance += distanceAdd;
 
 				// 添加标注
@@ -169,19 +171,26 @@ class MeasureTool {
 	 * 测量沿地形表面的距离
 	 */
 	measureGroundDistance(): void {
+		this.finishMeasure();
 		this.bMeasuring = true;
 		this.onMeasureStart?.();
 		this.viewer.scene.globe.depthTestAgainstTerrain = true;
 
 		const positions: Cartesian3[] = [];
 		let poly: Entity | null = null;
-		const distance = 0;
+		this.stopPreview = () => {
+			if (positions.length) positions.pop();
+			if (positions.length < 2 && poly) this.viewer.entities.remove(poly);
+		};
+		let distance = 0;
 
 		this.handler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
 		// 监听鼠标移动事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.endPosition);
+		this.handler.setInputAction((movement: { endPosition: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.endPosition,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.endPosition);
 				if (ray) {
@@ -192,24 +201,24 @@ class MeasureTool {
 			if (cartesian) {
 				// 采样地形高度
 				const p = Cartographic.fromCartesian(cartesian);
-				p.height = this.viewer.scene.sampleHeight(p);
+				p.height = this.viewer.scene.globe.getHeight(p) ?? p.height;
 				cartesian =
 					this.viewer.scene.globe.ellipsoid.cartographicToCartesian(p);
 
 				if (positions.length >= 2) {
+					positions[positions.length - 1] = cartesian;
 					if (!poly) {
 						poly = this.createGroundPolyline(positions);
-					} else {
-						positions.pop();
-						positions.push(cartesian);
 					}
 				}
 			}
 		}, ScreenSpaceEventType.MOUSE_MOVE);
 
 		// 监听单击事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.position);
+		this.handler.setInputAction((movement: { position: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.position,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.position);
 				if (ray) {
@@ -220,15 +229,18 @@ class MeasureTool {
 			if (cartesian) {
 				// 采样地形高度
 				const p = Cartographic.fromCartesian(cartesian);
-				p.height = this.viewer.scene.sampleHeight(p);
+				p.height = this.viewer.scene.globe.getHeight(p) ?? p.height;
 				cartesian =
 					this.viewer.scene.globe.ellipsoid.cartographicToCartesian(p);
 
 				if (positions.length === 0) {
 					positions.push(cartesian.clone());
+				} else {
+					positions[positions.length - 1] = cartesian.clone();
 				}
-				positions.push(cartesian);
-				this.calculateGroundDistance(positions, distance);
+				positions.push(cartesian.clone());
+				if (!poly) poly = this.createGroundPolyline(positions);
+				distance = this.calculateGroundDistance(positions, distance);
 			}
 		}, ScreenSpaceEventType.LEFT_CLICK);
 
@@ -281,27 +293,13 @@ class MeasureTool {
 	/**
 	 * 计算空间距离
 	 */
-	private getSpaceDistance(positions: Cartesian3[]): string {
-		let distance = 0;
-		if (positions.length > 2) {
-			const point1cartographic = Cartographic.fromCartesian(
-				positions[positions.length - 3],
-			);
-			const point2cartographic = Cartographic.fromCartesian(
-				positions[positions.length - 2],
-			);
-
-			// 根据经纬度计算出距离
-			const geodesic = new EllipsoidGeodesic();
-			geodesic.setEndPoints(point1cartographic, point2cartographic);
-			const s = geodesic.surfaceDistance;
-
-			// 返回两点之间的距离（包含高度差）
-			distance = Math.sqrt(
-				s ** 2 + (point2cartographic.height - point1cartographic.height) ** 2,
-			);
-		}
-		return distance.toFixed(2);
+	private getSpaceDistance(positions: Cartesian3[]): number {
+		return positions.length > 2
+			? Cartesian3.distance(
+					positions[positions.length - 3],
+					positions[positions.length - 2],
+				)
+			: 0;
 	}
 
 	/**
@@ -310,7 +308,7 @@ class MeasureTool {
 	private calculateGroundDistance(
 		positions: Cartesian3[],
 		distance: number,
-	): void {
+	): number {
 		if (positions.length > 2) {
 			const positions_: Cartographic[] = [];
 			const sp = Cartographic.fromCartesian(positions[positions.length - 3]);
@@ -320,17 +318,17 @@ class MeasureTool {
 			const s = geodesic.surfaceDistance;
 
 			positions_.push(sp);
-			let num = Math.floor(s / 100);
-			num = num > 200 ? 200 : num;
-			num = num < 20 ? 20 : num;
+			const num = Math.max(20, Math.min(200, Math.floor(s / 100)));
 
 			// 插值获取中间点
-			for (let i = 1; i < num; i++) {
+			for (let i = 1; s > 0.000001 && i < num; i++) {
 				const res = geodesic.interpolateUsingSurfaceDistance(
 					(s / num) * i,
 					new Cartographic(),
 				);
-				res.height = this.viewer.scene.sampleHeight(res);
+				res.height =
+					this.viewer.scene.globe.getHeight(res) ??
+					sp.height + ((ep.height - sp.height) * i) / num;
 				positions_.push(res);
 			}
 			positions_.push(ep);
@@ -380,24 +378,30 @@ class MeasureTool {
 			});
 			this.measureIds.push(entity.id);
 		}
+		return distance;
 	}
 
 	/**
 	 * 结束测量
 	 */
 	private finishMeasure(): void {
+		const wasMeasuring = this.bMeasuring;
+		this.stopPreview?.();
+		this.stopPreview = undefined;
 		if (this.handler && !this.handler.isDestroyed()) {
 			this.handler.destroy();
 			this.handler = null;
 		}
 		this.bMeasuring = false;
-		this.onMeasureEnd?.();
+		if (wasMeasuring) this.onMeasureEnd?.();
 	}
 
 	/**
 	 * 清除所有测量结果
 	 */
 	clear(): void {
+		this.stopPreview?.();
+		this.stopPreview = undefined;
 		// 删除所有实体
 		for (const id of this.measureIds) {
 			this.viewer.entities.removeById(id);
@@ -419,18 +423,25 @@ class MeasureTool {
 	 * 测量多边形区域的面积
 	 */
 	measureAreaSpace(): void {
+		this.finishMeasure();
 		this.bMeasuring = true;
 		this.onMeasureStart?.();
 
 		const positions: Cartesian3[] = [];
 		const tempPoints: Array<{ lon: number; lat: number; hei: number }> = [];
 		let polygon: Entity | null = null;
+		this.stopPreview = () => {
+			if (positions.length) positions.pop();
+			if (positions.length < 3 && polygon) this.viewer.entities.remove(polygon);
+		};
 
 		this.handler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
 		// 监听鼠标移动事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.endPosition);
+		this.handler.setInputAction((movement: { endPosition: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.endPosition,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.endPosition);
 				if (ray) {
@@ -439,18 +450,17 @@ class MeasureTool {
 			}
 
 			if (cartesian && positions.length >= 2) {
-				if (!polygon) {
+				positions[positions.length - 1] = cartesian;
+				if (!polygon && positions.length >= 3)
 					polygon = this.createPolygon(positions);
-				} else {
-					positions.pop();
-					positions.push(cartesian);
-				}
 			}
 		}, ScreenSpaceEventType.MOUSE_MOVE);
 
 		// 监听单击事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.position);
+		this.handler.setInputAction((movement: { position: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.position,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.position);
 				if (ray) {
@@ -461,8 +471,12 @@ class MeasureTool {
 			if (cartesian) {
 				if (positions.length === 0) {
 					positions.push(cartesian.clone());
+				} else {
+					positions[positions.length - 1] = cartesian.clone();
 				}
-				positions.push(cartesian);
+				positions.push(cartesian.clone());
+				if (!polygon && positions.length >= 3)
+					polygon = this.createPolygon(positions);
 
 				// 记录经纬度高度
 				const cartographic = Cartographic.fromCartesian(
@@ -495,14 +509,11 @@ class MeasureTool {
 
 		// 监听右键结束测量
 		this.handler.setInputAction(() => {
-			if (this.handler && !this.handler.isDestroyed()) {
-				this.handler.destroy();
-				this.handler = null;
-			}
-			positions.pop();
+			this.finishMeasure();
+			if (tempPoints.length < 3) return;
 
 			// 计算面积
-			const area = this.getArea(tempPoints, positions);
+			const area = this.getArea(tempPoints);
 			let areaText: string;
 			if (area < 0.001) {
 				areaText = `${(area * 1000000).toFixed(4)}平方米`;
@@ -527,9 +538,6 @@ class MeasureTool {
 				},
 			});
 			this.measureIds.push(entity.id);
-
-			this.bMeasuring = false;
-			this.onMeasureEnd?.();
 		}, ScreenSpaceEventType.RIGHT_CLICK);
 	}
 
@@ -538,6 +546,7 @@ class MeasureTool {
 	 * 测量两点之间的高度差
 	 */
 	measureAltitude(): void {
+		this.finishMeasure();
 		this.bMeasuring = true;
 		this.onMeasureStart?.();
 
@@ -550,8 +559,10 @@ class MeasureTool {
 		this.handler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
 		// 监听鼠标移动事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.endPosition);
+		this.handler.setInputAction((movement: { endPosition: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.endPosition,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.endPosition);
 				if (ray) {
@@ -574,8 +585,10 @@ class MeasureTool {
 		}, ScreenSpaceEventType.MOUSE_MOVE);
 
 		// 监听单击事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.position);
+		this.handler.setInputAction((movement: { position: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.position,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.position);
 				if (ray) {
@@ -629,6 +642,7 @@ class MeasureTool {
 	 * 测量两点之间的水平距离、高度差和空间距离
 	 */
 	measureTriangle(): void {
+		this.finishMeasure();
 		this.bMeasuring = true;
 		this.onMeasureStart?.();
 
@@ -642,8 +656,10 @@ class MeasureTool {
 		this.handler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
 		// 监听鼠标移动事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.endPosition);
+		this.handler.setInputAction((movement: { endPosition: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.endPosition,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.endPosition);
 				if (ray) {
@@ -667,8 +683,10 @@ class MeasureTool {
 		}, ScreenSpaceEventType.MOUSE_MOVE);
 
 		// 监听单击事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.position);
+		this.handler.setInputAction((movement: { position: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.position,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.position);
 				if (ray) {
@@ -723,6 +741,7 @@ class MeasureTool {
 	 * 测量两点之间的方位角和距离
 	 */
 	measureAngle(): void {
+		this.finishMeasure();
 		this.bMeasuring = true;
 		this.onMeasureStart?.();
 
@@ -735,8 +754,10 @@ class MeasureTool {
 		this.handler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
 		// 监听鼠标移动事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.endPosition);
+		this.handler.setInputAction((movement: { endPosition: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.endPosition,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.endPosition);
 				if (ray) {
@@ -755,8 +776,10 @@ class MeasureTool {
 		}, ScreenSpaceEventType.MOUSE_MOVE);
 
 		// 监听单击事件
-		this.handler.setInputAction((movement) => {
-			let cartesian = this.viewer.scene.pickPosition(movement.position);
+		this.handler.setInputAction((movement: { position: Cartesian2 }) => {
+			let cartesian: Cartesian3 | undefined = this.viewer.scene.pickPosition(
+				movement.position,
+			);
 			if (!cartesian) {
 				const ray = this.viewer.camera.getPickRay(movement.position);
 				if (ray) {
@@ -825,103 +848,21 @@ class MeasureTool {
 	/**
 	 * 计算多边形面积
 	 */
-	private getArea(
-		points: Array<{ lon: number; lat: number; hei: number }>,
-		positions: Cartesian3[],
-	): number {
-		const radiansPerDegree = Math.PI / 180.0;
-		const degreesPerRadian = 180.0 / Math.PI;
-
-		let res = 0;
-
-		// 拆分三角曲面
-		for (let i = 0; i < points.length - 2; i++) {
-			const j = (i + 1) % points.length;
-			const k = (i + 2) % points.length;
-			const totalAngle = this.calculateAngle(
-				points[i],
-				points[j],
-				points[k],
-				radiansPerDegree,
-				degreesPerRadian,
-			);
-
-			const disTemp1 = this.calculateDistance(positions[i], positions[j]);
-			const disTemp2 = this.calculateDistance(positions[j], positions[k]);
-			res += disTemp1 * disTemp2 * Math.abs(Math.sin(totalAngle));
+	private getArea(points: Array<{ lon: number; lat: number }>): number {
+		if (points.length < 3) return 0;
+		const ring: number[][] = [];
+		for (const point of points) {
+			let lon = point.lon;
+			const previous = ring.at(-1)?.[0];
+			if (previous !== undefined) {
+				while (lon - previous > 180) lon -= 360;
+				while (lon - previous < -180) lon += 360;
+			}
+			ring.push([lon, point.lat]);
 		}
-		return res / 1000000.0;
-	}
-
-	/**
-	 * 计算角度
-	 */
-	private calculateAngle(
-		p1: { lon: number; lat: number },
-		p2: { lon: number; lat: number },
-		p3: { lon: number; lat: number },
-		radiansPerDegree: number,
-		degreesPerRadian: number,
-	): number {
-		const bearing21 = this.calculateBearing(
-			p2,
-			p1,
-			radiansPerDegree,
-			degreesPerRadian,
-		);
-		const bearing23 = this.calculateBearing(
-			p2,
-			p3,
-			radiansPerDegree,
-			degreesPerRadian,
-		);
-		let angle = bearing21 - bearing23;
-		if (angle < 0) {
-			angle += 360;
-		}
-		return angle;
-	}
-
-	/**
-	 * 计算方位角
-	 */
-	private calculateBearing(
-		from: { lon: number; lat: number },
-		to: { lon: number; lat: number },
-		radiansPerDegree: number,
-		degreesPerRadian: number,
-	): number {
-		const lat1 = from.lat * radiansPerDegree;
-		const lon1 = from.lon * radiansPerDegree;
-		const lat2 = to.lat * radiansPerDegree;
-		const lon2 = to.lon * radiansPerDegree;
-		let angle = -Math.atan2(
-			Math.sin(lon1 - lon2) * Math.cos(lat2),
-			Math.cos(lat1) * Math.sin(lat2) -
-				Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2),
-		);
-		if (angle < 0) {
-			angle += Math.PI * 2.0;
-		}
-		angle = angle * degreesPerRadian;
-		return angle;
-	}
-
-	/**
-	 * 计算两点之间的距离
-	 */
-	private calculateDistance(point1: Cartesian3, point2: Cartesian3): number {
-		const point1cartographic = Cartographic.fromCartesian(point1);
-		const point2cartographic = Cartographic.fromCartesian(point2);
-
-		const geodesic = new EllipsoidGeodesic();
-		geodesic.setEndPoints(point1cartographic, point2cartographic);
-		const s = geodesic.surfaceDistance;
-
-		// 返回两点之间的距离（包含高度差）
-		return Math.sqrt(
-			s ** 2 + (point2cartographic.height - point1cartographic.height) ** 2,
-		);
+		ring.push([...ring[0]]);
+		// 球面投影面积，不包含地形起伏。
+		return polygonArea(polygon([ring])) / 1000000;
 	}
 
 	/**
@@ -1155,8 +1096,9 @@ class MeasureTool {
 				Cartesian3.fromDegrees(trianArr[3], trianArr[4]),
 			).toFixed(2);
 			const height = Math.abs(trianArr[2] - trianArr[5]).toFixed(2);
-			const strLine = Math.sqrt(
-				Number.parseFloat(lineDistance) ** 2 + Number.parseFloat(height) ** 2,
+			const strLine = Cartesian3.distance(
+				Cartesian3.fromDegrees(trianArr[0], trianArr[1], trianArr[2]),
+				Cartesian3.fromDegrees(trianArr[3], trianArr[4], trianArr[5]),
 			).toFixed(2);
 
 			X.position = new ConstantPositionProperty(
@@ -1252,8 +1194,9 @@ class MeasureTool {
 			Cartesian3.fromDegrees(trianArr[3], trianArr[4]),
 		).toFixed(2);
 		const height = Math.abs(trianArr[2] - trianArr[5]).toFixed(2);
-		const strLine = Math.sqrt(
-			Number.parseFloat(lineDistance) ** 2 + Number.parseFloat(height) ** 2,
+		const strLine = Cartesian3.distance(
+			Cartesian3.fromDegrees(trianArr[0], trianArr[1], trianArr[2]),
+			Cartesian3.fromDegrees(trianArr[3], trianArr[4], trianArr[5]),
 		).toFixed(2);
 
 		X = this.viewer.entities.add({
@@ -1468,20 +1411,14 @@ class MeasureTool {
 		lngB: number,
 		latB: number,
 	): number {
-		let dRotateAngle = Math.atan2(Math.abs(lngA - lngB), Math.abs(latA - latB));
-		if (lngB >= lngA) {
-			if (latB < latA) {
-				dRotateAngle = Math.PI - dRotateAngle;
-			}
-		} else {
-			if (latB >= latA) {
-				dRotateAngle = 2 * Math.PI - dRotateAngle;
-			} else {
-				dRotateAngle = Math.PI + dRotateAngle;
-			}
-		}
-		dRotateAngle = (dRotateAngle * 180) / Math.PI;
-		return Math.floor(dRotateAngle * 100) / 100;
+		const start = Cartographic.fromDegrees(lngA, latA);
+		const end = Cartographic.fromDegrees(lngB, latB);
+		if (start.longitude === end.longitude && start.latitude === end.latitude)
+			return 0;
+		const heading = CesiumMath.toDegrees(
+			new EllipsoidGeodesic(start, end).startHeading,
+		);
+		return Number(((heading + 360) % 360).toFixed(2));
 	}
 }
 
