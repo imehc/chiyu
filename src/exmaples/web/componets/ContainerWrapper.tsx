@@ -1,5 +1,5 @@
 import type React from "react";
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useCallback, useRef } from "react";
 import { useContainerSize } from "../hooks/useContainerSize";
 import type { ContainerProps } from "./Container";
 import Container from "./Container";
@@ -68,7 +68,17 @@ export default forwardRef<HTMLDivElement, ContainerWrapperProps>(
 		const [width, height] = useContainerSize(internalRef);
 
 		// 同步内部 ref 到外部 forwardedRef
-		useImperativeHandle(forwardedRef, () => internalRef.current!, []);
+		const setContainerRef = useCallback(
+			(node: HTMLDivElement | null) => {
+				internalRef.current = node;
+				if (typeof forwardedRef === "function") {
+					forwardedRef(node);
+				} else if (forwardedRef) {
+					forwardedRef.current = node;
+				}
+			},
+			[forwardedRef],
+		);
 
 		// 判断 children 是否为函数
 		const isFunction = typeof children === "function";
@@ -83,7 +93,7 @@ export default forwardRef<HTMLDivElement, ContainerWrapperProps>(
 		};
 
 		return (
-			<Container ref={internalRef} {...containerProps}>
+			<Container ref={setContainerRef} {...containerProps}>
 				{width > 0 && height > 0 ? (
 					useFixedWrapper ? (
 						// 使用绝对定位 wrapper 完全脱离文档流，防止子元素撑开容器

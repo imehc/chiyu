@@ -22,15 +22,14 @@ import { type RefObject, useEffect, useState } from "react";
  * ```
  */
 export function useContainerSize<T extends HTMLElement = HTMLDivElement>(
-	containerRef: RefObject<T>,
+	containerRef: RefObject<T | null>,
 ): [number, number] {
 	const [dimensions, setDimensions] = useState<[number, number]>([0, 0]);
 
 	useEffect(() => {
 		const updateSize = () => {
 			if (containerRef.current) {
-				const { width, height } =
-					containerRef.current.getBoundingClientRect();
+				const { width, height } = containerRef.current.getBoundingClientRect();
 				setDimensions([width, height]);
 			}
 		};

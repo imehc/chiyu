@@ -1,0 +1,71 @@
+.example {
+	max-width: 100%;
+	margin-bottom: 1.5rem;
+}
+
+.controls:empty {
+	display: none;
+}
+
+.stats {
+	/* biome-ignore lint/complexity/noImportantStyles: Override the third-party inline fixed position. */
+	position: absolute !important;
+	top: 0;
+	left: 0;
+}
+
+.panel {
+	margin-top: 0.75rem;
+	border: 1px solid var(--ifm-color-emphasis-300);
+	border-radius: var(--ifm-global-radius);
+	overflow: hidden;
+}
+
+.panel > summary {
+	padding: 0.75rem 1rem;
+	color: var(--ifm-font-color-base);
+	background: var(--ifm-background-surface-color);
+	font-size: 0.875rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.panel > summary:focus-visible {
+	outline: 2px solid var(--ifm-color-primary);
+	outline-offset: -3px;
+}
+
+.panel :global(.dg.main) {
+	float: none;
+	font-size: 12px;
+	text-shadow: none;
+}
+
+.panel :global(.dg .close-button) {
+	display: none;
+}
+
+.panel :global(.dg li:not(.folder)) {
+	height: 36px;
+	line-height: 36px;
+}
+
+.panel :global(.dg .closed li:not(.title)) {
+	height: 0;
+}
+
+.panel :global(.dg .c select) {
+	max-width: 100%;
+	margin-top: 7px;
+	min-height: 24px;
+}
+
+.panel :global(.dg .c input[type="text"]),
+.panel :global(.dg .slider) {
+	margin-top: 8px;
+}
+
+.panel :global(.dg .cr.function:focus-visible) {
+	outline: 2px solid var(--ifm-color-primary);
+	outline-offset: -2px;
+}

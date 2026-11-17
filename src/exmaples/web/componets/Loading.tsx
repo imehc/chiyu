@@ -1,3 +1,5 @@
+import styles from "./Loading.module.css";
+
 interface LoadingProps {
 	loadText?: string;
 }
@@ -9,7 +11,9 @@ export default function Loading({ loadText = "Loading..." }: LoadingProps) {
 				{/* Spinning loader */}
 				<div className="tw:relative tw:w-20 tw:h-20 tw:mb-6">
 					<div className="tw:absolute tw:inset-0 tw:border-4 tw:border-primary tw:border-t-transparent tw:rounded-full tw:animate-spin"></div>
-					<div className="tw:absolute tw:inset-2 tw:border-4 tw:border-secondary tw:border-b-transparent tw:rounded-full animate-spin-reverse"></div>
+					<div
+						className={`tw:absolute tw:inset-2 tw:border-4 tw:border-secondary tw:border-b-transparent tw:rounded-full ${styles.reverseSpinner}`}
+					></div>
 				</div>
 
 				{/* Loading text */}
@@ -17,20 +21,6 @@ export default function Loading({ loadText = "Loading..." }: LoadingProps) {
 					{loadText}
 				</div>
 			</div>
-
-			<style>{`
-					@keyframes spin-reverse {
-						from {
-							transform: rotate(360deg);
-						}
-						to {
-							transform: rotate(0deg);
-						}
-					}
-					.animate-spin-reverse {
-						animation: spin-reverse 1.5s linear infinite;
-					}
-				`}</style>
 		</div>
 	);
 }

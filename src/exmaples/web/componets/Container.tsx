@@ -1,12 +1,20 @@
 import ErrorBoundary from "@docusaurus/ErrorBoundary";
 import clsx from "clsx";
-import { forwardRef, type PropsWithChildren } from "react";
+import {
+	forwardRef,
+	type PropsWithChildren,
+	type ReactNode,
+	useEffect,
+	useRef,
+} from "react";
+import styles from "./Container.module.css";
 
 export interface ContainerProps {
 	className?: string;
 	hiddenBorder?: boolean;
 	autoHeight?: boolean;
 	fullWidth?: boolean;
+	controls?: ReactNode;
 }
 
 export default forwardRef<HTMLDivElement, PropsWithChildren<ContainerProps>>(
@@ -17,37 +25,62 @@ export default forwardRef<HTMLDivElement, PropsWithChildren<ContainerProps>>(
 			hiddenBorder = false,
 			autoHeight = false,
 			fullWidth = false,
+			controls,
 		},
 		ref,
 	) => {
+		const panelRef = useRef<HTMLDetailsElement>(null);
+		const hasControls = controls != null;
+		useEffect(() => {
+			if (hasControls && panelRef.current) {
+				panelRef.current.open = window.matchMedia("(min-width: 768px)").matches;
+			}
+		}, [hasControls]);
+
 		return (
 			<div
-				ref={ref}
+				data-example-root
 				className={clsx(
-					"tw:w-full tw:relative",
-					{ "tw:border tw:border-base-300 tw:box-border": !hiddenBorder },
-					{ "tw:aspect-video tw:overflow-hidden": !autoHeight },
-					[fullWidth ? "tw:w-full" : "tw:md:w-2xl"],
-					className,
+					styles.example,
+					fullWidth ? "tw:w-full" : "tw:w-full tw:md:w-2xl",
 				)}
 			>
-				<ErrorBoundary
-					fallback={({ error, tryAgain }) => (
-						<div className="tw:h-full tw:flex tw:flex-col tw:justify-center tw:items-center">
-							<div>Something went wrong</div>
-							<div className="tw:text-error">{error.message}</div>
-							<button
-								type="button"
-								className="tw:btn tw:btn-sm tw:btn-primary"
-								onClick={() => tryAgain()}
-							>
-								Reload
-							</button>
-						</div>
+				<div
+					ref={ref}
+					data-example-viewport
+					className={clsx(
+						"tw:w-full tw:relative",
+						{ "tw:border tw:border-base-300 tw:box-border": !hiddenBorder },
+						{ "tw:aspect-video tw:overflow-hidden": !autoHeight },
+						className,
 					)}
 				>
-					{children}
-				</ErrorBoundary>
+					<ErrorBoundary
+						fallback={({ error, tryAgain }) => (
+							<div className="tw:h-full tw:flex tw:flex-col tw:justify-center tw:items-center">
+								<div>Something went wrong</div>
+								<div className="tw:text-error">{error.message}</div>
+								<button
+									type="button"
+									className="tw:btn tw:btn-sm tw:btn-primary"
+									onClick={() => tryAgain()}
+								>
+									Reload
+								</button>
+							</div>
+						)}
+					>
+						{children}
+					</ErrorBoundary>
+				</div>
+				<div data-example-controls className={styles.controls}>
+					{hasControls && (
+						<details ref={panelRef} className={styles.panel}>
+							<summary>操作面板</summary>
+							{controls}
+						</details>
+					)}
+				</div>
 			</div>
 		);
 	},
