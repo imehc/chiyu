@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	Cartesian3,
 	Math as CesiumMath,
@@ -64,14 +65,10 @@ export function initViewer(el: HTMLElement) {
 	});
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.top = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 视频控制状态
-	let currentVideoInstance: Video = null;
+	let currentVideoInstance: Video | null = null;
 	let currentVideoElement: HTMLVideoElement | null = null;
 	let currentHls: Hls | null = null;
 
@@ -182,9 +179,11 @@ function loadVideo(viewer: Viewer, container: HTMLElement): HTMLVideoElement {
 
 	// 等待视频加载完成后创建多边形
 	video.addEventListener("loadedmetadata", () => {
+		if (viewer.isDestroyed() || !video.isConnected) return;
 		video
 			.play()
 			.then(() => {
+				if (viewer.isDestroyed() || !video.isConnected) return;
 				createVideoPolygons(viewer, video);
 			})
 			.catch((error) => {
@@ -249,7 +248,7 @@ function loadLiveVideo(
 	// HLS直播流地址 (示例地址，实际使用时需要替换为有效的HLS流地址)
 	const videoSrc =
 		// "https://sqhls2.ys7.com:7989/v3/openlive/FX4619647_2_1.m3u8?expire=1778830562&id=844961679353290752&t=c843557c001d3a833dfb4f5ab347d319f3847d85b63fb1642bf52e754517a28a&ev=100&u=4bcf089e4d424b9583ac48430a7ef177";
-		"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+		"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
 
 	// 视频投影配置 (与参考HTML中的配置一致，但使用武汉附近的坐标)
 	const options = {
@@ -272,9 +271,11 @@ function loadLiveVideo(
 		hls.loadSource(videoSrc);
 		hls.attachMedia(videoElement);
 		hls.on(Hls.Events.MANIFEST_PARSED, () => {
+			if (viewer.isDestroyed() || !videoElement.isConnected) return;
 			videoElement
 				.play()
 				.then(() => {
+					if (viewer.isDestroyed() || !videoElement.isConnected) return;
 					// 视频开始播放后，才创建视频投影
 					videoInstance.drawVideo();
 				})
@@ -286,9 +287,11 @@ function loadLiveVideo(
 		// Safari浏览器原生支持HLS
 		videoElement.src = videoSrc;
 		videoElement.addEventListener("loadedmetadata", () => {
+			if (viewer.isDestroyed() || !videoElement.isConnected) return;
 			videoElement
 				.play()
 				.then(() => {
+					if (viewer.isDestroyed() || !videoElement.isConnected) return;
 					// 视频开始播放后，才创建视频投影
 					videoInstance.drawVideo();
 				})

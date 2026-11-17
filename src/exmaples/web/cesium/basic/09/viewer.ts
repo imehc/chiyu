@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	Cartesian3,
 	Math as CesiumMath,
@@ -59,23 +60,26 @@ export function initViewer(el: HTMLElement) {
 	new CesiumNavigation(viewer, options);
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.bottom = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 示例配置
 	const controls = {
 		模型类型: "fengche",
 	};
 
+	let modelVersion = 0;
 	// 可用的模型类型
 	const modelTypes = {
 		fengche: () => {
-			loadFengcheModel(viewer);
+			const version = ++modelVersion;
+			loadFengcheModel(viewer, () => version !== modelVersion).catch(
+				(error) => {
+					if (!viewer.isDestroyed()) console.error("加载模型失败:", error);
+				},
+			);
 		},
 		pudong: () => {
+			++modelVersion;
 			loadShanghaipudongModel(viewer);
 		},
 	};
@@ -89,7 +93,7 @@ export function initViewer(el: HTMLElement) {
 		});
 
 	// 默认加载风车模型
-	loadFengcheModel(viewer);
+	modelTypes.fengche();
 
 	return { viewer, gui };
 }
@@ -121,12 +125,13 @@ function loadShanghaipudongModel(viewer: Viewer) {
 	viewer.flyTo(entity);
 }
 
-async function loadFengcheModel(viewer: Viewer) {
+async function loadFengcheModel(viewer: Viewer, isStale: () => boolean) {
 	removeEntities(viewer);
 	// 先加载地形
 	const terrainProvider = await CesiumTerrainProvider.fromUrl(
 		"//data.mars3d.cn/terrain",
 	);
+	if (viewer.isDestroyed() || isStale()) return;
 	viewer.terrainProvider = terrainProvider;
 
 	viewer.camera.setView({

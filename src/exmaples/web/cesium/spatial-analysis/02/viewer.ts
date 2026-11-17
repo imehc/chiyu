@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	Cesium3DTileset,
 	EllipsoidTerrainProvider,
@@ -62,6 +63,10 @@ export function initViewer(el: HTMLElement) {
 	// 加载3D Tiles模型
 	Cesium3DTileset.fromUrl("/cesium/02/data/tileset.json")
 		.then((tileset) => {
+			if (viewer.isDestroyed()) {
+				tileset.destroy();
+				return;
+			}
 			viewer.scene.primitives.add(tileset);
 			viewer.zoomTo(tileset);
 		})
@@ -70,11 +75,7 @@ export function initViewer(el: HTMLElement) {
 		});
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.top = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 日照分析实例
 	let sunlightAnalysis: SunlightAnalysis | null = null;
@@ -138,7 +139,10 @@ export function initViewer(el: HTMLElement) {
 		.add(controls, "startTime", 0, 23, 1)
 		.name("开始时间 (小时)")
 		.listen();
-	paramsFolder.add(controls, "stopTime", 0, 23, 1).name("结束时间 (小时)").listen();
+	paramsFolder
+		.add(controls, "stopTime", 0, 23, 1)
+		.name("结束时间 (小时)")
+		.listen();
 	paramsFolder
 		.add(controls, "multiplier", 1, 2000, 10)
 		.name("时间流逝速率")

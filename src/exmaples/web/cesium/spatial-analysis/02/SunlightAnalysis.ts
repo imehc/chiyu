@@ -1,9 +1,4 @@
-import {
-	ClockRange,
-	ClockStep,
-	JulianDate,
-	type Viewer,
-} from "cesium";
+import { ClockRange, ClockStep, JulianDate, type Viewer } from "cesium";
 
 /** 日照分析配置选项 */
 interface SunlightAnalysisOptions {
@@ -69,7 +64,8 @@ class SunlightAnalysis {
 			viewer.clock.startTime = JulianDate.fromDate(startDate);
 			viewer.clock.stopTime = JulianDate.fromDate(stopDate);
 			viewer.clock.clockRange = config.clockRange ?? ClockRange.LOOP_STOP;
-			viewer.clock.clockStep = config.clockStep ?? ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+			viewer.clock.clockStep =
+				config.clockStep ?? ClockStep.SYSTEM_CLOCK_MULTIPLIER;
 			viewer.clock.multiplier = config.multiplier ?? 500;
 
 			// 设置当前时间
@@ -87,7 +83,12 @@ class SunlightAnalysis {
 	/**
 	 * 播放日照动画
 	 */
-	play(day: string, startTime: number, stopTime: number, multiplier: number): void {
+	play(
+		day: string,
+		startTime: number,
+		stopTime: number,
+		multiplier: number,
+	): void {
 		this.analysis({
 			viewer: this.viewer,
 			play: true,

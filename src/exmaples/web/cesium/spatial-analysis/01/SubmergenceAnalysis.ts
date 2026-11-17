@@ -117,9 +117,7 @@ class SubmergenceAnalysis {
 	 * 坐标转换
 	 * 将各种坐标格式转换为 Cartesian3 数组
 	 */
-	private coordsTransformation(
-		coords: number[] | CoordPoint[],
-	): Cartesian3[] {
+	private coordsTransformation(coords: number[] | CoordPoint[]): Cartesian3[] {
 		const result: Cartesian3[] = [];
 
 		// 如果是数字数组
@@ -147,12 +145,7 @@ class SubmergenceAnalysis {
 				p = Cartesian3.fromDegrees(point.lng, point.lat);
 			} else if ("x" in point && "y" in point) {
 				// 检查是否是经纬度
-				if (
-					point.x < 180 &&
-					point.x > -180 &&
-					point.y < 90 &&
-					point.y > -90
-				) {
+				if (point.x < 180 && point.x > -180 && point.y < 90 && point.y > -90) {
 					p = Cartesian3.fromDegrees(point.x, point.y);
 				} else {
 					// 假定是笛卡尔坐标
@@ -258,4 +251,4 @@ class SubmergenceAnalysis {
 }
 
 export default SubmergenceAnalysis;
-export type { SubmergenceAnalysisOptions, CoordPoint };
+export type { CoordPoint, SubmergenceAnalysisOptions };

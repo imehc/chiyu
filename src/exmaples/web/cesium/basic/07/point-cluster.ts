@@ -43,8 +43,8 @@ export default class PointCluster {
 	private supercluster: Supercluster;
 
 	// 渲染集合 (比DataSource底层且快得多)
-	private billboards: BillboardCollection;
-	private labels: LabelCollection;
+	private billboards: BillboardCollection | null;
+	private labels: LabelCollection | null;
 
 	// 缓存背景圆圈的Canvas DataURL，避免重复绘制
 	private circleCache: Record<string, string> = {};
@@ -91,7 +91,7 @@ export default class PointCluster {
 	 * 加载数据
 	 */
 	public loadData(results: GeoJSON | Point[]) {
-		let points: Array<Feature<GeoPoint>> = [];
+		let points: Array<Feature<GeoPoint, Record<string, unknown>>> = [];
 
 		// 1. 数据标准化为 GeoJSON Feature 数组
 		if (Array.isArray(results)) {
@@ -101,7 +101,12 @@ export default class PointCluster {
 				geometry: { type: "Point", coordinates: [p.x, p.y] },
 			}));
 		} else if (results.type === "FeatureCollection") {
-			points = results.features as Array<Feature<GeoPoint>>;
+			points = results.features
+				.filter((feature) => feature.geometry?.type === "Point")
+				.map((feature) => ({
+					...feature,
+					properties: feature.properties ?? {},
+				})) as Array<Feature<GeoPoint, Record<string, unknown>>>;
 		}
 
 		// 2. 载入 Supercluster
@@ -131,7 +136,13 @@ export default class PointCluster {
 	 * 核心渲染逻辑：根据当前相机状态获取聚合点并绘制
 	 */
 	private updateView() {
-		if (!this.option.enable) return;
+		if (
+			!this.option.enable ||
+			!this.billboards ||
+			!this.labels ||
+			this.viewer.isDestroyed()
+		)
+			return;
 
 		// 1. 获取当前视野范围
 		const rect = this.viewer.camera.computeViewRectangle();

@@ -62,7 +62,8 @@ export function initViewer(el: HTMLElement) {
 }
 
 export async function loadCZML(viewer: Viewer) {
-	const czmldata = await CzmlDataSource.load('/cesium/08/wx.czml')
-	viewer.dataSources.add(czmldata)
+	const czmldata = await CzmlDataSource.load("/cesium/08/wx.czml");
+	if (viewer.isDestroyed()) return;
+	viewer.dataSources.add(czmldata);
 	viewer.clock.shouldAnimate = true;
 }

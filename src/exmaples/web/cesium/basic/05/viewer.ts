@@ -54,15 +54,16 @@ export async function loadShpFile(viewer: Viewer) {
 		// 使用完整URL - shpjs 需要完整的 URL
 		const baseUrl = window.location.origin;
 		const geojson = await shp(`${baseUrl}/cesium/05/shp2/唐家泊果园.shp`);
+		if (viewer.isDestroyed()) return;
 		const dataSource = await GeoJsonDataSource.load(geojson, {
 			clampToGround: true, // 贴地显示
 			fill: Color.YELLOW.withAlpha(0.6), // 填充颜色
 		});
+		if (viewer.isDestroyed()) return;
 		viewer.dataSources.add(dataSource);
 
 		viewer.flyTo(dataSource);
 	} catch (error) {
 		console.error("加载SHP失败:", error);
-		throw error;
 	}
 }

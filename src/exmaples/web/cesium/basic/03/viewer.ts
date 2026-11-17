@@ -10,7 +10,7 @@ import CesiumNavigation, {
 	type NavigationOptions,
 } from "cesium-navigation-es6";
 import proj4 from "proj4";
-import './projDefs'
+import "./projDefs";
 
 /**
  * 坐标系转换
@@ -43,23 +43,30 @@ export function initViewer(el: HTMLElement) {
 	// viewer.scene.globe.depthTestAgainstTerrain = true; // 启用深度检测
 
 	// 转换坐标
-	const convertedCoords = proj4("EPSG:4547", "EPSG:4326", [-219284.60702296568, 3295137.2366858963]);
+	const convertedCoords = proj4(
+		"EPSG:4547",
+		"EPSG:4326",
+		[-219284.60702296568, 3295137.2366858963],
+	);
 	console.log(convertedCoords);
 	const helper = new EventHelper();
-	helper.add(viewer.scene.globe.tileLoadProgressEvent, (queuedTileCount: number) => {
-		if (queuedTileCount === 0) {
-			// 所有瓦片加载完成
-			viewer.camera.flyTo({
-				destination: Cartesian3.fromDegrees(
-					convertedCoords[0],
-					convertedCoords[1],
-					10000
-				),
-				duration: 2,
-			});
-			helper.removeAll(); // 清理监听器
-		}
-	});
+	helper.add(
+		viewer.scene.globe.tileLoadProgressEvent,
+		(queuedTileCount: number) => {
+			if (queuedTileCount === 0) {
+				// 所有瓦片加载完成
+				viewer.camera.flyTo({
+					destination: Cartesian3.fromDegrees(
+						convertedCoords[0],
+						convertedCoords[1],
+						10000,
+					),
+					duration: 2,
+				});
+				helper.removeAll(); // 清理监听器
+			}
+		},
+	);
 
 	const options = {
 		enableCompass: true,

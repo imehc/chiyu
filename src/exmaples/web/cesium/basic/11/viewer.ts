@@ -3,7 +3,6 @@ import {
 	Cesium3DTileset,
 	defined,
 	EllipsoidTerrainProvider,
-	ScreenSpaceEventHandler,
 	ScreenSpaceEventType,
 	UrlTemplateImageryProvider,
 	Viewer,
@@ -45,11 +44,15 @@ export async function loadPointInfo(viewer: Viewer) {
 	const tileset = await Cesium3DTileset.fromUrl(
 		"/cesium/11/buildings/tileset.json",
 	);
+	if (viewer.isDestroyed()) {
+		tileset.destroy();
+		return;
+	}
 	tileset.debugShowBoundingVolume = true;
 	viewer.scene.primitives.add(tileset);
 	viewer.zoomTo(tileset);
 
-	const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
+	const handler = viewer.screenSpaceEventHandler;
 	handler.setInputAction((movement: { position: Cartesian2 }) => {
 		const pickedFeature = viewer.scene.pick(movement.position);
 		if (defined(pickedFeature)) {

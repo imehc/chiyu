@@ -1,4 +1,6 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
+	type Cartesian2,
 	Cartesian3,
 	Cartographic,
 	Math as CesiumMath,
@@ -55,6 +57,7 @@ export function initViewer(el: HTMLElement) {
 		requestVertexNormals: true,
 	})
 		.then((terrainProvider) => {
+			if (viewer.isDestroyed()) return;
 			viewer.scene.terrainProvider = terrainProvider;
 			console.log("地形加载成功");
 		})
@@ -88,11 +91,7 @@ export function initViewer(el: HTMLElement) {
 	});
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.top = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 通视分析实例
 	let sightlineAnalysis: SightlineAnalysis | null = null;
@@ -221,7 +220,7 @@ export function initViewer(el: HTMLElement) {
 	let pickingMode: "start" | "end" | null = null;
 
 	const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
-	handler.setInputAction((movement) => {
+	handler.setInputAction((movement: { position: Cartesian2 }) => {
 		if (!pickingMode) return;
 
 		const cartesian = viewer.camera.pickEllipsoid(

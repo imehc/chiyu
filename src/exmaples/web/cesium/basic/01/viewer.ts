@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	EllipsoidTerrainProvider,
 	GeographicTilingScheme,
@@ -43,11 +44,7 @@ export function initViewer(el: HTMLElement) {
 	viewer.scene.terrainProvider = new EllipsoidTerrainProvider({}); //移除默认地形
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.bottom = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 底图配置
 	const imageryOptions: Record<string, keyof typeof imageryTypes> = {

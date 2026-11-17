@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	Cartesian3,
 	CesiumTerrainProvider,
@@ -49,6 +50,7 @@ export function initViewer(el: HTMLElement) {
 		requestVertexNormals: true,
 	})
 		.then((terrainProvider) => {
+			if (viewer.isDestroyed()) return;
 			viewer.scene.terrainProvider = terrainProvider;
 			viewer.scene.globe.depthTestAgainstTerrain = true; // 启用深度检测
 		})
@@ -72,11 +74,7 @@ export function initViewer(el: HTMLElement) {
 	new CesiumNavigation(viewer, options);
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.top = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 淹没区域坐标（经纬度）
 	const floodAreaCoords = [

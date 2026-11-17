@@ -3,7 +3,7 @@ import SkyBoxOnGround, { type SkyBoxOnGroundOption } from "./SkyBoxOnGround";
 
 export default class SkyBox {
 	private viewer: Viewer;
-	private defaultSkyBox: CesiumSkyBox | null = null;
+	private defaultSkyBox: CesiumSkyBox | undefined;
 	private skyBoxOnGroundInstance: SkyBoxOnGround | null = null;
 
 	constructor(viewer: Viewer) {
@@ -28,7 +28,8 @@ export default class SkyBox {
 
 		// 恢复默认天空盒
 		this.viewer.scene.skyBox = this.defaultSkyBox;
-		this.viewer.scene.skyAtmosphere.show = true;
+		if (this.viewer.scene.skyAtmosphere)
+			this.viewer.scene.skyAtmosphere.show = true;
 	}
 
 	/**

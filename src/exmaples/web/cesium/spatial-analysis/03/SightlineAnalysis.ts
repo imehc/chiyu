@@ -29,9 +29,9 @@ interface SightlineAnalysisOptions {
 	/** Cesium Viewer 实例 */
 	viewer: Viewer;
 	/** 观测点坐标（笛卡尔坐标） */
-	startPoint?: Cartesian3;
+	startPoint: Cartesian3;
 	/** 目的点坐标（笛卡尔坐标） */
-	endPoint?: Cartesian3;
+	endPoint: Cartesian3;
 	/** 可见线段颜色 */
 	visibleColor?: Color;
 	/** 不可见线段颜色 */
@@ -214,7 +214,7 @@ class SightlineAnalysis {
 			// 拾取该屏幕位置对应的实际地表点
 			const surfacePoint = this.pickCartesian(tempWindowPoint);
 
-			if (!surfacePoint || !surfacePoint.cartesian) {
+			if (!surfacePoint?.cartesian) {
 				continue;
 			}
 
@@ -296,7 +296,9 @@ class SightlineAnalysis {
 	/**
 	 * 将世界坐标转换为屏幕坐标
 	 */
-	private convertCartesian3ToCartesian2(position: Cartesian3): Cartesian2 {
+	private convertCartesian3ToCartesian2(
+		position: Cartesian3,
+	): Cartesian2 | undefined {
 		return SceneTransforms.worldToWindowCoordinates(
 			this.viewer.scene,
 			position,
@@ -488,4 +490,4 @@ class SightlineAnalysis {
 }
 
 export default SightlineAnalysis;
-export type { SightlineAnalysisOptions, SightlineResult, PickResult };
+export type { PickResult, SightlineAnalysisOptions, SightlineResult };

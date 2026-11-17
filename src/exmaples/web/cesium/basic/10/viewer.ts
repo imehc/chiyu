@@ -2,6 +2,7 @@ import {
 	TencentImageryProvider,
 	type TencentImageryProviderOptions,
 } from "@cesium-china/cesium-map";
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	Cesium3DTileset,
 	CustomShader,
@@ -26,7 +27,10 @@ import { GUI } from "dat.gui";
  * @returns 返回配置好的 Viewer 实例和 GUI
  */
 
-export async function initViewer(el: HTMLElement) {
+export async function initViewer(
+	el: HTMLElement,
+	onViewerCreated?: (viewer: Viewer) => void,
+) {
 	const viewer = new Viewer(el, {
 		baseLayerPicker: false, // 隐藏底图选择器
 		animation: false, // 隐藏动画控件
@@ -39,6 +43,7 @@ export async function initViewer(el: HTMLElement) {
 		selectionIndicator: false, // 隐藏选择指示器
 		navigationHelpButton: false, // 隐藏导航帮助按钮
 	});
+	onViewerCreated?.(viewer);
 	// viewer.scene.globe.depthTestAgainstTerrain = true; // 启用深度检测
 	viewer.scene.debugShowFramesPerSecond = true; // 显示帧率
 	viewer.imageryLayers.remove(viewer.imageryLayers.get(0)); // 移除默认影像
@@ -63,7 +68,17 @@ export async function initViewer(el: HTMLElement) {
 		ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
 	);
 
-	const tileset = await Cesium3DTileset.fromUrl("/cesium/02/data/tileset.json");
+	let tileset: Cesium3DTileset;
+	try {
+		tileset = await Cesium3DTileset.fromUrl("/cesium/02/data/tileset.json");
+	} catch (error) {
+		if (!viewer.isDestroyed()) viewer.destroy();
+		throw error;
+	}
+	if (viewer.isDestroyed()) {
+		tileset.destroy();
+		return;
+	}
 	tileset.debugShowBoundingVolume = true;
 	viewer.scene.primitives.add(tileset);
 	viewer.zoomTo(tileset);
@@ -75,11 +90,7 @@ export async function initViewer(el: HTMLElement) {
 	new CesiumNavigation(viewer, options);
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.bottom = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 示例配置
 	const controls = {

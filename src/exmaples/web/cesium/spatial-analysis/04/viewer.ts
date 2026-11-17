@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	Cartesian3,
 	Math as CesiumMath,
@@ -52,6 +53,7 @@ export function initViewer(el: HTMLElement) {
 		requestVertexNormals: true,
 	})
 		.then((terrainProvider) => {
+			if (viewer.isDestroyed()) return;
 			viewer.scene.terrainProvider = terrainProvider;
 			console.log("地形加载成功");
 		})
@@ -96,11 +98,7 @@ export function initViewer(el: HTMLElement) {
 	});
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.top = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 控制参数
 	const controls = {

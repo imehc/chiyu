@@ -6,7 +6,7 @@ import {
 import CesiumNavigation, {
 	type NavigationOptions,
 } from "cesium-navigation-es6";
-import type { GeoJSON } from "geojson";
+import type { FeatureCollection, GeoJSON, Point as GeoPoint } from "geojson";
 import PointCluster, { type Point } from "./point-cluster";
 
 /**
@@ -85,7 +85,7 @@ export function randomPointsWithinBbox(
 	type?: "geojson",
 ): GeoJSON | Point[] {
 	if (type === "geojson") {
-		const pointMap = {
+		const pointMap: FeatureCollection<GeoPoint, { value: number }> = {
 			type: "FeatureCollection",
 			features: [],
 		} satisfies GeoJSON;

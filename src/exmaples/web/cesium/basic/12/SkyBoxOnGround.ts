@@ -1,4 +1,4 @@
-import type { Scene } from "cesium";
+import type { SkyBox as CesiumSkyBox, Scene } from "cesium";
 import SkyBox from "./cesium-modified/Scene/SkyBox.js";
 
 interface SkyBoxOnGroundSources {
@@ -19,8 +19,8 @@ export interface SkyBoxOnGroundOption {
 export default class SkyBoxOnGround {
 	private scene: Scene;
 	private option: SkyBoxOnGroundOption;
-	private groundSkyBox = null;
-	private defaultSkyBox = null;
+	private groundSkyBox: CesiumSkyBox | undefined;
+	private defaultSkyBox: CesiumSkyBox | undefined;
 	private removePostRenderListener: (() => void) | null = null;
 	private isDestroyed = false;
 
@@ -78,13 +78,13 @@ export default class SkyBoxOnGround {
 			if (this.scene.skyBox !== this.groundSkyBox) {
 				this.scene.skyBox = this.groundSkyBox;
 			}
-			this.scene.skyAtmosphere.show = false;
+			if (this.scene.skyAtmosphere) this.scene.skyAtmosphere.show = false;
 		} else {
 			// 高空：显示默认天空盒，显示大气层
 			if (this.scene.skyBox !== this.defaultSkyBox) {
 				this.scene.skyBox = this.defaultSkyBox;
 			}
-			this.scene.skyAtmosphere.show = true;
+			if (this.scene.skyAtmosphere) this.scene.skyAtmosphere.show = true;
 		}
 	}
 
@@ -123,13 +123,13 @@ export default class SkyBoxOnGround {
 		// 销毁近地天空盒
 		if (this.groundSkyBox?.destroy) {
 			this.groundSkyBox.destroy();
-			this.groundSkyBox = null;
+			this.groundSkyBox = undefined;
 		}
 
 		// 恢复默认天空盒和大气层
 		if (this.defaultSkyBox) {
 			this.scene.skyBox = this.defaultSkyBox;
-			this.scene.skyAtmosphere.show = true;
+			if (this.scene.skyAtmosphere) this.scene.skyAtmosphere.show = true;
 		}
 
 		this.isDestroyed = true;

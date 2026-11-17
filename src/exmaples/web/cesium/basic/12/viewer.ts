@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import {
 	Cartesian3,
 	Math as CesiumMath,
@@ -57,11 +58,7 @@ export function initViewer(el: HTMLElement) {
 	new CesiumNavigation(viewer, options);
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.top = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	let weather: Weather | null = null;
 	let skyBox: SkyBox | null = null;
@@ -178,7 +175,7 @@ export function initViewer(el: HTMLElement) {
 		},
 	};
 
-	function renderDefault(option?: WeatherOption) {
+	function renderDefault(option: WeatherOption) {
 		removeAll(weather, skyBox);
 		viewer.camera.setView({
 			destination: Cartesian3.fromDegrees(-95.166493, 39.9060534, 2000000),
@@ -233,7 +230,7 @@ export function initViewer(el: HTMLElement) {
 			cloudFolder = null;
 		}
 		(viewer.scene.canvas as HTMLCanvasElement).style.backgroundImage = ""; //清除背景图片
-		viewer.scene.skyBox.show = true; //显示天空盒
+		if (viewer.scene.skyBox) viewer.scene.skyBox.show = true; //显示天空盒
 		viewer.scene.backgroundColor = Color.BLACK; //恢复默认背景色
 	}
 
@@ -251,7 +248,7 @@ export function initViewer(el: HTMLElement) {
 
 type OnGroundType = "lantian" | "qingtian" | "wanxia";
 
-function loadSceneType(viewer: Viewer, option?: WeatherOption) {
+function loadSceneType(viewer: Viewer, option: WeatherOption) {
 	return new Weather(viewer, option);
 }
 
@@ -315,7 +312,7 @@ function loadSkyBox(viewer: Viewer, type?: OnGroundType, onGround = false) {
 function loadBackgroundImage(viewer: Viewer) {
 	viewer.scene.canvas.style.backgroundImage =
 		"url('/cesium/basic/12/backGroundImg.jpg')"; //设置背景图片
-	viewer.scene.skyBox.show = false; //不显示天空盒
+	if (viewer.scene.skyBox) viewer.scene.skyBox.show = false; //不显示天空盒
 	viewer.scene.backgroundColor = new Color(0.0, 0.0, 0.0, 0.0); //设置背景色透明
 }
 

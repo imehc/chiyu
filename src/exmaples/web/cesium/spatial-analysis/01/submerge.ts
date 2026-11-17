@@ -122,7 +122,7 @@ const submerge = {
 	/** url参数获取 */
 	getRequest: () => {
 		const url = location.search;
-		const theRequest = new Object();
+		const theRequest: Record<string, string> = {};
 		if (url.indexOf("?") !== -1) {
 			const str = url.substring(1);
 			const strs = str.split("&");
@@ -153,12 +153,13 @@ const submerge = {
 			return copy;
 		}
 		if (typeof obj === "object") {
-			const copy = {};
+			const copy: Record<string, unknown> = {};
 			for (const attr in obj) {
 				if (attr === "_layer" || attr === "_layers" || attr === "_parent")
 					continue;
 
-				if (Object.hasOwn(obj, attr)) copy[attr] = clone(obj[attr]);
+				if (Object.hasOwn(obj, attr))
+					copy[attr] = clone((obj as Record<string, unknown>)[attr]);
 			}
 			return copy;
 		}
@@ -410,7 +411,7 @@ const submerge = {
 			const n2 = o2.num;
 			const t1 = o1.times;
 			const t2 = o2.times;
-			const max = t1 > t2 ? t1 : t2;
+			const max = Math.max(t1, t2);
 			let result = 0;
 
 			switch (op) {

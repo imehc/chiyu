@@ -47,7 +47,11 @@ export class Popup {
 		ctn.style.transform = "translate(-50%, -100%)";
 		this.option.viewer.container.appendChild(ctn);
 
-		ctn.innerHTML = this.createHtml(content.header, content.content, isClose);
+		ctn.innerHTML = this.createHtml(
+			content.header ?? "",
+			content.content,
+			isClose,
+		);
 		this.ctnMap[id] = [position, ctn];
 		this.render();
 		if (!this.eventListener) {
@@ -77,7 +81,10 @@ export class Popup {
 				this.option.viewer.scene,
 				element[0],
 			);
-			if (!pos.x || !pos.y) continue;
+			if (!pos) {
+				element[1].style.display = "none";
+				continue;
+			}
 			if (
 				Math.abs(pos.x) > window.innerWidth * 2 ||
 				Math.abs(pos.y) > window.innerHeight * 2
@@ -113,7 +120,7 @@ export class Popup {
 	private close(el: HTMLElement) {
 		el.remove();
 		delete this.ctnMap[el.id];
-		if (Object.keys(this.ctnMap).length === 0) {
+		if (Object.keys(this.ctnMap).length === 0 && this.eventListener) {
 			this.option.viewer.clock.onTick.removeEventListener(this.eventListener);
 			this.eventListener = null;
 		}
@@ -136,7 +143,9 @@ export class Popup {
 			this.ctnMap[c][1].remove();
 		}
 		this.ctnMap = {};
-		this.option.viewer.clock.onTick.removeEventListener(this.eventListener);
+		if (this.eventListener) {
+			this.option.viewer.clock.onTick.removeEventListener(this.eventListener);
+		}
 		this.eventListener = null;
 	}
 }

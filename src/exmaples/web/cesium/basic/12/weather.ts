@@ -12,24 +12,15 @@ export default class Weather {
 	constructor(viewer: Viewer, option: WeatherOption) {
 		this.viewer = viewer;
 		this.option = option;
-		let stage = this.getStage();
-		let fs: string;
-		if (stage === null) {
-			switch (option.type) {
-				case "snow":
-					fs = this.fsSnow();
-					break;
-				case "rain":
-					fs = this.fsRain();
-					break;
-				case "fog":
-					fs = this.fsFog();
-					break;
-			}
-		}
-		stage = new PostProcessStage({
+		if (this.getStage()) return;
+		const shaders = {
+			snow: this.fsSnow(),
+			rain: this.fsRain(),
+			fog: this.fsFog(),
+		};
+		const stage = new PostProcessStage({
 			name: option.name,
-			fragmentShader: fs,
+			fragmentShader: shaders[option.type],
 			uniforms: {
 				color: Color.fromAlpha(Color.BLACK, 1),
 			},
@@ -44,8 +35,9 @@ export default class Weather {
 		}
 	}
 	private getStage() {
-		let stage: ReturnType<typeof this.viewer.scene.postProcessStages.get> =
-				null,
+		let stage: ReturnType<
+				typeof this.viewer.scene.postProcessStages.get
+			> | null = null,
 			stages = this.viewer.scene.postProcessStages;
 		for (let i = 0; i < stages.length; i++) {
 			const tmp = stages.get(i);

@@ -9,15 +9,22 @@ export default function App() {
 		const container = ref.current;
 		if (!container) return;
 
+		let disposed = false;
 		let viewer: Viewer;
 
 		// Dynamic import to ensure Cesium is only loaded on the client side
-		import("./viewer").then(async ({ initViewer, loadCZML }) => {
-			viewer = initViewer(container);
-			await loadCZML(viewer);
-		});
+		import("./viewer")
+			.then(async ({ initViewer, loadCZML }) => {
+				if (disposed) return;
+				viewer = initViewer(container);
+				await loadCZML(viewer);
+			})
+			.catch((error) => {
+				if (!disposed) console.error("场景加载失败:", error);
+			});
 
 		return () => {
+			disposed = true;
 			if (viewer && !viewer.isDestroyed()) {
 				viewer.destroy();
 			}

@@ -1,3 +1,4 @@
+import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
 import { randomPoint } from "@turf/turf";
 import {
 	BillboardCollection,
@@ -8,7 +9,7 @@ import {
 	HeightReference,
 	HorizontalOrigin,
 	NearFarScalar,
-	ScreenSpaceEventHandler,
+	type ScreenSpaceEventHandler,
 	ScreenSpaceEventType,
 	UrlTemplateImageryProvider,
 	VerticalOrigin,
@@ -70,11 +71,7 @@ export function initViewer(el: HTMLElement) {
 	new CesiumNavigation(viewer, options);
 
 	// 创建 dat.gui 控制面板
-	const gui = new GUI();
-	gui.domElement.style.position = "fixed";
-	gui.domElement.style.bottom = "50%";
-	gui.domElement.style.transform = "translateY(-50%)";
-	gui.domElement.style.left = "0";
+	const gui = mountExampleGui(new GUI({ autoPlace: false }), el);
 
 	// 示例配置
 	const controls = {
@@ -356,7 +353,7 @@ function loadPopup(viewer: Viewer) {
 	};
 
 	// 添加点击事件监听
-	const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
+	const handler = viewer.screenSpaceEventHandler;
 	handler.setInputAction(
 		(movement: ScreenSpaceEventHandler.PositionedEvent) => {
 			const pickedObject = viewer.scene.pick(movement.position);
@@ -375,7 +372,13 @@ function loadPopup(viewer: Viewer) {
 		.flyTo(entity, {
 			offset: new HeadingPitchRange(0, -Math.PI / 4, 50000), // 距离50000米，俯角45度
 		})
-		.then(() => {
+		.then((completed) => {
+			if (
+				!completed ||
+				viewer.isDestroyed() ||
+				!viewer.entities.contains(entity)
+			)
+				return;
 			// 动画结束后显示弹窗
 			popupId = popup.add(mockData);
 		});

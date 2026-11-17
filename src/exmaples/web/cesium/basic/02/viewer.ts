@@ -1,5 +1,6 @@
 import {
 	type Cartesian2,
+	Cesium3DTileFeature,
 	Cesium3DTileset,
 	Color,
 	defined,
@@ -44,7 +45,13 @@ export function initViewer(el: HTMLElement) {
 
 export async function loadFiles(viewer: Viewer) {
 	try {
-		const tileset = await Cesium3DTileset.fromUrl("/cesium/02/data/tileset.json")
+		const tileset = await Cesium3DTileset.fromUrl(
+			"/cesium/02/data/tileset.json",
+		);
+		if (viewer.isDestroyed()) {
+			tileset.destroy();
+			return;
+		}
 		tileset.debugShowBoundingVolume = true;
 		viewer.scene.primitives.add(tileset);
 		viewer.zoomTo(tileset);
@@ -91,12 +98,17 @@ export async function loadFiles(viewer: Viewer) {
 			ScreenSpaceEventType.MOUSE_MOVE,
 		);
 
-		const highlighted = {
+		const highlighted: {
+			feature: Cesium3DTileFeature | undefined;
+			originalColor: Color;
+		} = {
 			feature: undefined,
-			originalColor: new Color()
+			originalColor: new Color(),
 		};
 
-		viewer.screenSpaceEventHandler.setInputAction(function leftClick(movement: { position: Cartesian2; }) {
+		viewer.screenSpaceEventHandler.setInputAction(function leftClick(movement: {
+			position: Cartesian2;
+		}) {
 			var pickedFeature = viewer.scene.pick(movement.position);
 			if (defined(pickedFeature)) {
 				silhouetteGreen.selected = [pickedFeature];
@@ -108,13 +120,14 @@ export async function loadFiles(viewer: Viewer) {
 			}
 
 			// 如果未选中任何要素，则直接返回
-			if (!defined(pickedFeature)) {
+			if (!(pickedFeature instanceof Cesium3DTileFeature)) {
 				return;
 			}
 
 			// 存储当前选中要素的原始颜色，并应用新的高亮颜色
 			highlighted.feature = pickedFeature;
-			if (defined(pickedFeature.color)) { // 确保feature有color属性
+			if (defined(pickedFeature.color)) {
+				// 确保feature有color属性
 				Color.clone(pickedFeature.color, highlighted.originalColor);
 				pickedFeature.color = Color.YELLOW; // 设置为高亮颜色，例如黄色
 			}

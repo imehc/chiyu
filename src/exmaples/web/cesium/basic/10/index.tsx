@@ -10,17 +10,27 @@ export default function App() {
 		const container = ref.current;
 		if (!container) return;
 
+		let disposed = false;
 		let viewer: Viewer;
 		let gui: GUI;
 
 		// Dynamic import to ensure Cesium is only loaded on the client side
-		import("./viewer").then(async ({ initViewer }) => {
-			const result = await initViewer(container);
-			viewer = result.viewer;
-			gui = result.gui;
-		});
+		import("./viewer")
+			.then(async ({ initViewer }) => {
+				if (disposed) return;
+				const result = await initViewer(container, (instance) => {
+					viewer = instance;
+				});
+				if (!result) return;
+				viewer = result.viewer;
+				gui = result.gui;
+			})
+			.catch((error) => {
+				if (!disposed) console.error("场景加载失败:", error);
+			});
 
 		return () => {
+			disposed = true;
 			if (viewer && !viewer.isDestroyed()) {
 				viewer.destroy();
 			}
