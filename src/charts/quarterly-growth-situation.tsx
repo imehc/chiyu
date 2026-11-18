@@ -185,7 +185,7 @@ export default function QuarterlyGrowthSituation() {
 			id="right-card"
 			class="tw:flex-1 tw:mb-3 tw:translate-x-[150%] tw:opacity-0"
 		>
-			<Card title="专项资金用途">
+			<Card title="各季度增长情况">
 				<div ref={chartRef} class="tw:size-full" />
 			</Card>
 		</div>

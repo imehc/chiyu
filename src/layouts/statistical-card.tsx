@@ -1,5 +1,13 @@
-import type { Statistical } from "../helper/map";
 import { cn } from "../utils/cn";
+
+export interface Statistical {
+	icon: "xiaoshoujine" | "zongxiaoliang";
+	zhLabel: string;
+	enLabel: string;
+	value: number;
+	unit: string;
+	decimals?: number;
+}
 import StatisticalCount from "./statistical-count";
 
 export default function StatisticalCard({

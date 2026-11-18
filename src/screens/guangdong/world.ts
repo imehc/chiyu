@@ -37,25 +37,31 @@ import {
 } from "three";
 import { InteractionManager } from "three.interactive";
 import labelIcon from "/texture/label-icon.png";
-import chinaData from "../maps/china";
-import provincesData from "../maps/guang-dong";
-import infoData from "../maps/info";
-import scatterData from "../maps/scatter";
-import { cn } from "../utils/cn";
-import emitter from "../utils/emitter";
-import type Assets from "./assets";
-import { sortByValue } from "./utils/sort-by-value";
-import WorldCore from "./world-core";
-import BaseMap from "./world-core/components/base-map";
-import ExtrudeMap from "./world-core/components/extrude-map";
-import Focus from "./world-core/components/focus";
-import Grid from "./world-core/components/grid";
-import Label3D, { type Label } from "./world-core/components/label-3d";
-import Line from "./world-core/components/line";
-import Particles from "./world-core/components/particles";
-import Plane from "./world-core/components/plane";
-import DiffuseShader from "./world-core/shader/diffuse-shader";
-import GradientShader from "./world-core/shader/gradient-shader";
+import { cn } from "../../utils/cn";
+import type Assets from "../../shared/map/assets";
+import type { MapWorldOptions } from "../../shared/map/map-3d";
+import {
+	buildFocusLabelHtml,
+	type FocusLabelAlign,
+} from "../../shared/map/utils/focus-label";
+import { sortByValue } from "../../shared/map/utils/sort-by-value";
+import WorldCore from "../../shared/map/world-core";
+import BaseMap from "../../shared/map/world-core/components/base-map";
+import ExtrudeMap from "../../shared/map/world-core/components/extrude-map";
+import Focus from "../../shared/map/world-core/components/focus";
+import Grid from "../../shared/map/world-core/components/grid";
+import Label3D, {
+	type Label,
+} from "../../shared/map/world-core/components/label-3d";
+import Line from "../../shared/map/world-core/components/line";
+import Particles from "../../shared/map/world-core/components/particles";
+import Plane from "../../shared/map/world-core/components/plane";
+import DiffuseShader from "../../shared/map/world-core/shader/diffuse-shader";
+import GradientShader from "../../shared/map/world-core/shader/gradient-shader";
+import chinaData from "./data/china-decoration";
+import infoData from "./data/info";
+import provincesData from "./data/regions";
+import scatterData from "./data/scatter";
 
 export type Point = [number, number];
 
@@ -72,6 +78,8 @@ interface WorldMapFocusLabelInfo {
 	name: string;
 	enName: string;
 	center: Point;
+	/** 中英文对齐方式，默认左对齐 */
+	align?: FocusLabelAlign;
 }
 
 const defaultMapFocusLabelInfo: WorldMapFocusLabelInfo = {
@@ -136,9 +144,15 @@ export default class World extends WorldCore {
 	private _infoPointIndex: number = 0;
 	private _animateTl: gsap.core.Timeline | null = null;
 	private _infoPointLabelTime: ReturnType<typeof setInterval> | null = null;
+	private readonly _onPlayComplete?: () => void;
 
-	constructor(canvas: HTMLCanvasElement, assets?: Assets) {
+	constructor(
+		canvas: HTMLCanvasElement,
+		assets?: Assets,
+		options: MapWorldOptions = {},
+	) {
 		super(canvas);
+		this._onPlayComplete = options.onPlayComplete;
 		this._geoProjectionCenter = [113.280637, 23.125178];
 		this._geoProjectionScale = 120;
 		this._flyLineCenter = [113.544372, 23.329249];
@@ -575,11 +589,11 @@ export default class World extends WorldCore {
 			label.init(
 				`<div>
                     <div id="provinces-label-wrap" class="${cn(
-					"tw:translate-x-1/2 tw:translate-y-[200%] tw:opacity-0",
-					"tw:flex tw:justify-between tw:items-center tw:px-5",
-					"tw:h-13 tw:rounded-3xl tw:rounded-bl-none",
-					"tw:bg-[#00000066] tw:box-border tw:gap-x-2"
-				)}">
+											"tw:translate-x-1/2 tw:translate-y-[200%] tw:opacity-0",
+											"tw:flex tw:justify-between tw:items-center tw:px-5",
+											"tw:h-13 tw:rounded-3xl tw:rounded-bl-none",
+											"tw:bg-[#00000066] tw:box-border tw:gap-x-2",
+										)}">
                         <div id="number" class="tw:text-white tw:text-3xl tw:font-bold tw:whitespace-nowrap">
                             <span id="value">${data.value}</span>
                             <span class="tw:text-white tw:text-xs tw:font-normal tw:opacity-50 tw:pl-1">万人</span>
@@ -588,12 +602,11 @@ export default class World extends WorldCore {
                             <span class="tw:block">${data.name}</span>
                             <span class="tw:block tw:text-white tw:text-xxs tw:opacity-50 tw:font-bold">${data.enName.toUpperCase()}</span>
                         </div>
-                        <div class="${cn(
-					"tw:text-3xl tw:font-bold",
-					[index > 4 ?
-						"tw:text-[#fef99e] tw:[text-shadow:0_0_5px_#fef99e,0_0_10px_#fef99e]" :
-						"tw:text-[#7efbf6] tw:[text-shadow:0_0_5px_#7efbf6,0_0_10px_#7efbf6]"]
-				)}">
+                        <div class="${cn("tw:text-3xl tw:font-bold", [
+													index > 4
+														? "tw:text-[#fef99e] tw:[text-shadow:0_0_5px_#fef99e,0_0_10px_#fef99e]"
+														: "tw:text-[#7efbf6] tw:[text-shadow:0_0_5px_#7efbf6,0_0_10px_#7efbf6]",
+												])}">
 								${index + 1}
 							</div>
                     </div>
@@ -901,10 +914,9 @@ export default class World extends WorldCore {
 		) {
 			const label = label3d.create(
 				"",
-				cn(
-					"tw:text-white tw:text-xs tw:will-change-transform",
-					{ "tw:blur-xxs" : province.blur }
-				),
+				cn("tw:text-white tw:text-xs tw:will-change-transform", {
+					"tw:blur-xxs": province.blur,
+				}),
 				false,
 			);
 			const [x, y] = self.geoProjection(province.center as [number, number]);
@@ -912,7 +924,7 @@ export default class World extends WorldCore {
 				`<div id="other-label" class="${cn(
 					"tw:flex tw:items-center tw:p-1 tw:rounded-sm",
 					"tw:bg-[#00000099] tw:will-change-transform",
-					"tw:translate-y-[200%] tw:opacity-0 tw:bg-none"
+					"tw:translate-y-[200%] tw:opacity-0 tw:bg-none",
 				)}">
 					<img class="tw:block tw:size-5 tw:mr-2" src="${labelIcon}">
 					${province.name}
@@ -929,22 +941,12 @@ export default class World extends WorldCore {
 			labelGroup: Group,
 		) {
 			const label = label3d.create(
-				"", cn(
-					"tw:p-1 tw:text-white tw:will-change-transform tw:tracking-wider tw:text-4xl tw:font-bold",
-					"tw:[-webkit-box-reflect:below_0_-webkit-linear-gradient(transparent,transparent_20%,#ffffff4d)]"
-				), false
+				"",
+				"tw:p-1 tw:text-white tw:will-change-transform tw:tracking-wider tw:text-4xl tw:font-bold",
+				false,
 			);
 			const [x, y] = self.geoProjection(province.center);
-			label.init(
-				`<div id="other-label" class="${cn(
-					"tw:flex tw:flex-col tw:will-change-transform",
-					"tw:translate-y-[200%] tw:opacity-0 tw:bg-none"
-				)}">
-					<span class="tw:text-5xl">${province.name}</span>
-					<span class="tw:text-xs tw:leading-6 tw:font-normal tw:tracking-normal tw:text-[#a7d5ef]">${province.enName}</span>
-				</div>`,
-				new Vector3(x, -y, 0.4),
-			);
+			label.init(buildFocusLabelHtml(province), new Vector3(x, -y, 0.4));
 			label3d.setLabelStyle(label, 0.015, "x");
 			label.setParent(labelGroup);
 			return label;
@@ -956,10 +958,7 @@ export default class World extends WorldCore {
 		) {
 			const label = label3d.create(
 				"",
-				cn(
-					"decoration-label",
-					{ "" : data.reflect }
-				),
+				cn("decoration-label", { "": data.reflect }),
 				false,
 			);
 			const [x, y] = self.geoProjection(data.center);
@@ -1292,18 +1291,18 @@ export default class World extends WorldCore {
 					"tw:after:content-[''] tw:after:block tw:after:size-4",
 					"tw:after:border-t tw:after:border-r tw:after:border-solid",
 					"tw:after:border-t-[#4b87a6] tw:after:border-r-[#4b87a6]",
-					"tw:after:absolute tw:after:top-0 tw:after:right-0"
+					"tw:after:absolute tw:after:top-0 tw:after:right-0",
 				)}">
                     <div class="${cn(
-					"tw:before:content-[''] tw:before:block tw:before:size-4",
-					"tw:before:border-b tw:before:border-l tw:before:border-solid",
-					"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
-					"tw:before:absolute tw:before:bottom-0 tw:before:left-0",
-					"tw:after:content-[''] tw:after:block tw:after:size-4",
-					"tw:after:border-b tw:after:border-r tw:after:border-solid",
-					"tw:after:border-b-[#4b87a6] tw:after:border-r-[#4b87a6]",
-					"tw:after:absolute tw:after:bottom-0 tw:after:right-0"
-				)}">
+											"tw:before:content-[''] tw:before:block tw:before:size-4",
+											"tw:before:border-b tw:before:border-l tw:before:border-solid",
+											"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
+											"tw:before:absolute tw:before:bottom-0 tw:before:left-0",
+											"tw:after:content-[''] tw:after:block tw:after:size-4",
+											"tw:after:border-b tw:after:border-r tw:after:border-solid",
+											"tw:after:border-b-[#4b87a6] tw:after:border-r-[#4b87a6]",
+											"tw:after:absolute tw:after:bottom-0 tw:after:right-0",
+										)}">
                         <div class="tw:absolute tw:top-2 tw:right-3 tw:flex">
 							<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
                         	<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
@@ -1392,7 +1391,7 @@ export default class World extends WorldCore {
 		//     console.log(this.camera.instance.position);
 		// });
 		const tl = gsap.timeline({
-			onComplete: () => { },
+			onComplete: () => {},
 		});
 		tl.pause();
 		this._animateTl = tl;
@@ -1509,7 +1508,7 @@ export default class World extends WorldCore {
 				ease: "circ.out",
 				onComplete: () => {
 					this._flyLineFocusGroup.visible = true;
-					emitter.$emit("mapPlayComplete");
+					this._onPlayComplete?.();
 				},
 			},
 			"focusMapOpacity",
@@ -1619,7 +1618,14 @@ export default class World extends WorldCore {
 	}
 
 	destroy() {
-		super.destroy();
+		if (this._infoPointLabelTime) {
+			clearInterval(this._infoPointLabelTime);
+			this._infoPointLabelTime = null;
+		}
+		this._animateTl?.kill();
+		this._interactionManager.dispose();
 		this._label3d.destroy();
+		document.body.style.cursor = "default";
+		super.destroy();
 	}
 }

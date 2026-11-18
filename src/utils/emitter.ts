@@ -1,5 +1,5 @@
 import mitt from "mitt";
-import type Assets from "../helper/assets";
+import type Assets from "../shared/map/assets";
 
 type Events = {
 	loadMap?: Assets;

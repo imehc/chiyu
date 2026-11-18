@@ -1,0 +1,253 @@
+export interface ChinaRegion {
+	name: string;
+	enName: string;
+	center: [number, number];
+	centroid: [number, number];
+	/** 演示指标，非真实统计数据。 */
+	value: number;
+}
+
+export const chinaRegions: ChinaRegion[] = [
+	{
+		name: "北京市",
+		enName: "Beijing",
+		center: [116.405285, 39.904989],
+		centroid: [116.41995, 40.18994],
+		value: 92,
+	},
+	{
+		name: "天津市",
+		enName: "Tianjin",
+		center: [117.190182, 39.125596],
+		centroid: [117.347043, 39.288036],
+		value: 68,
+	},
+	{
+		name: "河北省",
+		enName: "Hebei",
+		center: [114.502461, 38.045474],
+		centroid: [114.502461, 38.045474],
+		value: 73,
+	},
+	{
+		name: "山西省",
+		enName: "Shanxi",
+		center: [112.549248, 37.857014],
+		centroid: [112.304436, 37.618179],
+		value: 58,
+	},
+	{
+		name: "内蒙古自治区",
+		enName: "Inner Mongolia",
+		center: [111.670801, 40.818311],
+		centroid: [114.077429, 44.331087],
+		value: 55,
+	},
+	{
+		name: "辽宁省",
+		enName: "Liaoning",
+		center: [123.429096, 41.796767],
+		centroid: [122.604994, 41.299712],
+		value: 67,
+	},
+	{
+		name: "吉林省",
+		enName: "Jilin",
+		center: [125.3245, 43.886841],
+		centroid: [126.171208, 43.703954],
+		value: 52,
+	},
+	{
+		name: "黑龙江省",
+		enName: "Heilongjiang",
+		center: [126.642464, 45.756967],
+		centroid: [127.693027, 48.040465],
+		value: 50,
+	},
+	{
+		name: "上海市",
+		enName: "Shanghai",
+		center: [121.472644, 31.231706],
+		centroid: [121.438737, 31.072559],
+		value: 96,
+	},
+	{
+		name: "江苏省",
+		enName: "Jiangsu",
+		center: [118.767413, 32.041544],
+		centroid: [119.486506, 32.983991],
+		value: 94,
+	},
+	{
+		name: "浙江省",
+		enName: "Zhejiang",
+		center: [120.153576, 30.287459],
+		centroid: [120.109913, 29.181466],
+		value: 91,
+	},
+	{
+		name: "安徽省",
+		enName: "Anhui",
+		center: [117.283042, 31.86119],
+		centroid: [117.226884, 31.849254],
+		value: 75,
+	},
+	{
+		name: "福建省",
+		enName: "Fujian",
+		center: [119.306239, 26.075302],
+		centroid: [118.006468, 26.069925],
+		value: 79,
+	},
+	{
+		name: "江西省",
+		enName: "Jiangxi",
+		center: [115.892151, 28.676493],
+		centroid: [115.732975, 27.636112],
+		value: 66,
+	},
+	{
+		name: "山东省",
+		enName: "Shandong",
+		center: [117.000923, 36.675807],
+		centroid: [118.187759, 36.376092],
+		value: 89,
+	},
+	{
+		name: "河南省",
+		enName: "Henan",
+		center: [113.665412, 34.757975],
+		centroid: [113.619717, 33.902648],
+		value: 78,
+	},
+	{
+		name: "湖北省",
+		enName: "Hubei",
+		center: [114.298572, 30.584355],
+		centroid: [112.271301, 30.987527],
+		value: 82,
+	},
+	{
+		name: "湖南省",
+		enName: "Hunan",
+		center: [112.982279, 28.19409],
+		centroid: [111.711649, 27.629216],
+		value: 77,
+	},
+	{
+		name: "广东省",
+		enName: "Guangdong",
+		center: [113.280637, 23.125178],
+		centroid: [113.429919, 23.334643],
+		value: 98,
+	},
+	{
+		name: "广西壮族自治区",
+		enName: "Guangxi",
+		center: [108.320004, 22.82402],
+		centroid: [108.7944, 23.833381],
+		value: 63,
+	},
+	{
+		name: "海南省",
+		enName: "Hainan",
+		center: [110.33119, 20.031971],
+		centroid: [109.754859, 19.189767],
+		value: 60,
+	},
+	{
+		name: "重庆市",
+		enName: "Chongqing",
+		center: [106.504962, 29.533155],
+		centroid: [107.8839, 30.067297],
+		value: 76,
+	},
+	{
+		name: "四川省",
+		enName: "Sichuan",
+		center: [104.065735, 30.659462],
+		centroid: [102.693453, 30.674545],
+		value: 84,
+	},
+	{
+		name: "贵州省",
+		enName: "Guizhou",
+		center: [106.713478, 26.578343],
+		centroid: [106.880455, 26.826368],
+		value: 61,
+	},
+	{
+		name: "云南省",
+		enName: "Yunnan",
+		center: [102.712251, 25.040609],
+		centroid: [101.485106, 25.008643],
+		value: 65,
+	},
+	{
+		name: "西藏自治区",
+		enName: "Xizang",
+		center: [91.132212, 29.660361],
+		centroid: [88.388277, 31.56375],
+		value: 42,
+	},
+	{
+		name: "陕西省",
+		enName: "Shaanxi",
+		center: [108.948024, 34.263161],
+		centroid: [108.887114, 35.263661],
+		value: 72,
+	},
+	{
+		name: "甘肃省",
+		enName: "Gansu",
+		center: [103.823557, 36.058039],
+		centroid: [103.823557, 36.058039],
+		value: 51,
+	},
+	{
+		name: "青海省",
+		enName: "Qinghai",
+		center: [101.778916, 36.623178],
+		centroid: [96.043533, 35.726403],
+		value: 45,
+	},
+	{
+		name: "宁夏回族自治区",
+		enName: "Ningxia",
+		center: [106.278179, 38.46637],
+		centroid: [106.169866, 37.291332],
+		value: 48,
+	},
+	{
+		name: "新疆维吾尔自治区",
+		enName: "Xinjiang",
+		center: [87.617733, 43.792818],
+		centroid: [85.294711, 41.371801],
+		value: 54,
+	},
+	{
+		name: "台湾省",
+		enName: "Taiwan, China",
+		center: [121.509062, 25.044332],
+		centroid: [120.971485, 23.749452],
+		value: 70,
+	},
+	{
+		name: "香港特别行政区",
+		enName: "Hong Kong, China",
+		center: [114.173355, 22.320048],
+		centroid: [114.134357, 22.377366],
+		value: 88,
+	},
+	{
+		name: "澳门特别行政区",
+		enName: "Macao, China",
+		center: [113.54909, 22.198951],
+		centroid: [113.566988, 22.159307],
+		value: 62,
+	},
+];
+
+export const chinaTopRegions = [...chinaRegions]
+	.sort((a, b) => b.value - a.value)
+	.slice(0, 7);

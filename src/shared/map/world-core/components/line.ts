@@ -38,6 +38,7 @@ const defaultOption = {
 	type: "LineLoop",
 	renderOrder: 1,
 	tubeRadius: 0.2,
+	tubeSegments: 256 * 10,
 };
 
 export default class Line {
@@ -143,7 +144,7 @@ export default class Line {
 
 	createLine3(points: Vector3[]) {
 		const tubeRadius = this.#option.tubeRadius;
-		const tubeSegments = 256 * 10;
+		const tubeSegments = this.#option.tubeSegments;
 		const tubeRadialSegments = 4;
 		const closed = false;
 

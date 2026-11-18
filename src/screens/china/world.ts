@@ -1,0 +1,1522 @@
+import { geoMercator } from "d3-geo";
+import gsap from "gsap";
+import {
+	AddEquation,
+	AdditiveBlending,
+	AmbientLight,
+	BoxGeometry,
+	Color,
+	type ColorRepresentation,
+	CustomBlending,
+	DirectionalLight,
+	DoubleSide,
+	DstColorFactor,
+	Fog,
+	Group,
+	LineBasicMaterial,
+	Mesh,
+	MeshBasicMaterial,
+	MeshLambertMaterial,
+	MeshStandardMaterial,
+	OneFactor,
+	PlaneGeometry,
+	PointLight,
+	PointsMaterial,
+	QuadraticBezierCurve3,
+	RepeatWrapping,
+	Sprite,
+	SpriteMaterial,
+	SRGBColorSpace,
+	type Texture,
+	TubeGeometry,
+	Vector3,
+	type Vector3Like,
+	type Object3D,
+	type Object3DEventMap,
+} from "three";
+import { InteractionManager } from "three.interactive";
+import labelIcon from "/texture/label-icon.png";
+import type Assets from "../../shared/map/assets";
+import type { MapWorldOptions } from "../../shared/map/map-3d";
+import { sortByValue } from "../../shared/map/utils/sort-by-value";
+import WorldCore from "../../shared/map/world-core";
+import BaseMap from "../../shared/map/world-core/components/base-map";
+import ExtrudeMap from "../../shared/map/world-core/components/extrude-map";
+import Focus from "../../shared/map/world-core/components/focus";
+import Grid from "../../shared/map/world-core/components/grid";
+import Label3D, {
+	type Label,
+} from "../../shared/map/world-core/components/label-3d";
+import Line from "../../shared/map/world-core/components/line";
+import Particles from "../../shared/map/world-core/components/particles";
+import Plane from "../../shared/map/world-core/components/plane";
+import DiffuseShader from "../../shared/map/world-core/shader/diffuse-shader";
+import GradientShader from "../../shared/map/world-core/shader/gradient-shader";
+import {
+	buildFocusLabelHtml,
+	type FocusLabelAlign,
+} from "../../shared/map/utils/focus-label";
+import { cn } from "../../utils/cn";
+import infoData from "./data/info";
+import labelData from "./data/labels";
+import { chinaRegions } from "./data/regions";
+import scatterData from "./data/scatter";
+
+export type Point = [number, number];
+
+type PointLightParam = {
+	x: number;
+	y: number;
+	z: number;
+	color?: ColorRepresentation;
+	intensity?: number;
+	distance?: number;
+};
+
+interface WorldMapFocusLabelInfo {
+	name: string;
+	enName: string;
+	center: Point;
+	/** 中英文对齐方式，默认左对齐 */
+	align?: FocusLabelAlign;
+}
+
+const defaultMapFocusLabelInfo: WorldMapFocusLabelInfo = {
+	name: "中国",
+	enName: "PEOPLE'S REPUBLIC OF CHINA",
+	center: [110, 15.5],
+	// 英文全称明显长于中文，居中对齐才不会让「中国」偏到左侧
+	align: "center",
+};
+
+/** 与广东大屏保持同一套场景比例，便于复用视觉参数。 */
+export default class ChinaWorld extends WorldCore {
+	private readonly _assets: Assets;
+	private readonly _interactionManager: InteractionManager;
+
+	private readonly _geoProjectionCenter: Point = [104.3, 35.7];
+	private readonly _geoProjectionScale = 14;
+	private readonly _flyLineCenter: Point = [116.405285, 39.904989];
+	private readonly _depth = 0.5;
+	private readonly _mapWidth = 15.05;
+	private readonly _mapFocusLabelInfo = defaultMapFocusLabelInfo;
+	private readonly _onPlayComplete?: () => void;
+
+	private _labelGroup!: Group;
+	private _label3d!: Label3D;
+	private _flyLineFocusGroup!: Group;
+
+	private _eventElement: Object3D[] = [];
+	private _defaultMaterial: MeshStandardMaterial | null = null;
+	private _defaultLightMaterial: MeshStandardMaterial | null = null;
+
+	private _rotateBorder1: Mesh | null = null;
+	private _rotateBorder2: Mesh | null = null;
+	private _focusMapGroup: Group | null = null;
+	private _focusMapTopMaterial:
+		| MeshLambertMaterial
+		| MeshStandardMaterial
+		| null = null;
+	private _focusMapSideMaterial:
+		| MeshLambertMaterial
+		| MeshStandardMaterial
+		| null = null;
+	private _mapLineMaterial: LineBasicMaterial | null = null;
+	private _barGroup: Group | null = null;
+	private _allBar: Mesh[] = [];
+	private _allBarMaterial: MeshBasicMaterial[] = [];
+	private _allGuangquan: Group[] = [];
+	private _allProvinceLabel: Label[] = [];
+	private _otherLabel: Label[] = [];
+	private _flyLineGroup: Group | null = null;
+	private _particleGroup: Group | null = null;
+	private _scatterGroup: Group | null = null;
+	private _infoPointGroup: Group | null = null;
+	private _infoLabelElement: Label[] = [];
+	private _infoPointIndex = 0;
+	private _clicked = false;
+	private _animateTl: gsap.core.Timeline | null = null;
+	private _infoPointLabelTime: ReturnType<typeof setInterval> | null = null;
+
+	constructor(
+		canvas: HTMLCanvasElement,
+		assets: Assets,
+		options: MapWorldOptions = {},
+	) {
+		super(canvas);
+		this._assets = assets;
+		this._onPlayComplete = options.onPlayComplete;
+		this.scene.fog = new Fog(0x102736, 1, 50);
+		this.scene.background = new Color(0x102736);
+		this.camera.instance.position.set(
+			-13.767695123014105,
+			12.990152163077308,
+			39.28228164159694,
+		);
+		this.camera.instance.near = 1;
+		this.camera.instance.far = 10000;
+		this.camera.instance.updateProjectionMatrix();
+		this._interactionManager = new InteractionManager(
+			this.renderer.instance,
+			this.camera.instance,
+			canvas,
+		);
+		this.initEnvironment();
+		this.init();
+	}
+
+	get animateTl() {
+		return this._animateTl as gsap.core.Timeline;
+	}
+
+	private init() {
+		this._labelGroup = new Group();
+		this._label3d = new Label3D({
+			canvas: this.canvas,
+			sizes: this.sizes,
+			scene: this.scene,
+			camera: this.camera,
+			time: this.time,
+		});
+		this._labelGroup.rotation.x = -Math.PI / 2;
+		this.scene.add(this._labelGroup);
+
+		this._flyLineFocusGroup = new Group();
+		this._flyLineFocusGroup.visible = false;
+		this._flyLineFocusGroup.rotation.x = -Math.PI / 2;
+		this.scene.add(this._flyLineFocusGroup);
+
+		this._eventElement = [];
+		this._defaultMaterial = null;
+		this._defaultLightMaterial = null;
+
+		this.createBottomBg();
+		this.createGrid();
+		this.createRotateBorder();
+		this.createLabel();
+		this.createMap();
+		this.createEvent();
+		this.createFlyLine();
+		this.createFocus();
+		this.createParticles();
+		this.createScatter();
+		this.createInfoPoint();
+		this.createStorke();
+		this.createAnimationTimeline();
+	}
+
+	private initEnvironment() {
+		const sun = new AmbientLight(0xffffff, 5);
+		this.scene.add(sun);
+		const directionalLight = new DirectionalLight(0xffffff, 5);
+		directionalLight.position.set(-30, 6, -8);
+		directionalLight.castShadow = true;
+		directionalLight.shadow.radius = 20;
+		directionalLight.shadow.mapSize.width = 1024;
+		directionalLight.shadow.mapSize.height = 1024;
+		this.scene.add(directionalLight);
+		this.createPointLight({
+			color: "#1d5e5e",
+			intensity: 800,
+			distance: 10000,
+			x: -9,
+			y: 3,
+			z: -3,
+		});
+		this.createPointLight({
+			color: "#1d5e5e",
+			intensity: 200,
+			distance: 10000,
+			x: 0,
+			y: 2,
+			z: 5,
+		});
+	}
+
+	private createPointLight(pointParam: PointLightParam) {
+		const pointLight = new PointLight(
+			pointParam.color,
+			pointParam.intensity,
+			pointParam.distance,
+		);
+		pointLight.position.set(pointParam.x, pointParam.y, pointParam.z);
+		this.scene.add(pointLight);
+	}
+
+	private createMap() {
+		const mapGroup = new Group();
+		const focusMapGroup = new Group();
+		this._focusMapGroup = focusMapGroup;
+		const { surrounding, surroundingLine } = this.createSurrounding();
+		const { map, mapTop, mapLine } = this.createProvince();
+		surrounding.setParent(mapGroup);
+		surroundingLine.setParent(mapGroup);
+		this.createDiffuse();
+		map.setParent(focusMapGroup);
+		mapTop.setParent(focusMapGroup);
+		mapLine.setParent(focusMapGroup);
+		focusMapGroup.position.set(0, 0, -0.01);
+		focusMapGroup.scale.set(1, 1, 0);
+		mapGroup.add(focusMapGroup);
+		mapGroup.rotation.x = -Math.PI / 2;
+		mapGroup.position.set(0, 0.2, 0);
+		this.scene.add(mapGroup);
+		this.createBar();
+	}
+
+	/** 周边国家陆地背景，对应广东大屏的中国底图。 */
+	private createSurrounding() {
+		const params = {
+			surroundingBgMaterialColor: "#1a3853",
+			lineColor: "#3f82cd",
+		};
+		const surroundingData = this._assets.instance.getResource(
+			"world",
+		) as string;
+		if (!surroundingData) {
+			throw new Error("worldData is not found");
+		}
+		const surroundingBgMaterial = new MeshLambertMaterial({
+			color: new Color(params.surroundingBgMaterialColor),
+			transparent: true,
+			opacity: 1,
+		});
+		const surrounding = new BaseMap(undefined, {
+			data: surroundingData,
+			geoProjectionCenter: this._geoProjectionCenter,
+			geoProjectionScale: this._geoProjectionScale,
+			merge: true,
+			material: surroundingBgMaterial,
+			renderOrder: 2,
+		});
+		const surroundingTopLineMaterial = new LineBasicMaterial({
+			color: params.lineColor,
+			transparent: true,
+			opacity: 0.62,
+		});
+		const surroundingLine = new Line(undefined, {
+			data: surroundingData,
+			geoProjectionCenter: this._geoProjectionCenter,
+			geoProjectionScale: this._geoProjectionScale,
+			material: surroundingTopLineMaterial,
+			renderOrder: 3,
+		});
+		surroundingLine.lineGroup.position.z += 0.01;
+		return { surrounding, surroundingLine };
+	}
+
+	private createProvince() {
+		const mapJsonData = this._assets.instance.getResource("mapJson") as string;
+		if (!mapJsonData) {
+			throw new Error("mapJsonData is not found");
+		}
+		const [topMaterial, sideMaterial] = this.createProvinceMaterial();
+		this._focusMapTopMaterial = topMaterial;
+		this._focusMapSideMaterial = sideMaterial;
+		const map = new ExtrudeMap(
+			{ assets: this._assets, time: this.time },
+			{
+				geoProjectionCenter: this._geoProjectionCenter,
+				geoProjectionScale: this._geoProjectionScale,
+				position: new Vector3(0, 0, 0.11),
+				data: mapJsonData,
+				depth: this._depth,
+				topFaceMaterial: topMaterial,
+				sideMaterial: sideMaterial,
+				renderOrder: 9,
+			},
+		);
+		const faceMaterial = new MeshStandardMaterial({
+			color: 0xffffff,
+			transparent: true,
+			opacity: 0.5,
+		});
+		new GradientShader(faceMaterial, {
+			uColor1: 0x12bbe0,
+			uColor2: 0x0094b5,
+		});
+		this._defaultMaterial = faceMaterial;
+		this._defaultLightMaterial = this._defaultMaterial.clone();
+		this._defaultLightMaterial.color = new Color("rgba(115,208,255,1)");
+		this._defaultLightMaterial.opacity = 0.8;
+		const mapTop = new BaseMap(undefined, {
+			geoProjectionCenter: this._geoProjectionCenter,
+			geoProjectionScale: this._geoProjectionScale,
+			position: new Vector3(0, 0, this._depth + 0.22),
+			data: mapJsonData,
+			material: faceMaterial,
+			renderOrder: 2,
+		});
+		mapTop.mapGroup.children.forEach((group) => {
+			group.children.forEach((mesh) => {
+				if (mesh.type === "Mesh") {
+					this._eventElement.push(mesh);
+				}
+			});
+		});
+		this._mapLineMaterial = new LineBasicMaterial({
+			color: 0xffffff,
+			opacity: 0,
+			transparent: true,
+			fog: false,
+		});
+		const mapLine = new Line(undefined, {
+			geoProjectionCenter: this._geoProjectionCenter,
+			geoProjectionScale: this._geoProjectionScale,
+			data: mapJsonData,
+			material: this._mapLineMaterial,
+			renderOrder: 3,
+		});
+		mapLine.lineGroup.position.z += this._depth + 0.23;
+		return { map, mapTop, mapLine };
+	}
+
+	private createProvinceMaterial() {
+		const topMaterial = new MeshLambertMaterial({
+			color: 0xffffff,
+			transparent: true,
+			opacity: 0,
+			fog: false,
+			side: DoubleSide,
+		});
+		topMaterial.onBeforeCompile = (shader) => {
+			shader.uniforms = {
+				...shader.uniforms,
+				uColor1: { value: new Color(0x2a6e92) },
+				uColor2: { value: new Color(0x102736) },
+			};
+			shader.vertexShader = shader.vertexShader.replace(
+				"void main() {",
+				`
+        attribute float alpha;
+        varying vec3 vPosition;
+        varying float vAlpha;
+        void main() {
+          vAlpha = alpha;
+          vPosition = position;
+      `,
+			);
+			shader.fragmentShader = shader.fragmentShader.replace(
+				"void main() {",
+				`
+        varying vec3 vPosition;
+        varying float vAlpha;
+        uniform vec3 uColor1;
+        uniform vec3 uColor2;
+        void main() {
+      `,
+			);
+			shader.fragmentShader = shader.fragmentShader.replace(
+				"#include <opaque_fragment>",
+				/* glsl */ `
+      #ifdef OPAQUE
+      diffuseColor.a = 1.0;
+      #endif
+            #ifdef USE_TRANSMISSION
+      diffuseColor.a *= transmissionAlpha + 0.1;
+      #endif
+      vec3 gradient = mix(uColor1, uColor2, vPosition.x/${this._mapWidth.toFixed(2)});
+      outgoingLight = outgoingLight*gradient;
+      float topAlpha = 0.5;
+      if(vPosition.z>0.3){
+        diffuseColor.a *= topAlpha;
+      }
+      gl_FragColor = vec4( outgoingLight, diffuseColor.a  );
+      `,
+			);
+		};
+		const sideMap = this._assets.instance.getResource("side") as Texture;
+		if (!sideMap) {
+			throw new Error("sideMap is not found");
+		}
+		sideMap.wrapS = RepeatWrapping;
+		sideMap.wrapT = RepeatWrapping;
+		sideMap.repeat.set(1, 1.5);
+		sideMap.offset.y += 0.065;
+		const sideMaterial = new MeshStandardMaterial({
+			color: 0xffffff,
+			map: sideMap,
+			fog: false,
+			opacity: 0,
+			side: DoubleSide,
+		});
+		this.time.on("tick", () => {
+			sideMap.offset.y += 0.005;
+		});
+		sideMaterial.onBeforeCompile = (shader) => {
+			shader.uniforms = {
+				...shader.uniforms,
+				uColor1: { value: new Color(0x2a6e92) },
+				uColor2: { value: new Color(0x2a6e92) },
+			};
+			shader.vertexShader = shader.vertexShader.replace(
+				"void main() {",
+				`
+        attribute float alpha;
+        varying vec3 vPosition;
+        varying float vAlpha;
+        void main() {
+          vAlpha = alpha;
+          vPosition = position;
+      `,
+			);
+			shader.fragmentShader = shader.fragmentShader.replace(
+				"void main() {",
+				`
+        varying vec3 vPosition;
+        varying float vAlpha;
+        uniform vec3 uColor1;
+        uniform vec3 uColor2;
+        void main() {
+      `,
+			);
+			shader.fragmentShader = shader.fragmentShader.replace(
+				"#include <opaque_fragment>",
+				/* glsl */ `
+      #ifdef OPAQUE
+      diffuseColor.a = 1.0;
+      #endif
+            #ifdef USE_TRANSMISSION
+      diffuseColor.a *= transmissionAlpha + 0.1;
+      #endif
+      vec3 gradient = mix(uColor1, uColor2, vPosition.z/1.2);
+      outgoingLight = outgoingLight*gradient;
+      gl_FragColor = vec4( outgoingLight, diffuseColor.a  );
+      `,
+			);
+		};
+		return [topMaterial, sideMaterial];
+	}
+
+	/**
+	 * 指标柱按区域分散选取。
+	 * 柱标签与广东大屏同尺寸（约 156px 宽），因此省份之间需要足够的地理间距，
+	 * 否则东部沿海与中部省份的标签会互相叠压。
+	 */
+	private getBarRegions() {
+		const regionNames = [
+			"广东省",
+			"上海市",
+			"四川省",
+			"北京市",
+			"新疆维吾尔自治区",
+			"黑龙江省",
+		];
+		return sortByValue(
+			chinaRegions.filter((item) => regionNames.includes(item.name)),
+		);
+	}
+
+	private createBar() {
+		const self = this;
+		const data = this.getBarRegions();
+		const barGroup = new Group();
+		this._barGroup = barGroup;
+		const factor = 0.7;
+		const height = 4.0 * factor;
+		const max = data[0].value;
+		this._allBar = [];
+		this._allBarMaterial = [];
+		this._allGuangquan = [];
+		this._allProvinceLabel = [];
+		data.forEach((item, index) => {
+			const geoHeight = height * (item.value / max);
+			const material = new MeshBasicMaterial({
+				color: 0xffffff,
+				transparent: true,
+				opacity: 0,
+				depthTest: false,
+				fog: false,
+			});
+			new GradientShader(material, {
+				uColor1: index > 3 ? 0xfbdf88 : 0x50bbfe,
+				uColor2: index > 3 ? 0xfffef4 : 0x77fbf5,
+				size: geoHeight,
+				dir: "y",
+			});
+			const geo = new BoxGeometry(0.1 * factor, 0.1 * factor, geoHeight);
+			geo.translate(0, 0, geoHeight / 2);
+			const mesh = new Mesh(geo, material);
+			mesh.renderOrder = 5;
+			const areaBar = mesh;
+			const [x, y] = this.geoProjection(item.centroid);
+			areaBar.position.set(x, -y, this._depth + 0.45);
+			areaBar.scale.set(1, 1, 0);
+			areaBar.userData = { ...item };
+			const guangQuan = this.createQuan(
+				new Vector3(x, this._depth + 0.44, y),
+				index,
+			);
+			const hg = this.createHUIGUANG(
+				geoHeight,
+				index > 3 ? 0xfffef4 : 0x77fbf5,
+			);
+			areaBar.add(...hg);
+			barGroup.add(areaBar);
+			barGroup.rotation.x = -Math.PI / 2;
+			const barLabel = labelStyle04(
+				item,
+				index,
+				new Vector3(x, -y, this._depth + 1.1 + geoHeight),
+			);
+			this._allBar.push(areaBar);
+			this._allBarMaterial.push(material);
+			this._allGuangquan.push(guangQuan);
+			this._allProvinceLabel.push(barLabel);
+		});
+		this.scene.add(barGroup);
+
+		type RegionLabel = (typeof chinaRegions)[number];
+		function labelStyle04(
+			data: RegionLabel,
+			index: number,
+			position: Vector3Like,
+		) {
+			const label = self._label3d.create("", "provinces-label", false);
+			label.init(
+				`<div>
+                    <div id="provinces-label-wrap" class="${cn(
+											"tw:translate-x-1/2 tw:translate-y-[200%] tw:opacity-0",
+											"tw:flex tw:justify-between tw:items-center tw:px-5",
+											"tw:h-13 tw:rounded-3xl tw:rounded-bl-none",
+											"tw:bg-[#00000066] tw:box-border tw:gap-x-2",
+										)}">
+                        <div id="number" class="tw:text-white tw:text-3xl tw:font-bold tw:whitespace-nowrap">
+                            <span id="value">${data.value}</span>
+                            <span class="tw:text-white tw:text-xs tw:font-normal tw:opacity-50 tw:pl-1">指数</span>
+                        </div>
+                        <div class="tw:text-white tw:text-base tw:font-bold">
+                            <span class="tw:block">${data.name}</span>
+                            <span class="tw:block tw:text-white tw:text-xxs tw:opacity-50 tw:font-bold">${data.enName.toUpperCase()}</span>
+                        </div>
+                        <div class="${cn("tw:text-3xl tw:font-bold", [
+													index > 4
+														? "tw:text-[#fef99e] tw:[text-shadow:0_0_5px_#fef99e,0_0_10px_#fef99e]"
+														: "tw:text-[#7efbf6] tw:[text-shadow:0_0_5px_#7efbf6,0_0_10px_#7efbf6]",
+												])}">
+								${index + 1}
+							</div>
+                    </div>
+                </div>`,
+				position,
+			);
+			self._label3d.setLabelStyle(label, 0.01, "x");
+			label.setParent(self._labelGroup);
+			return label;
+		}
+	}
+
+	private createEvent() {
+		let objectsHover: Object3D[] = [];
+		const reset = (mesh: Object3D) => {
+			mesh.traverse((obj) => {
+				if ("isMesh" in obj && obj.isMesh) {
+					(obj as Mesh).material = this
+						._defaultMaterial as MeshStandardMaterial;
+				}
+			});
+		};
+		const move = (mesh: Object3D) => {
+			mesh.traverse((obj) => {
+				if ("isMesh" in obj && obj.isMesh) {
+					(obj as Mesh).material = this
+						._defaultLightMaterial as MeshStandardMaterial;
+				}
+			});
+		};
+		this._eventElement.forEach((mesh) => {
+			this._interactionManager.add(mesh);
+			mesh.addEventListener("mousedown" as keyof Object3DEventMap, (ev) => {
+				console.log(ev.target.userData.name);
+			});
+			mesh.addEventListener("mouseover" as keyof Object3DEventMap, (event) => {
+				if (!objectsHover.includes(event.target.parent as Object3D)) {
+					objectsHover.push(event.target.parent as Object3D);
+				}
+				document.body.style.cursor = "pointer";
+				move(event.target.parent as Object3D);
+			});
+			mesh.addEventListener("mouseout" as keyof Object3DEventMap, (event) => {
+				objectsHover = objectsHover.filter(
+					(n) =>
+						n.userData.name !== (event.target.parent as Object3D).userData.name,
+				);
+				reset(event.target.parent as Object3D);
+				document.body.style.cursor = "default";
+			});
+		});
+	}
+
+	private createHUIGUANG(h: number, color: number) {
+		const geometry = new PlaneGeometry(0.35, h);
+		geometry.translate(0, h / 2, 0);
+		const texture = this._assets.instance.getResource("huiguang") as Texture;
+		if (!texture) {
+			throw new Error("huiguang texture not found");
+		}
+		texture.colorSpace = SRGBColorSpace;
+		texture.wrapS = RepeatWrapping;
+		texture.wrapT = RepeatWrapping;
+		const material = new MeshBasicMaterial({
+			color: color,
+			map: texture,
+			transparent: true,
+			opacity: 0.4,
+			depthWrite: false,
+			side: DoubleSide,
+			blending: AdditiveBlending,
+		});
+		const mesh = new Mesh(geometry, material);
+		mesh.renderOrder = 10;
+		mesh.rotateX(Math.PI / 2);
+		const mesh2 = mesh.clone();
+		const mesh3 = mesh.clone();
+		mesh2.rotateY((Math.PI / 180) * 60);
+		mesh3.rotateY((Math.PI / 180) * 120);
+		return [mesh, mesh2, mesh3];
+	}
+
+	private createQuan(position: Vector3Like, _index: number) {
+		const guangquan1 = this._assets.instance.getResource(
+			"guangquan1",
+		) as Texture;
+		const guangquan2 = this._assets.instance.getResource(
+			"guangquan2",
+		) as Texture;
+		if (!guangquan1 || !guangquan2) {
+			throw new Error("guangquan1 or guangquan2 not found");
+		}
+		const geometry = new PlaneGeometry(0.5, 0.5);
+		const material1 = new MeshBasicMaterial({
+			color: 0xffffff,
+			map: guangquan1,
+			alphaMap: guangquan1,
+			opacity: 1,
+			transparent: true,
+			depthTest: false,
+			fog: false,
+			blending: AdditiveBlending,
+		});
+		const material2 = new MeshBasicMaterial({
+			color: 0xffffff,
+			map: guangquan2,
+			alphaMap: guangquan2,
+			opacity: 1,
+			transparent: true,
+			depthTest: false,
+			fog: false,
+			blending: AdditiveBlending,
+		});
+		const mesh1 = new Mesh(geometry, material1);
+		const mesh2 = new Mesh(geometry, material2);
+		mesh1.renderOrder = 6;
+		mesh2.renderOrder = 6;
+		mesh1.rotateX(-Math.PI / 2);
+		mesh2.rotateX(-Math.PI / 2);
+		mesh1.position.copy(position);
+		mesh2.position.copy(position);
+		mesh2.position.y -= 0.001;
+		mesh1.scale.set(0, 0, 0);
+		mesh2.scale.set(0, 0, 0);
+		const quanGroup = new Group();
+		quanGroup.add(mesh1, mesh2);
+		this.scene.add(quanGroup);
+		this.time.on("tick", () => {
+			mesh1.rotation.z += 0.05;
+		});
+		return quanGroup;
+	}
+
+	private createDiffuse() {
+		const geometry = new PlaneGeometry(200, 200);
+		const material = new MeshBasicMaterial({
+			color: 0x000000,
+			depthWrite: false,
+			transparent: true,
+			blending: CustomBlending,
+		});
+		material.blendEquation = AddEquation;
+		material.blendSrc = DstColorFactor;
+		material.blendDst = OneFactor;
+		new DiffuseShader({
+			material,
+			time: this.time,
+			size: 60,
+			diffuseSpeed: 8.0,
+			diffuseColor: 0x71918e,
+			diffuseWidth: 2.0,
+			callback: (pointShader) => {
+				setTimeout(() => {
+					gsap.to(pointShader.uniforms.uTime, {
+						value: 4,
+						repeat: -1,
+						duration: 6,
+						ease: "power1.easeIn",
+					});
+				}, 3);
+			},
+		});
+		const mesh = new Mesh(geometry, material);
+		mesh.renderOrder = 3;
+		mesh.rotation.x = -Math.PI / 2;
+		mesh.position.set(0, 0.21, 0);
+		this.scene.add(mesh);
+	}
+
+	private createGrid() {
+		new Grid(
+			{
+				scene: this.scene,
+				time: this.time,
+			},
+			{
+				gridSize: 50,
+				gridDivision: 20,
+				gridColor: 0x1b4b70,
+				shapeSize: 0.5,
+				shapeColor: 0x2a5f8a,
+				pointSize: 0.1,
+				pointColor: 0x154d7d,
+			},
+		);
+	}
+
+	private createBottomBg() {
+		const geometry = new PlaneGeometry(20, 20);
+		const texture = this._assets.instance.getResource("ocean") as
+			| Texture
+			| undefined;
+		if (!texture) {
+			throw new Error("ocean texture not found");
+		}
+		texture.colorSpace = SRGBColorSpace;
+		texture.wrapS = RepeatWrapping;
+		texture.wrapT = RepeatWrapping;
+		texture.repeat.set(1, 1);
+		const material = new MeshBasicMaterial({
+			map: texture,
+			opacity: 1,
+			fog: false,
+		});
+		const mesh = new Mesh(geometry, material);
+		mesh.rotation.x = -Math.PI / 2;
+		mesh.position.set(0, -0.7, 0);
+		this.scene.add(mesh);
+	}
+
+	private createLabel() {
+		const self = this;
+		const labelGroup = this._labelGroup;
+		const label3d = this._label3d;
+		const otherLabel: Label[] = [];
+		labelData.forEach((province) => {
+			const label = labelStyle01(province, label3d, labelGroup);
+			otherLabel.push(label);
+		});
+		const mapFocusLabel = labelStyle02(
+			{
+				...this._mapFocusLabelInfo,
+			},
+			label3d,
+			labelGroup,
+		);
+		const iconLabel1 = labelStyle03(
+			{
+				icon: labelIcon,
+				center: [124.5, 33.0],
+				width: "40px",
+				height: "40px",
+				reflect: true,
+			},
+			label3d,
+			labelGroup,
+		);
+		const iconLabel2 = labelStyle03(
+			{
+				icon: labelIcon,
+				center: [92.5, 40.0],
+				width: "20px",
+				height: "20px",
+				reflect: false,
+			},
+			label3d,
+			labelGroup,
+		);
+		otherLabel.push(mapFocusLabel);
+		otherLabel.push(iconLabel1);
+		otherLabel.push(iconLabel2);
+		this._otherLabel = otherLabel;
+
+		type DecorationLabel = (typeof labelData)[number];
+		type ProvinceLabel = {
+			icon: string;
+			center: [number, number];
+			width: string;
+			height: string;
+			reflect: boolean;
+		};
+		function labelStyle01(
+			province: DecorationLabel,
+			label3d: Label3D,
+			labelGroup: Group,
+		) {
+			const label = label3d.create(
+				"",
+				cn("tw:text-white tw:text-xs tw:will-change-transform", {
+					"tw:blur-xxs": province.blur,
+				}),
+				false,
+			);
+			const [x, y] = self.geoProjection(province.center);
+			label.init(
+				`<div id="other-label" class="${cn(
+					"tw:flex tw:items-center tw:p-1 tw:rounded-sm",
+					"tw:bg-[#00000099] tw:will-change-transform",
+					"tw:translate-y-[200%] tw:opacity-0 tw:bg-none",
+				)}">
+					<img class="tw:block tw:size-5 tw:mr-2" src="${labelIcon}">
+					${province.name}
+				</div>`,
+				new Vector3(x, -y, 0.4),
+			);
+			label3d.setLabelStyle(label, 0.02, "x");
+			label.setParent(labelGroup);
+			return label;
+		}
+		function labelStyle02(
+			province: WorldMapFocusLabelInfo,
+			label3d: Label3D,
+			labelGroup: Group,
+		) {
+			const label = label3d.create(
+				"",
+				"tw:p-1 tw:text-white tw:will-change-transform tw:tracking-wider tw:text-4xl tw:font-bold",
+				false,
+			);
+			const [x, y] = self.geoProjection(province.center);
+			label.init(buildFocusLabelHtml(province), new Vector3(x, -y, 0.4));
+			label3d.setLabelStyle(label, 0.015, "x");
+			label.setParent(labelGroup);
+			return label;
+		}
+		function labelStyle03(
+			data: ProvinceLabel,
+			label3d: Label3D,
+			labelGroup: Group,
+		) {
+			const label = label3d.create(
+				"",
+				cn("decoration-label", { "": data.reflect }),
+				false,
+			);
+			const [x, y] = self.geoProjection(data.center);
+			label.init(
+				`<div id="other-label" class="tw:translate-y-[200%] tw:opacity-0 tw:bg-none tw:will-change-transform">
+					<img class="tw:block tw:size-10" style="width:${data.width};height:${data.height}" src="${data.icon}">
+				</div>
+				`,
+				new Vector3(x, -y, 0.4),
+			);
+			label3d.setLabelStyle(label, 0.02, "x");
+			label.setParent(labelGroup);
+			return label;
+		}
+	}
+
+	private createRotateBorder() {
+		const max = 12;
+		const rotationBorder1 = this._assets.instance.getResource(
+			"rotationBorder1",
+		) as Texture | undefined;
+		const rotationBorder2 = this._assets.instance.getResource(
+			"rotationBorder2",
+		) as Texture | undefined;
+		if (!rotationBorder1 || !rotationBorder2) {
+			throw new Error("rotationBorder1 or rotationBorder2 not found");
+		}
+		const plane01 = new Plane(
+			{ time: this.time },
+			{
+				width: max * 1.178,
+				needRotate: true,
+				rotateSpeed: 0.001,
+				material: new MeshBasicMaterial({
+					map: rotationBorder1,
+					color: 0x48afff,
+					transparent: true,
+					opacity: 0.2,
+					side: DoubleSide,
+					depthWrite: false,
+					blending: AdditiveBlending,
+				}),
+				position: new Vector3(0, 0.28, 0),
+			},
+		);
+		plane01.instance.rotation.x = -Math.PI / 2;
+		plane01.instance.renderOrder = 6;
+		plane01.instance.scale.set(0, 0, 0);
+		plane01.setParent(this.scene);
+
+		const plane02 = new Plane(
+			{ time: this.time },
+			{
+				width: max * 1.116,
+				needRotate: true,
+				rotateSpeed: -0.004,
+				material: new MeshBasicMaterial({
+					map: rotationBorder2,
+					color: 0x48afff,
+					transparent: true,
+					opacity: 0.4,
+					side: DoubleSide,
+					depthWrite: false,
+					blending: AdditiveBlending,
+				}),
+				position: new Vector3(0, 0.3, 0),
+			},
+		);
+		plane02.instance.rotation.x = -Math.PI / 2;
+		plane02.instance.renderOrder = 6;
+		plane02.instance.scale.set(0, 0, 0);
+		plane02.setParent(this.scene);
+		this._rotateBorder1 = plane01.instance;
+		this._rotateBorder2 = plane02.instance;
+	}
+
+	private createFlyLine() {
+		this._flyLineGroup = new Group();
+		this._flyLineGroup.visible = false;
+		this.scene.add(this._flyLineGroup);
+		const texture = this._assets.instance.getResource("mapFlyline") as Texture;
+		if (!texture) {
+			throw new Error("mapFlyline texture not found");
+		}
+		texture.wrapS = texture.wrapT = RepeatWrapping;
+		texture.repeat.set(0.5, 2);
+		const tubeRadius = 0.1;
+		const tubeSegments = 32;
+		const tubeRadialSegments = 2;
+		const closed = false;
+		const [centerX, centerY] = this.geoProjection(this._flyLineCenter);
+		const centerPoint = new Vector3(centerX, -centerY, 0);
+		const material = new MeshBasicMaterial({
+			map: texture,
+			color: 0x2a6f72,
+			transparent: true,
+			fog: false,
+			opacity: 1,
+			depthTest: false,
+			blending: AdditiveBlending,
+		});
+		this.time.on("tick", () => {
+			texture.offset.x -= 0.006;
+		});
+		this.getBarRegions().forEach((region) => {
+			const [x, y] = this.geoProjection(region.centroid);
+			const point = new Vector3(x, -y, 0);
+			const center = new Vector3();
+			center.addVectors(centerPoint, point).multiplyScalar(0.5);
+			center.setZ(3);
+			const curve = new QuadraticBezierCurve3(centerPoint, center, point);
+			const tubeGeometry = new TubeGeometry(
+				curve,
+				tubeSegments,
+				tubeRadius,
+				tubeRadialSegments,
+				closed,
+			);
+			const mesh = new Mesh(tubeGeometry, material);
+			mesh.rotation.x = -Math.PI / 2;
+			mesh.position.set(0, this._depth + 0.44, 0);
+			mesh.renderOrder = 21;
+			this._flyLineGroup?.add(mesh);
+		});
+	}
+
+	private createFocus() {
+		const focusObj = new Focus(
+			{ assets: this._assets },
+			{ color1: 0xbdfdfd, color2: 0xbdfdfd },
+		);
+		const [x, y] = this.geoProjection(this._flyLineCenter);
+		focusObj.position.set(x, -y, this._depth + 0.44);
+		focusObj.scale.set(1, 1, 1);
+		this._flyLineFocusGroup.add(focusObj);
+	}
+
+	private createParticles() {
+		const particles = new Particles(
+			{ time: this.time },
+			{
+				num: 10,
+				range: 30,
+				dir: "up",
+				speed: 0.05,
+				material: new PointsMaterial({
+					map: Particles.createTexture(),
+					size: 1,
+					color: 0x00eeee,
+					transparent: true,
+					opacity: 1,
+					depthTest: false,
+					depthWrite: false,
+					vertexColors: true,
+					blending: AdditiveBlending,
+					sizeAttenuation: true,
+				}),
+			},
+		);
+		this._particleGroup = new Group();
+		this.scene.add(this._particleGroup);
+		this._particleGroup.rotation.x = -Math.PI / 2;
+		particles.setParent(this._particleGroup);
+		particles.enable = true;
+		this._particleGroup.visible = true;
+	}
+
+	private createScatter() {
+		this._scatterGroup = new Group();
+		this._scatterGroup.visible = false;
+		this._scatterGroup.rotation.x = -Math.PI / 2;
+		this.scene.add(this._scatterGroup);
+		const texture = this._assets.instance.getResource("arrow") as Texture;
+		if (!texture) {
+			throw new Error("arrow texture not found");
+		}
+		const material = new SpriteMaterial({
+			map: texture,
+			color: 0xfffef4,
+			fog: false,
+			transparent: true,
+			depthTest: false,
+		});
+		const scatterAllData = sortByValue([...scatterData]);
+		const max = scatterAllData[0].value;
+		scatterAllData.forEach((data) => {
+			const sprite = new Sprite(material);
+			sprite.renderOrder = 23;
+			const scale = 0.1 + (data.value / max) * 0.2;
+			sprite.scale.set(scale, scale, scale);
+			const [x, y] = this.geoProjection([data.lng, data.lat]);
+			sprite.position.set(x, -y, this._depth + 0.45);
+			sprite.userData.position = [x, -y, this._depth + 0.45];
+			this._scatterGroup?.add(sprite);
+		});
+	}
+
+	private createInfoPoint() {
+		const self = this;
+		this._infoPointGroup = new Group();
+		this.scene.add(this._infoPointGroup);
+		this._infoPointGroup.visible = false;
+		this._infoPointGroup.rotation.x = -Math.PI / 2;
+		this._infoPointIndex = 0;
+		this._infoPointLabelTime = null;
+		this._infoLabelElement = [];
+		const label3d = this._label3d;
+		const texture = this._assets.instance.getResource("point") as Texture;
+		if (!texture) {
+			throw new Error("point texture not found");
+		}
+		const colors = [0xfffef4, 0x77fbf5];
+		const infoAllData = sortByValue([...infoData]);
+		const max = infoAllData[0].value;
+		infoAllData.forEach((data, index) => {
+			const material = new SpriteMaterial({
+				map: texture,
+				color: colors[index % colors.length],
+				fog: false,
+				transparent: true,
+				depthTest: false,
+			});
+			const sprite = new Sprite(material);
+			sprite.renderOrder = 23;
+			const scale = 0.7 + (data.value / max) * 0.4;
+			sprite.scale.set(scale, scale, scale);
+			const [x, y] = this.geoProjection([data.lng, data.lat]);
+			const position = [x, -y, this._depth + 0.7];
+			sprite.position.set(position[0], position[1], position[2]);
+			sprite.userData = {
+				position: [...position],
+				name: data.name,
+				value: data.value,
+				level: data.level,
+				index: index,
+			};
+			this._infoPointGroup?.add(sprite);
+			const label = infoLabel(data, label3d, this._infoPointGroup as Group);
+			this._infoLabelElement.push(label);
+			this._interactionManager.add(sprite);
+			sprite.addEventListener("mousedown" as keyof Object3DEventMap, (ev) => {
+				if (this._clicked || !this._infoPointGroup?.visible) return false;
+				this._clicked = true;
+				this._infoPointIndex = ev.target.userData.index;
+				this._infoLabelElement.forEach((label) => {
+					label.visible = false;
+				});
+				label.visible = true;
+				this.createInfoPointLabelLoop();
+			});
+			sprite.addEventListener("mouseup" as keyof Object3DEventMap, () => {
+				this._clicked = false;
+			});
+			sprite.addEventListener("mouseover" as keyof Object3DEventMap, () => {
+				document.body.style.cursor = "pointer";
+			});
+			sprite.addEventListener("mouseout" as keyof Object3DEventMap, () => {
+				document.body.style.cursor = "default";
+			});
+		});
+
+		type Label3dConfig = (typeof infoData)[0];
+		function infoLabel(
+			data: Label3dConfig,
+			label3d: Label3D,
+			labelGroup: Group,
+		) {
+			const label = label3d.create(
+				"",
+				cn(
+					"tw:bg-[#00000080] tw:text-[#a3dcde] tw:text-sm",
+					"tw:w-42.5 tw:h-26.5 tw:pt-4 tw:px-3 tw:mb-7.5",
+					"tw:will-change-transform tw:box-content",
+				),
+				true,
+			);
+			const [x, y] = self.geoProjection([data.lng, data.lat]);
+			label.init(
+				` <div class="${cn(
+					"tw:before:content-[''] tw:before:block tw:before:size-4",
+					"tw:before:border-t tw:before:border-l tw:before:border-solid",
+					"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
+					"tw:before:absolute tw:before:top-0 tw:before:left-0",
+					"tw:after:content-[''] tw:after:block tw:after:size-4",
+					"tw:after:border-t tw:after:border-r tw:after:border-solid",
+					"tw:after:border-t-[#4b87a6] tw:after:border-r-[#4b87a6]",
+					"tw:after:absolute tw:after:top-0 tw:after:right-0",
+				)}">
+                    <div class="${cn(
+											"tw:before:content-[''] tw:before:block tw:before:size-4",
+											"tw:before:border-b tw:before:border-l tw:before:border-solid",
+											"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
+											"tw:before:absolute tw:before:bottom-0 tw:before:left-0",
+											"tw:after:content-[''] tw:after:block tw:after:size-4",
+											"tw:after:border-b tw:after:border-r tw:after:border-solid",
+											"tw:after:border-b-[#4b87a6] tw:after:border-r-[#4b87a6]",
+											"tw:after:absolute tw:after:bottom-0 tw:after:right-0",
+										)}">
+                        <div class="tw:absolute tw:top-2 tw:right-3 tw:flex">
+							<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
+                        	<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
+                        	<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
+                        </div>
+                        <div>
+                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
+								<span class="tw:w-15 tw:pl-2">名称</span>
+								<span class="tw:text-white">${data.name}</span>
+							</div>
+                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
+								<span class="tw:w-15 tw:pl-2">算力指数</span>
+								<span class="tw:text-white">${data.value}</span>
+							</div>
+                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
+								<span class="tw:w-15 tw:pl-2">等级</span>
+								<span class="tw:text-white">${data.level}</span>
+							</div>
+                        </div>
+                    </div>
+                    </div>
+                `,
+				new Vector3(x, -y, self._depth + 3.6),
+			);
+			label3d.setLabelStyle(label, 0.015, "x");
+			label.setParent(labelGroup);
+			label.visible = false;
+			return label;
+		}
+	}
+
+	private createInfoPointLabelLoop() {
+		clearInterval(this._infoPointLabelTime as number);
+		this._infoPointLabelTime = setInterval(() => {
+			this._infoPointIndex++;
+			if (this._infoPointIndex >= this._infoLabelElement.length) {
+				this._infoPointIndex = 0;
+			}
+			this._infoLabelElement.forEach((label, i) => {
+				if (this._infoPointIndex === i) {
+					label.visible = true;
+				} else {
+					label.visible = false;
+				}
+			});
+		}, 3000);
+	}
+
+	private createStorke() {
+		const mapStroke = this._assets.instance.getResource("mapStroke") as string;
+		const texture = this._assets.instance.getResource("pathLine3") as Texture;
+		if (!mapStroke || !texture) {
+			throw new Error("mapStroke or pathLine3 texture not found");
+		}
+		texture.wrapS = texture.wrapT = RepeatWrapping;
+		texture.repeat.set(2, 1);
+		const pathLine = new Line(undefined, {
+			geoProjectionCenter: this._geoProjectionCenter,
+			geoProjectionScale: this._geoProjectionScale,
+			position: new Vector3(0, 0, this._depth + 0.24),
+			data: mapStroke,
+			material: new MeshBasicMaterial({
+				color: 0x2bc4dc,
+				map: texture,
+				alphaMap: texture,
+				fog: false,
+				transparent: true,
+				opacity: 1,
+				blending: AdditiveBlending,
+			}),
+			type: "Line3",
+			renderOrder: 22,
+			tubeRadius: 0.03,
+			tubeSegments: 720,
+		});
+		this._focusMapGroup?.add(pathLine.lineGroup);
+		this.time.on("tick", () => {
+			texture.offset.x += 0.005;
+		});
+	}
+
+	private createAnimationTimeline() {
+		const tl = gsap.timeline({
+			onComplete: () => {},
+		});
+		tl.pause();
+		this._animateTl = tl;
+		tl.addLabel("focusMap", 1.5);
+		tl.addLabel("focusMapOpacity", 2);
+		tl.addLabel("bar", 3);
+		tl.to(this.camera.instance.position, {
+			duration: 2,
+			x: -0.17427287762525134,
+			y: 13.678992786206543,
+			z: 20.688611202093714,
+			ease: "circ.out",
+			onStart: () => {
+				this._flyLineFocusGroup.visible = false;
+			},
+		});
+		tl.to(
+			(this._focusMapGroup as Group).position,
+			{
+				duration: 1,
+				x: 0,
+				y: 0,
+				z: 0,
+			},
+			"focusMap",
+		);
+		tl.to(
+			(this._focusMapGroup as Group).scale,
+			{
+				duration: 1,
+				x: 1,
+				y: 1,
+				z: 1,
+				ease: "circ.out",
+				onComplete: () => {
+					(this._flyLineGroup as Group).visible = true;
+					(this._scatterGroup as Group).visible = true;
+					(this._infoPointGroup as Group).visible = true;
+					this.createInfoPointLabelLoop();
+				},
+			},
+			"focusMap",
+		);
+		tl.to(
+			this._focusMapTopMaterial,
+			{
+				duration: 1,
+				opacity: 1,
+				ease: "circ.out",
+			},
+			"focusMapOpacity",
+		);
+		tl.to(
+			this._focusMapSideMaterial,
+			{
+				duration: 1,
+				opacity: 1,
+				ease: "circ.out",
+				onComplete: () => {
+					(
+						this._focusMapSideMaterial as NonNullable<
+							typeof this._focusMapSideMaterial
+						>
+					).transparent = false;
+				},
+			},
+			"focusMapOpacity",
+		);
+		this._otherLabel.forEach((item, index) => {
+			const element = item.element.querySelector("#other-label");
+			tl.to(
+				element,
+				{
+					duration: 1,
+					delay: 0.1 * index,
+					translateY: 0,
+					opacity: 1,
+					ease: "circ.out",
+				},
+				"focusMapOpacity",
+			);
+		});
+		tl.to(
+			this._mapLineMaterial,
+			{
+				duration: 0.5,
+				delay: 0.3,
+				opacity: 1,
+			},
+			"focusMapOpacity",
+		);
+		tl.to(
+			(this._rotateBorder1 as NonNullable<typeof this._rotateBorder1>).scale,
+			{
+				delay: 0.3,
+				duration: 1,
+				x: 1,
+				y: 1,
+				z: 1,
+				ease: "circ.out",
+			},
+			"focusMapOpacity",
+		);
+		tl.to(
+			(this._rotateBorder2 as NonNullable<typeof this._rotateBorder2>).scale,
+			{
+				duration: 1,
+				delay: 0.5,
+				x: 1,
+				y: 1,
+				z: 1,
+				ease: "circ.out",
+				onComplete: () => {
+					this._flyLineFocusGroup.visible = true;
+					this._onPlayComplete?.();
+				},
+			},
+			"focusMapOpacity",
+		);
+		this._allBar.forEach((item, index) => {
+			tl.to(
+				item.scale,
+				{
+					duration: 1,
+					delay: 0.1 * index,
+					x: 1,
+					y: 1,
+					z: 1,
+					ease: "circ.out",
+				},
+				"bar",
+			);
+		});
+		this._allBarMaterial.forEach((item, index) => {
+			tl.to(
+				item,
+				{
+					duration: 1,
+					delay: 0.1 * index,
+					opacity: 1,
+					ease: "circ.out",
+				},
+				"bar",
+			);
+		});
+		this._allProvinceLabel.forEach((item, index) => {
+			const element = item.element.querySelector("#provinces-label-wrap");
+			const number = item.element.querySelector(
+				"#number #value",
+			) as HTMLDivElement;
+			const numberVal = Number(number.innerText);
+			const numberAnimate = {
+				score: 0,
+			};
+			tl.to(
+				element,
+				{
+					duration: 1,
+					delay: 0.2 * index,
+					translateY: 0,
+					opacity: 1,
+					ease: "circ.out",
+				},
+				"bar",
+			);
+			tl.to(
+				numberAnimate,
+				{
+					duration: 1,
+					delay: 0.2 * index,
+					score: numberVal,
+					onUpdate: showScore,
+				},
+				"bar",
+			);
+			function showScore() {
+				number.innerText = numberAnimate.score.toFixed(0);
+			}
+		});
+		this._allGuangquan.forEach((item, index) => {
+			tl.to(
+				item.children[0].scale,
+				{
+					duration: 1,
+					delay: 0.1 * index,
+					x: 1,
+					y: 1,
+					z: 1,
+					ease: "circ.out",
+				},
+				"bar",
+			);
+			tl.to(
+				item.children[1].scale,
+				{
+					duration: 1,
+					delay: 0.1 * index,
+					x: 1,
+					y: 1,
+					z: 1,
+					ease: "circ.out",
+				},
+				"bar",
+			);
+		});
+	}
+
+	private geoProjection(args: [number, number]) {
+		return geoMercator()
+			.center(this._geoProjectionCenter)
+			.scale(this._geoProjectionScale)
+			.translate([0, 0])(args) as [number, number];
+	}
+
+	update() {
+		super.update();
+		this._interactionManager?.update();
+	}
+
+	destroy() {
+		if (this._infoPointLabelTime) {
+			clearInterval(this._infoPointLabelTime);
+			this._infoPointLabelTime = null;
+		}
+		this._animateTl?.kill();
+		this._interactionManager.dispose();
+		this._label3d.destroy();
+		document.body.style.cursor = "default";
+		super.destroy();
+	}
+}

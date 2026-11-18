@@ -1,0 +1,31 @@
+/** 全国重点城市散点，演示数据。 */
+const chinaScatterPoints: { value: number; lng: number; lat: number }[] = [
+	{ value: 187, lng: 116.405285, lat: 39.904989 },
+	{ value: 196, lng: 121.472644, lat: 31.231706 },
+	{ value: 178, lng: 113.280637, lat: 23.125178 },
+	{ value: 189, lng: 114.057868, lat: 22.543099 },
+	{ value: 165, lng: 120.153576, lat: 30.287459 },
+	{ value: 160, lng: 118.767413, lat: 32.041544 },
+	{ value: 152, lng: 114.298572, lat: 30.584355 },
+	{ value: 148, lng: 104.065735, lat: 30.659462 },
+	{ value: 143, lng: 108.948024, lat: 34.263161 },
+	{ value: 138, lng: 113.665412, lat: 34.757975 },
+	{ value: 132, lng: 112.982279, lat: 28.19409 },
+	{ value: 128, lng: 123.429096, lat: 41.796767 },
+	{ value: 121, lng: 126.642464, lat: 45.756967 },
+	{ value: 136, lng: 117.000923, lat: 36.675807 },
+	{ value: 133, lng: 120.3839, lat: 36.0662 },
+	{ value: 124, lng: 119.306239, lat: 26.075302 },
+	{ value: 118, lng: 118.089425, lat: 24.479834 },
+	{ value: 112, lng: 102.712251, lat: 25.040609 },
+	{ value: 106, lng: 106.713478, lat: 26.578343 },
+	{ value: 108, lng: 108.320004, lat: 22.82402 },
+	{ value: 102, lng: 103.823557, lat: 36.058039 },
+	{ value: 96, lng: 87.617733, lat: 43.792818 },
+	{ value: 90, lng: 91.132212, lat: 29.660361 },
+	{ value: 104, lng: 111.670801, lat: 40.818311 },
+	{ value: 111, lng: 110.33119, lat: 20.031971 },
+	{ value: 127, lng: 121.509062, lat: 25.044332 },
+];
+
+export default chinaScatterPoints;

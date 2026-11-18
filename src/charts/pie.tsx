@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { createSignal, type JSXElement, onMount } from "solid-js";
+import { createSignal, type JSXElement, onCleanup, onMount } from "solid-js";
 import {
 	AmbientLight,
 	AxesHelper,
@@ -425,9 +425,10 @@ export default function PieChart({
 		.map((item) => item.value)
 		.reduce((prev, current) => prev + current, 0);
 
+	let pie: Pie | null = null;
 	onMount(() => {
 		const { offsetWidth, offsetHeight } = pieDom;
-		new Pie(pieDom, {
+		pie = new Pie(pieDom, {
 			width: offsetWidth,
 			height: offsetHeight,
 			count,
@@ -437,6 +438,10 @@ export default function PieChart({
 			delay,
 			onChange: setActiveIndex,
 		});
+	});
+	onCleanup(() => {
+		pie?.destroy();
+		pie = null;
 	});
 
 	return (

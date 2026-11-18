@@ -23,8 +23,10 @@
 @font-face {
   font-family: "阿里妈妈数黑体 Bold";
   font-weight: 700;
+  /* 必须用完整字库：EUt83SjhF4Bt.woff2 是只含「广东省数据可视化平台」10 个字形的子集，
+     标题换成其它字样时（如“中国…”）会缺字回退到系统字体，观感与其它字不一致。 */
   src: 
-    url("/assets/font/alimama/EUt83SjhF4Bt.woff2") format("woff2"),
-    url("/assets/font/alimama/EUt83SjhF4Bt.woff") format("woff");
+    url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff2") format("woff2"),
+    url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff") format("woff");
   font-display: swap;
 }

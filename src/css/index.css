@@ -30,3 +30,94 @@ body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* Tweakpane 大屏切换面板（顶部把手可拖拽，宽度由 JS 实测内容统一设定） */
+.screen-switcher {
+  position: fixed;
+  z-index: 2147483000;
+  max-width: calc(100vw - 8px);
+  pointer-events: auto;
+  user-select: none;
+  --tp-base-background-color: rgba(7, 28, 44, 0.92);
+  --tp-base-shadow-color: rgba(0, 0, 0, 0.5);
+  --tp-button-background-color: rgba(48, 220, 255, 0.12);
+  --tp-button-background-color-focus: rgba(48, 220, 255, 0.2);
+  --tp-button-background-color-hover: rgba(48, 220, 255, 0.24);
+  --tp-button-background-color-active: rgba(48, 220, 255, 0.34);
+  --tp-button-foreground-color: #7ef6ff;
+  --tp-container-background-color: rgba(9, 39, 59, 0.72);
+  --tp-container-background-color-focus: rgba(12, 51, 77, 0.82);
+  --tp-container-background-color-hover: rgba(12, 51, 77, 0.82);
+  --tp-container-background-color-active: rgba(16, 66, 99, 0.9);
+  --tp-container-foreground-color: #b7ecf6;
+  --tp-groove-foreground-color: rgba(48, 220, 255, 0.28);
+  --tp-input-background-color: rgba(7, 28, 44, 0.88);
+  --tp-input-background-color-focus: rgba(9, 39, 59, 0.95);
+  --tp-input-background-color-hover: rgba(9, 39, 59, 0.95);
+  --tp-input-background-color-active: rgba(12, 51, 77, 1);
+  --tp-input-foreground-color: #e7fdff;
+  --tp-label-foreground-color: #8cd5e8;
+}
+
+/* 顶部拖拽把手 */
+.screen-switcher-handle {
+  position: relative;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(126, 246, 255, 0.55);
+  background: rgba(7, 28, 44, 0.92);
+  border: 1px solid rgba(48, 220, 255, 0.35);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  cursor: move;
+  touch-action: none;
+}
+
+.screen-switcher-handle .grip {
+  width: 28px;
+  height: 10px;
+}
+
+.screen-switcher-collapse {
+  position: absolute;
+  right: 3px;
+  top: 1px;
+  width: 20px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: rgba(126, 246, 255, 0.7);
+  cursor: pointer;
+}
+
+.screen-switcher-collapse svg {
+  width: 10px;
+  height: 10px;
+}
+
+.screen-switcher-collapse:hover {
+  color: #7ef6ff;
+}
+
+.screen-switcher.dragging .screen-switcher-handle {
+  cursor: grabbing;
+  color: rgba(126, 246, 255, 0.9);
+  background: rgba(12, 51, 77, 0.95);
+}
+
+.screen-switcher .tp-dfwv {
+  width: auto;
+  font-size: 12px;
+}
+
+.screen-switcher .tp-rotv {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-radius: 0 0 6px 6px;
+}
