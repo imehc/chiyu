@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/02';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 3D Tiles
 
 本示例展示如何加载倾斜摄影 3D Tiles 数据，并实现鼠标交互选择单体建筑物，通过后处理效果高亮显示选中的对象。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/02?example-source').then(module => module.default)} />
 
 ## 核心功能
 

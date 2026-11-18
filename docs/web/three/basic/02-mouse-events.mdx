@@ -5,10 +5,13 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/three/basic/02';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 鼠标事件
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/three/basic/02?example-source').then(module => module.default)} />
 
 ## 核心概念
 

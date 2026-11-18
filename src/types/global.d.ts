@@ -7,3 +7,8 @@ declare module "*?raw" {
 	const content: string;
 	export default content;
 }
+
+declare module "*?example-source" {
+	const files: Record<string, string>;
+	export default files;
+}

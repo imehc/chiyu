@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/03';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 坐标系转换
 
 本示例展示如何在 Cesium 中使用 proj4 库进行不同坐标系之间的转换，将投影坐标（如 CGCS2000、WGS84 投影坐标等）转换为 Cesium 使用的经纬度坐标系（WGS84 地理坐标）。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/03?example-source').then(module => module.default)} />
 
 ## 核心功能
 

@@ -5,12 +5,15 @@ tags: [Javascript, TypeScript, Cesium]
 ---
 
 import App from '@site/src/exmaples/web/cesium/spatial-analysis/01';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 淹没分析
 
 本示例展示如何在 Cesium 中实现三维淹没分析功能。通过动态模拟水位上升或下降，可视化展示特定区域的淹没情况，支持实时参数调整和交互控制。该功能广泛应用于洪水模拟、水库蓄水分析、海平面上升预测等场景，为水利规划、防灾减灾、环境评估等提供直观的三维可视化支持。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/spatial-analysis/01?example-source').then(module => module.default)} />
 
 ## 核心功能
 

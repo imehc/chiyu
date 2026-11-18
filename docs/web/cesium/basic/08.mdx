@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/08';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # CZML 时空数据可视化
 
 本示例展示如何在 Cesium 中加载和显示 CZML（Cesium Language）格式的时空数据。CZML 是一种基于 JSON 的时空数据描述语言，专为 Cesium 设计，可以描述动态场景，如卫星轨道、飞行路径、移动对象等。本例通过加载卫星轨道数据，展示 CZML 的强大时空可视化能力。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/08?example-source').then(module => module.default)} />
 
 ## 核心功能
 

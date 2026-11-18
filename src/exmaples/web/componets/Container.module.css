@@ -3,8 +3,27 @@
 	margin-bottom: 1.5rem;
 }
 
-.controls:empty {
+.controls {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.sourceActions {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	justify-self: start;
+	align-self: start;
+	margin-top: 0.75rem;
+}
+
+.sourceActions:empty {
 	display: none;
+}
+
+.controls:has(.panel) .sourceActions {
+	grid-column: 2;
+	z-index: 1;
+	margin: 1rem 0.5rem 0 0;
 }
 
 .stats {
@@ -15,6 +34,8 @@
 }
 
 .panel {
+	grid-column: 1 / -1;
+	grid-row: 1;
 	margin-top: 0.75rem;
 	border: 1px solid var(--ifm-color-emphasis-300);
 	border-radius: var(--ifm-global-radius);
@@ -33,6 +54,10 @@
 .panel > summary:focus-visible {
 	outline: 2px solid var(--ifm-color-primary);
 	outline-offset: -3px;
+}
+
+.controls:has(.sourceActions:not(:empty)) .panel > summary {
+	padding-right: 8rem;
 }
 
 .panel :global(.dg.main) {

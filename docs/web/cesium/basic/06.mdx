@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/06';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 点线面图标与弹窗
 
 本示例展示如何在 Cesium 中绘制基础几何图形（点、线、面、图标）以及实现自定义弹窗（Popup）和工具提示（Tooltip）。通过 dat.GUI 控制面板可以切换不同的示例类型，包括单个点、线、面、图标、大量图标、弹窗和工具提示。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/06?example-source').then(module => module.default)} />
 
 ## 核心功能
 

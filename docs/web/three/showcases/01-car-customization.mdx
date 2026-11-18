@@ -5,6 +5,7 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/three/showcases/01';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Loading from '@site/src/exmaples/web/componets/Loading'
 
@@ -13,6 +14,8 @@ import Loading from '@site/src/exmaples/web/componets/Loading'
 <BrowserOnly fallback={<Loading />}>
   {() => <App />}
 </BrowserOnly>
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/three/showcases/01?example-source').then(module => module.default)} />
 
 ## 核心概念
 

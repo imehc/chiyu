@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/09';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 3D 模型加载与地形贴合
 
 本示例展示如何在 Cesium 中加载 GLTF/GLB 格式的 3D 模型，并确保模型正确贴合真实地形。示例包含两个场景：风车阵列和建筑，通过 dat.gui 控制面板可以切换不同的模型场景。重点演示了地形提供者的使用和模型的精确定位。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/09?example-source').then(module => module.default)} />
 
 ## 核心功能
 

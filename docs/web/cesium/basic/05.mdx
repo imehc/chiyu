@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/05';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 加载 SHP 文件
 
 本示例展示如何在 Cesium 中加载和展示 Shapefile（SHP）格式的矢量数据，通过 shpjs 库将 SHP 文件转换为 GeoJSON 格式，然后使用 Cesium 的 GeoJsonDataSource 进行可视化展示。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/05?example-source').then(module => module.default)} />
 
 ## 核心功能
 

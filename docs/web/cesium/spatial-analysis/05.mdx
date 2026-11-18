@@ -5,12 +5,15 @@ tags: [Javascript, TypeScript, Cesium]
 ---
 
 import App from '@site/src/exmaples/web/cesium/spatial-analysis/05';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 视频投影
 
 本示例展示如何在 Cesium 中实现三维视频投影功能。支持将视频内容投影到三维地形表面或特定的几何体上，可以模拟监控摄像头视角、视频播放器投影、实时直播流投影等场景。该功能广泛应用于智慧城市监控、无人机视频回传、视频监控系统、虚拟演播厅等领域，为三维场景中的视频展示提供直观的可视化支持。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/spatial-analysis/05?example-source').then(module => module.default)} />
 
 ## 核心功能
 

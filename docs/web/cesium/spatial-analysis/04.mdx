@@ -5,12 +5,15 @@ tags: [Javascript, TypeScript, Cesium]
 ---
 
 import App from '@site/src/exmaples/web/cesium/spatial-analysis/04';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 空间测量
 
 选择测量工具，左键添加点，右键结束。距离按确认的点击点累计；高度差、三角测量和方位角在第二次点击后结束。切换工具会结束当前测量，已完成的结果保留，点击「清除结果」全部移除。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/spatial-analysis/04?example-source').then(module => module.default)} />
 
 ## 核心功能
 

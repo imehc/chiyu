@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/11';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 点击获取 3D Tiles 属性
 
 本示例展示如何在 Cesium 中通过鼠标点击获取 3D Tiles 模型的属性信息。通过使用 ScreenSpaceEventHandler 事件处理器和 scene.pick() 方法，可以实现对三维模型的交互查询，获取建筑物名称、高度、用途等属性数据，为智慧城市、数字孪生等应用提供基础交互能力。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/11?example-source').then(module => module.default)} />
 
 ## 核心功能
 

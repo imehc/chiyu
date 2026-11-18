@@ -5,10 +5,13 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/three/advanced/06';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 层次结构
 
 <App/>
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/three/advanced/06?example-source').then(module => module.default)} />
 
 ## 核心概念
 

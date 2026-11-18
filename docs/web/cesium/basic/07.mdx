@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/07';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 聚合
 
 本示例展示如何在 Cesium 中实现大规模点位的高性能聚合显示。通过 Supercluster 算法和 Primitive API，可以流畅地渲染和交互成千上万个点位，并根据视角动态聚合。示例生成了 10,000 个随机点，在缩放过程中会自动根据密度聚合或展开。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/07?example-source').then(module => module.default)} />
 
 ## 核心功能
 

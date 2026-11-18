@@ -4,10 +4,13 @@ title: 图像马赛克
 ---
 
 import App from '@site/src/exmaples/web/canvas/01';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 图像马赛克
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/canvas/01?example-source').then(module => module.default)} />
 
 ## 核心概念
 

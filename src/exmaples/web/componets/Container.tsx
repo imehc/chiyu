@@ -68,6 +68,7 @@ export default forwardRef<HTMLDivElement, PropsWithChildren<ContainerProps>>(
 							{controls}
 						</details>
 					)}
+					<div data-example-source-actions className={styles.sourceActions} />
 				</div>
 			</div>
 		);

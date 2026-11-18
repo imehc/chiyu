@@ -5,6 +5,7 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/12';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import Loading from '@site/src/exmaples/web/componets/Loading'
 
@@ -13,6 +14,8 @@ import Loading from '@site/src/exmaples/web/componets/Loading'
 本示例展示如何在 Cesium 中实现丰富的天气和场景效果,包括雨雪天气、闪电效果、动态云层、自定义天空盒、近地天空盒以及背景图片设置,并通过 GUI 控制面板实现多种场景效果的动态切换。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/12?example-source').then(module => module.default)} />
 
 ## 核心功能
 

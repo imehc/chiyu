@@ -5,12 +5,15 @@ tags: [Javascript, TypeScript, Cesium]
 ---
 
 import App from '@site/src/exmaples/web/cesium/spatial-analysis/02';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 日照分析
 
 本示例展示如何在 Cesium 中实现三维场景的日照分析功能。通过模拟一天中不同时间段的太阳光照和阴影效果，可视化展示建筑物或地形在不同时刻的光照情况。该功能广泛应用于建筑设计、城市规划、太阳能评估等场景，为日照权分析、建筑采光优化、光伏发电选址等提供直观的三维可视化支持。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/spatial-analysis/02?example-source').then(module => module.default)} />
 
 ## 核心功能
 

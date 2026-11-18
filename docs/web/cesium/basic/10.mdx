@@ -5,12 +5,15 @@ tags: [Javascript]
 ---
 
 import App from '@site/src/exmaples/web/cesium/basic/10';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 自定义 Shader 材质特效
 
 本示例展示如何在 Cesium 中使用 CustomShader 为 3D Tiles 模型添加自定义着色效果。通过编写 GLSL 着色器代码，可以实现渐变色、动态光圈、纹理贴图等丰富的视觉效果。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/basic/10?example-source').then(module => module.default)} />
 
 ## 核心功能
 

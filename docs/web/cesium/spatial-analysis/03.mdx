@@ -5,12 +5,15 @@ tags: [Javascript, TypeScript, Cesium]
 ---
 
 import App from '@site/src/exmaples/web/cesium/spatial-analysis/03';
+import ExampleSource from '@site/src/exmaples/web/componets/ExampleSource';
 
 # 通视分析
 
 本示例展示如何在 Cesium 中实现三维场景的通视分析功能。通过分析观测点与目的点之间的视线是否被地形或建筑物遮挡，判断两点之间是否可见，并可视化显示通视情况。该功能广泛应用于通信基站选址、观景台规划、视域分析、军事侦察等场景，为视线规划、可见性评估、障碍物识别等提供直观的三维可视化支持。
 
 <App />
+
+<ExampleSource loadFiles={() => import('@site/src/exmaples/web/cesium/spatial-analysis/03?example-source').then(module => module.default)} />
 
 ## 核心功能
 
