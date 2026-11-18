@@ -1,1 +1,1 @@
-import{R as e,g as o,l as r,v as a}from"./chunk-GWE2HRAQ.js";var n=function(n,t){return o(t)&&(n=e.unpack(n,t)),n._center=r.clone(n._center),n._ellipsoid=a.clone(n._ellipsoid),e.createGeometry(n)};export{n as default};
+import{R as e,g as o,l as r,v as a}from"./chunk-FZYUOFLY.js";var n=function(n,t){return o(t)&&(n=e.unpack(n,t)),n._center=r.clone(n._center),n._ellipsoid=a.clone(n._ellipsoid),e.createGeometry(n)};export{n as default};

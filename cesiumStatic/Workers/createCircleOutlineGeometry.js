@@ -1,1 +1,1 @@
-import{S as e,g as l,l as r,v as o}from"./chunk-GWE2HRAQ.js";var t=function(t,s){return l(s)&&(t=e.unpack(t,s)),t._ellipseGeometry._center=r.clone(t._ellipseGeometry._center),t._ellipseGeometry._ellipsoid=o.clone(t._ellipseGeometry._ellipsoid),e.createGeometry(t)};export{t as default};
+import{S as e,g as l,l as r,v as o}from"./chunk-FZYUOFLY.js";var t=function(t,s){return l(s)&&(t=e.unpack(t,s)),t._ellipseGeometry._center=r.clone(t._ellipseGeometry._center),t._ellipseGeometry._ellipsoid=o.clone(t._ellipseGeometry._ellipsoid),e.createGeometry(t)};export{t as default};
