@@ -8,7 +8,10 @@
 	grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.sourceActions {
+.actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 	grid-column: 1 / -1;
 	grid-row: 1;
 	justify-self: start;
@@ -16,11 +19,11 @@
 	margin-top: 0.75rem;
 }
 
-.sourceActions:empty {
+.actions:not(:has(button)) {
 	display: none;
 }
 
-.controls:has(.panel) .sourceActions {
+.controls:has(.panel) .actions {
 	grid-column: 2;
 	z-index: 1;
 	margin: 1rem 0.5rem 0 0;
@@ -56,8 +59,154 @@
 	outline-offset: -3px;
 }
 
-.controls:has(.sourceActions:not(:empty)) .panel > summary {
-	padding-right: 8rem;
+.actionButton {
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--ifm-color-emphasis-300);
+	border-radius: var(--ifm-global-radius);
+	color: var(--ifm-font-color-base);
+	background: var(--ifm-background-surface-color);
+	font: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.actionButton:hover {
+	border-color: var(--ifm-color-primary);
+}
+
+.actionButton:focus-visible {
+	outline: 2px solid var(--ifm-color-primary);
+	outline-offset: 2px;
+}
+
+.fullscreenError {
+	grid-column: 1 / -1;
+	margin: 0.5rem 0 0;
+	color: var(--ifm-color-danger);
+	font-size: 0.875rem;
+}
+
+.example:fullscreen {
+	--example-summary-padding: 0;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	color: var(--ifm-font-color-base);
+	background: var(--ifm-background-surface-color);
+}
+
+.example:fullscreen > .viewport {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+}
+
+.example:fullscreen > .controls {
+	position: absolute;
+	top: 0.75rem;
+	right: 0.75rem;
+	z-index: 10;
+	width: auto;
+	max-width: calc(100% - 1.5rem);
+}
+
+.example:fullscreen .actions {
+	justify-self: end;
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	background: transparent;
+}
+
+.example:fullscreen .panel {
+	margin-top: 0;
+	border-color: transparent;
+	background: transparent;
+}
+
+.example:fullscreen .panel > summary {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	color: #fff;
+	background: transparent;
+	font-size: 0;
+	list-style: none;
+}
+
+.controls:has(.actions button) .panel > summary {
+	padding-right: var(--example-summary-padding, 13rem);
+}
+
+.example:fullscreen .panel > summary::-webkit-details-marker {
+	display: none;
+}
+
+.example:fullscreen .panel > summary::after {
+	width: 20px;
+	height: 20px;
+	background: currentColor;
+	mask:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round'%3E%3Cpath d='M4 7h5m4 0h7M4 17h9m4 0h3M9 4v6m4 4v6'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+	filter: drop-shadow(0 1px 2px rgb(0 0 0 / 60%));
+	content: "";
+}
+
+.example:fullscreen .panel:not([open]) {
+	grid-column: 1;
+}
+
+.example:fullscreen .controls:has(.panel) .actions {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	box-shadow: none;
+}
+
+.example:fullscreen .panel[open] {
+	max-height: min(60vh, 28rem);
+	border-color: var(--ifm-color-emphasis-300);
+	background: var(--ifm-background-surface-color);
+	overflow: auto;
+}
+
+.example:fullscreen .panel[open] > summary {
+	color: var(--ifm-font-color-base);
+	text-shadow: none;
+}
+
+.example:fullscreen .controls:has(.panel[open]) {
+	width: min(28rem, calc(100% - 1.5rem));
+}
+
+.example:fullscreen .controls:has(.panel[open]) .actions {
+	color: var(--ifm-font-color-base);
+}
+
+.example:fullscreen .actionButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 0;
+	color: inherit;
+	background: transparent;
+	opacity: 0.8;
+	filter: drop-shadow(0 1px 2px rgb(0 0 0 / 60%));
+}
+
+.example:fullscreen .actionButton:hover {
+	opacity: 1;
 }
 
 .panel :global(.dg.main) {

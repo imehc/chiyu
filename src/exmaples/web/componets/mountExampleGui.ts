@@ -13,6 +13,8 @@ export function mountExampleGui(gui: GUI, scene: HTMLElement): GUI {
 	panel.className = styles.panel;
 	const summary = document.createElement("summary");
 	summary.textContent = "操作面板";
+	summary.setAttribute("aria-label", "操作面板");
+	summary.title = "操作面板";
 	panel.append(summary, gui.domElement);
 	host.append(panel);
 	const resizeObserver = new ResizeObserver(([entry]) => {

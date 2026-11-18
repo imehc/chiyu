@@ -60,7 +60,7 @@ export default function ExampleSource({ loadFiles }: ExampleSourceProps) {
 				: previous?.querySelector("[data-example-root]");
 			setActionHost(
 				root?.querySelector<HTMLElement>(
-					":scope > [data-example-controls] > [data-example-source-actions]",
+					":scope > [data-example-controls] [data-example-source-actions]",
 				) ?? null,
 			);
 		};
@@ -97,19 +97,105 @@ export default function ExampleSource({ loadFiles }: ExampleSourceProps) {
 
 	const entries = Object.entries(files ?? {});
 	const filenames = entries.map(([name]) => name);
+	const overlayHost = actionHost
+		?.closest("[data-example-root]")
+		?.querySelector<HTMLElement>(":scope > [data-example-overlays]");
 	const trigger = (
 		<button
 			type="button"
 			className={`${styles.trigger} ${actionHost ? styles.inlineTrigger : ""}`}
 			aria-haspopup="dialog"
+			aria-label="查看源码"
+			title="查看源码"
 			onClick={() => {
 				dialog.current?.showModal();
 				setOpen(true);
 				if (!files) void loadSource();
 			}}
 		>
-			查看源码
+			<svg
+				className={styles.sourceIcon}
+				width={20}
+				height={20}
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth={1.75}
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				aria-hidden="true"
+			>
+				<path d="m8 7-5 5 5 5m8-10 5 5-5 5M13 3l-2 18" />
+			</svg>
+			<span className={styles.sourceLabel}>查看源码</span>
 		</button>
+	);
+	const modal = (
+		<dialog
+			ref={dialog}
+			className={styles.dialog}
+			aria-labelledby={titleId}
+			onClose={() => setOpen(false)}
+		>
+			<header className={styles.header}>
+				<h2 id={titleId}>示例源码</h2>
+				<button
+					type="button"
+					className={styles.closeButton}
+					aria-label="关闭源码弹窗"
+					title="关闭"
+					onClick={() => dialog.current?.close()}
+				>
+					<IconClose width={20} height={20} />
+				</button>
+			</header>
+			<div className={styles.content}>
+				{loading && <p role="status">加载源码…</p>}
+				{error && (
+					<p role="alert">
+						源码加载失败。
+						<button
+							type="button"
+							className="button button--secondary button--sm"
+							onClick={() => void loadSource()}
+						>
+							重试
+						</button>
+					</p>
+				)}
+				{entries.length === 1 && (
+					<div className={styles.singleFile}>
+						<CodeBlock
+							language={language(entries[0][0])}
+							title={entries[0][0]}
+							showLineNumbers
+						>
+							{entries[0][1]}
+						</CodeBlock>
+					</div>
+				)}
+				{entries.length > 1 && (
+					<Tabs lazy className={styles.fileTabs}>
+						{entries.map(([name, code]) => (
+							<TabItem
+								key={name}
+								value={name}
+								label={fileLabel(name, filenames)}
+								attributes={{ title: name }}
+							>
+								<CodeBlock
+									language={language(name)}
+									title={name}
+									showLineNumbers
+								>
+									{code}
+								</CodeBlock>
+							</TabItem>
+						))}
+					</Tabs>
+				)}
+			</div>
+		</dialog>
 	);
 	return (
 		<div
@@ -119,71 +205,7 @@ export default function ExampleSource({ loadFiles }: ExampleSourceProps) {
 			}
 		>
 			{actionHost ? createPortal(trigger, actionHost) : trigger}
-			<dialog
-				ref={dialog}
-				className={styles.dialog}
-				aria-labelledby={titleId}
-				onClose={() => setOpen(false)}
-			>
-				<header className={styles.header}>
-					<h2 id={titleId}>示例源码</h2>
-					<button
-						type="button"
-						className={styles.closeButton}
-						aria-label="关闭源码弹窗"
-						title="关闭"
-						onClick={() => dialog.current?.close()}
-					>
-						<IconClose width={20} height={20} />
-					</button>
-				</header>
-				<div className={styles.content}>
-					{loading && <p role="status">加载源码…</p>}
-					{error && (
-						<p role="alert">
-							源码加载失败。
-							<button
-								type="button"
-								className="button button--secondary button--sm"
-								onClick={() => void loadSource()}
-							>
-								重试
-							</button>
-						</p>
-					)}
-					{entries.length === 1 && (
-						<div className={styles.singleFile}>
-							<CodeBlock
-								language={language(entries[0][0])}
-								title={entries[0][0]}
-								showLineNumbers
-							>
-								{entries[0][1]}
-							</CodeBlock>
-						</div>
-					)}
-					{entries.length > 1 && (
-						<Tabs lazy className={styles.fileTabs}>
-							{entries.map(([name, code]) => (
-								<TabItem
-									key={name}
-									value={name}
-									label={fileLabel(name, filenames)}
-									attributes={{ title: name }}
-								>
-									<CodeBlock
-										language={language(name)}
-										title={name}
-										showLineNumbers
-									>
-										{code}
-									</CodeBlock>
-								</TabItem>
-							))}
-						</Tabs>
-					)}
-				</div>
-			</dialog>
+			{overlayHost ? createPortal(modal, overlayHost) : modal}
 		</div>
 	);
 }

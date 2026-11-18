@@ -24,7 +24,7 @@ export default function App() {
 	};
 
 	return (
-		<Container hiddenBorder autoHeight fullWidth>
+		<Container hiddenBorder autoHeight fullWidth allowFullscreen={false}>
 			<StackBlitzPlayground
 				files={files}
 				title="Cesium WKT 转 GeoJSON"
