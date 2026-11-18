@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkanch=self.webpackChunkanch||[]).push([["4251"],{34970(a){a.exports=JSON.parse('{"tag":{"label":"Vue","permalink":"/blog/tags/vue","allTagsPath":"/blog/tags","count":4,"unlisted":false},"listMetadata":{"permalink":"/blog/tags/vue","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

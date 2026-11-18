@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Visualize Dashboard Favicon">
+  <defs>
+    <linearGradient id="bg" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#071726" />
+      <stop offset="1" stop-color="#11364d" />
+    </linearGradient>
+    <linearGradient id="glow" x1="14" y1="14" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#77ecff" />
+      <stop offset="1" stop-color="#30dcff" />
+    </linearGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.4" result="b" />
+      <feMerge>
+        <feMergeNode in="b" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)" />
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="none" stroke="#1f5168" stroke-width="1.4" />
+
+  <circle cx="32" cy="30" r="16.5" fill="none" stroke="url(#glow)" stroke-opacity="0.35" stroke-width="1.8" />
+  <circle cx="32" cy="30" r="11.2" fill="none" stroke="url(#glow)" stroke-opacity="0.2" stroke-width="1.2" />
+
+  <path
+    d="M21 31.6L24.7 24.5L30.5 23L35 18.6L40.2 20.7L43.8 26.3L41.2 32.8L35.6 36.7L29.6 36L25 38.6Z"
+    fill="#0f6d85"
+    fill-opacity="0.52"
+    stroke="url(#glow)"
+    stroke-width="1.5"
+    stroke-linejoin="round"
+    filter="url(#softGlow)"
+  />
+
+  <path d="M20 22.5C24.8 20.2 39.3 19.2 44.6 24.8" fill="none" stroke="#57e3ff" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.75" />
+  <circle cx="44.8" cy="24.9" r="1.4" fill="#8af3ff" />
+
+  <rect x="22.2" y="43.2" width="3.8" height="8.2" rx="1" fill="#7eefff" />
+  <rect x="29.6" y="40.3" width="3.8" height="11.1" rx="1" fill="#53e3ff" />
+  <rect x="37" y="45.5" width="3.8" height="5.9" rx="1" fill="#2fc8ea" />
+</svg>
