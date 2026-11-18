@@ -8,6 +8,8 @@
 # Generated files
 .docusaurus
 .cache-loader
+.dashboard-preview
+/static/previews/dashboard-screen/
 
 # Misc
 .DS_Store

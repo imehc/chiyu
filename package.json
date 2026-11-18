@@ -4,8 +4,9 @@
 	"private": true,
 	"scripts": {
 		"docusaurus": "docusaurus",
-		"start": "docusaurus start",
-		"build": "docusaurus build",
+		"start": "node scripts/sync-dashboard.mjs --if-needed && docusaurus start",
+		"build": "node scripts/sync-dashboard.mjs --if-needed && docusaurus build",
+		"sync:dashboard": "node scripts/sync-dashboard.mjs",
 		"swizzle": "docusaurus swizzle",
 		"deploy": "docusaurus deploy",
 		"clear": "docusaurus clear",

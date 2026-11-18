@@ -8,5 +8,5 @@
 			"@site/*": ["./*"]
 		}
 	},
-	"exclude": [".docusaurus", "build"]
+	"exclude": [".docusaurus", "build", ".dashboard-preview"]
 }
