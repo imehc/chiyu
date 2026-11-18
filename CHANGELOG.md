@@ -1,3 +1,29 @@
+# [1.3.0](https://github.com/imehc/imehc.github.io/compare/v1.2.2...v1.3.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* 修正 Cesium 测量计算与结束交互 ([026424e](https://github.com/imehc/imehc.github.io/commit/026424eb839476c84aa8a34682bb59f421b2938e))
+* 修正 Cesium 示例加载与资源清理 ([2adbdb7](https://github.com/imehc/imehc.github.io/commit/2adbdb714a28602e4ff6fdea98d4281a2ceaa11b))
+* 修正 Three.js 示例交互与场景清理 ([2c8ca9b](https://github.com/imehc/imehc.github.io/commit/2c8ca9b92deb357f49dc6b28da83998766acd92a))
+* 修正场景背景切换的加载提示清理 ([c1e1773](https://github.com/imehc/imehc.github.io/commit/c1e1773f3e512a7c592641d45a7d844b9d19d92a))
+* 修正房子示例加载与标注清理 ([479247b](https://github.com/imehc/imehc.github.io/commit/479247b14d61ca2dfdabec841b5ba0b5e678c4b6))
+* 修正物料拾取示例加载提示清理 ([9cc1599](https://github.com/imehc/imehc.github.io/commit/9cc1599d90b12db689476ea3f0e31ec2f653583d))
+* 缩小源码弹窗标签栏高度 ([525689e](https://github.com/imehc/imehc.github.io/commit/525689ee89348844faa6c029dd5bc920057e34fc))
+* 默认折叠操作面板并移除空面板 ([0234322](https://github.com/imehc/imehc.github.io/commit/0234322c5ca1abc77aedd48fbb4e8ab73d2fed83))
+
+
+### Features
+
+* 为图形示例添加全屏展示 ([3bfa43e](https://github.com/imehc/imehc.github.io/commit/3bfa43e1df7fafe3b4affcb3f6bab0f0986fa0df))
+* 为图形示例添加源码查看弹窗 ([fa38ff5](https://github.com/imehc/imehc.github.io/commit/fa38ff54e93ca3694446053f1ffd27ccfbd1f9aa))
+* 完善示例操作面板与画布布局 ([c9f907e](https://github.com/imehc/imehc.github.io/commit/c9f907eca5047359f50d10d576491fcf13c5c41a))
+* 按开发领域整理知识库与博客 ([499abd9](https://github.com/imehc/imehc.github.io/commit/499abd9c99241eac1e93895bd58be1ddc1eb0f3a))
+* 添加可视化大屏示例与分支预览同步 ([962bb22](https://github.com/imehc/imehc.github.io/commit/962bb223b01abc3d021801f84721e99ca86db768))
+* 添加图形示例画廊与筛选 ([9f22da8](https://github.com/imehc/imehc.github.io/commit/9f22da894b779f8253cee5e1c5a4671b55d5997b))
+* 添加示例源码 GitHub 入口 ([f109187](https://github.com/imehc/imehc.github.io/commit/f1091877c079ddf7fc749a54ccf0c95b0bb0a15f))
+* 调整 StackBlitz 示例入口与主题样式 ([6a10df5](https://github.com/imehc/imehc.github.io/commit/6a10df55b33138b09a64ac2c4f3adeef3983fa70))
+
 ## [1.2.2](https://github.com/imehc/imehc.github.io/compare/v1.2.1...v1.2.2) (2026-10-20)
 
 
