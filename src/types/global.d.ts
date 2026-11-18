@@ -9,6 +9,6 @@ declare module "*?raw" {
 }
 
 declare module "*?example-source" {
-	const files: Record<string, string>;
-	export default files;
+	const bundle: import("../data/example-source").ExampleSourceBundle;
+	export default bundle;
 }

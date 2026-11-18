@@ -99,6 +99,19 @@
 	font-size: 1.125rem;
 }
 
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.githubLink {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	font-size: 0.875rem;
+}
+
 .closeButton {
 	display: inline-flex;
 	flex-shrink: 0;

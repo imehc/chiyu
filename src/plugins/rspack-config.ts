@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { Plugin } from "@docusaurus/types";
+import { exampleRepository } from "../data/repository";
 
 export default function rspackPlugin(context: { siteDir: string }): Plugin {
 	return {
@@ -13,10 +14,13 @@ export default function rspackPlugin(context: { siteDir: string }): Plugin {
 							resourceQuery: /example-source/,
 							type: "javascript/auto",
 							use: [
-								path.join(
-									context.siteDir,
-									"src/plugins/example-source-loader.cjs",
-								),
+								{
+									loader: path.join(
+										context.siteDir,
+										"src/plugins/example-source-loader.cjs",
+									),
+									options: exampleRepository,
+								},
 							],
 						},
 						{

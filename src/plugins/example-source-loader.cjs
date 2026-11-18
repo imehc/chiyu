@@ -113,12 +113,22 @@ function collectSources(entry, siteDir, addDependency = () => {}) {
 }
 
 module.exports = function exampleSourceLoader() {
+	const { url, branch } = this.getOptions();
 	const { files, usesStackBlitz } = collectSources(
 		this.resourcePath,
 		this.rootContext,
 		(filename) => this.addDependency(filename),
 	);
-	return `export default ${JSON.stringify(usesStackBlitz ? {} : files)};`;
+	const relativePath = path
+		.relative(this.rootContext, this.resourcePath)
+		.split(path.sep)
+		.map(encodeURIComponent)
+		.join("/");
+	const bundle = {
+		files: usesStackBlitz ? {} : files,
+		githubUrl: `${url}/blob/${encodeURIComponent(branch)}/${relativePath}`,
+	};
+	return `export default ${JSON.stringify(bundle)};`;
 };
 module.exports.collectSources = collectSources;
 module.exports.moduleSpecifiers = moduleSpecifiers;

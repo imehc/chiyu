@@ -4,10 +4,11 @@ import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import type { ExampleSourceBundle } from "../../../data/example-source";
 import styles from "./ExampleSource.module.css";
 
 interface ExampleSourceProps {
-	loadFiles: () => Promise<Record<string, string>>;
+	loadFiles: () => Promise<ExampleSourceBundle>;
 }
 
 function language(filename: string) {
@@ -35,6 +36,7 @@ function fileLabel(filename: string, filenames: string[]) {
 export default function ExampleSource({ loadFiles }: ExampleSourceProps) {
 	const [open, setOpen] = useState(false);
 	const [files, setFiles] = useState<Record<string, string> | null>(null);
+	const [githubUrl, setGithubUrl] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
 	const [actionHost, setActionHost] = useState<HTMLElement | null>(null);
@@ -86,7 +88,10 @@ export default function ExampleSource({ loadFiles }: ExampleSourceProps) {
 		setError(false);
 		try {
 			const result = await loadFiles();
-			if (mounted.current) setFiles(result);
+			if (mounted.current) {
+				setFiles(result.files);
+				setGithubUrl(result.githubUrl);
+			}
 		} catch {
 			if (mounted.current) setError(true);
 		} finally {
@@ -139,15 +144,41 @@ export default function ExampleSource({ loadFiles }: ExampleSourceProps) {
 		>
 			<header className={styles.header}>
 				<h2 id={titleId}>示例源码</h2>
-				<button
-					type="button"
-					className={styles.closeButton}
-					aria-label="关闭源码弹窗"
-					title="关闭"
-					onClick={() => dialog.current?.close()}
-				>
-					<IconClose width={20} height={20} />
-				</button>
+				<div className={styles.headerActions}>
+					{githubUrl && (
+						<a
+							className={styles.githubLink}
+							href={githubUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							aria-label="在 GitHub 中查看示例源码"
+						>
+							GitHub
+							<svg
+								width={16}
+								height={16}
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth={1.75}
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								aria-hidden="true"
+							>
+								<path d="M14 3h7v7m0-7L10 14M10 3H3v18h18v-7" />
+							</svg>
+						</a>
+					)}
+					<button
+						type="button"
+						className={styles.closeButton}
+						aria-label="关闭源码弹窗"
+						title="关闭"
+						onClick={() => dialog.current?.close()}
+					>
+						<IconClose width={20} height={20} />
+					</button>
+				</div>
 			</header>
 			<div className={styles.content}>
 				{loading && <p role="status">加载源码…</p>}
