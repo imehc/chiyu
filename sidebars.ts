@@ -118,10 +118,8 @@ const sidebars: SidebarsConfig = {
 								label: "图形与可视化",
 								collapsed: true,
 								link: {
-									type: "generated-index" as const,
-									title: "图形与可视化",
-									description: "探索 Three.js、Canvas 和 Cesium 的交互示例。",
-									slug: "/knowledge/frontend/visualization",
+									type: "doc" as const,
+									id: "knowledge/frontend/visualization",
 								},
 								items: graphicsItems,
 							},

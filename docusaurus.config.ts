@@ -33,6 +33,7 @@ const config: Config = {
 	},
 
 	plugins: [
+		"./src/plugins/example-gallery.ts",
 		"./src/plugins/tailwind-config.ts",
 		"./src/plugins/rspack-config.ts",
 		"./src/plugins/cesium-config.ts",
