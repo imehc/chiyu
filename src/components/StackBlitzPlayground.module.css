@@ -1,0 +1,71 @@
+.playground {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.25rem;
+	padding: 1.5rem;
+	border: 1px solid var(--ifm-color-emphasis-300);
+	border-radius: 0.75rem;
+	color: var(--ifm-font-color-base);
+	background: var(--ifm-background-surface-color);
+}
+
+.intro {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 1rem;
+}
+
+.icon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: var(--ifm-global-radius);
+	color: var(--ifm-color-primary);
+	background: var(--ifm-color-emphasis-100);
+}
+
+.text {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.title {
+	font-weight: 600;
+}
+
+.description {
+	margin: 0.25rem 0 0;
+	color: var(--ifm-color-emphasis-700);
+	font-size: 0.875rem;
+}
+
+.openButton {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+}
+
+.openButton:focus-visible {
+	outline: 2px solid var(--ifm-color-primary);
+	outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+	.playground {
+		flex-direction: column;
+		align-items: stretch;
+		padding: 1.25rem;
+	}
+
+	.openButton {
+		width: 100%;
+	}
+}

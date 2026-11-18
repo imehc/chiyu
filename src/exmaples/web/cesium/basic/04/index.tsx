@@ -27,10 +27,9 @@ export default function App() {
 		<Container hiddenBorder autoHeight fullWidth>
 			<StackBlitzPlayground
 				files={files}
-				title="Cesium Example"
-				description="Cesium basic example"
+				title="Cesium WKT 转 GeoJSON"
+				description="在 StackBlitz 中在线运行和修改完整示例"
 				openFile="src/App.tsx"
-				height={500}
 			/>
 		</Container>
 	);
