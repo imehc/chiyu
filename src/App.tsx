@@ -43,7 +43,7 @@ export default function App() {
 	let pane: Pane | undefined;
 	let fsButton: ReturnType<Pane["addButton"]> | undefined;
 
-	const [currentScreen, setCurrentScreen] = createSignal<ScreenId>("guangdong");
+	const [currentScreen, setCurrentScreen] = createSignal<ScreenId>("chongqing");
 	const [position, setPosition] = createSignal(
 		loadPosition() ??
 			clampPosition(

@@ -1,5 +1,6 @@
 import type { Component } from "solid-js";
 import ChinaScreen from "./china";
+import ChongqingScreen from "./chongqing";
 import GuangdongScreen from "./guangdong";
 
 export interface ScreenDefinition {
@@ -10,6 +11,11 @@ export interface ScreenDefinition {
 }
 
 export const screenRegistry = {
+	chongqing: {
+		label: "重庆市大屏",
+		short: "重庆",
+		component: ChongqingScreen,
+	},
 	guangdong: {
 		label: "广东省大屏",
 		short: "广东",
