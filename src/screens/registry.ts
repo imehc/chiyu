@@ -1,7 +1,4 @@
-import type { Component } from "solid-js";
-import ChinaScreen from "./china";
-import ChongqingScreen from "./chongqing";
-import GuangdongScreen from "./guangdong";
+import { type Component, lazy } from "solid-js";
 
 export interface ScreenDefinition {
 	label: string;
@@ -11,20 +8,25 @@ export interface ScreenDefinition {
 }
 
 export const screenRegistry = {
+	blue: {
+		label: "复杂大屏",
+		short: "复杂",
+		component: lazy(() => import("./blue")),
+	},
 	chongqing: {
 		label: "重庆市大屏",
 		short: "重庆",
-		component: ChongqingScreen,
+		component: lazy(() => import("./chongqing")),
 	},
 	guangdong: {
 		label: "广东省大屏",
 		short: "广东",
-		component: GuangdongScreen,
+		component: lazy(() => import("./guangdong")),
 	},
 	china: {
 		label: "中国大屏",
 		short: "中国",
-		component: ChinaScreen,
+		component: lazy(() => import("./china")),
 	},
 } satisfies Record<string, ScreenDefinition>;
 

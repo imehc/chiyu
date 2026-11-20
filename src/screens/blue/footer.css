@@ -1,0 +1,24 @@
+.blue-command-footer {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 62px;
+	z-index: 1;
+	pointer-events: none;
+}
+.blue-footer-art {
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	pointer-events: none;
+}
+.blue-footer-gold-glow {
+	opacity: 0.4;
+}
+@media (prefers-reduced-motion: reduce) {
+	.blue-command-footer .blue-line-flow {
+		display: none;
+	}
+}

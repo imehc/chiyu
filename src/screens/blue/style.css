@@ -1,0 +1,573 @@
+.blue-shell fieldset {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	min-width: 0;
+}
+.blue-shell {
+	position: relative;
+	width: 100vw;
+	height: 100dvh;
+	overflow: hidden;
+	background: #020712;
+	color: #d5eaf8;
+	font-family: "Alibaba PuHuiTi", "PingFang SC", sans-serif;
+}
+.blue-stage {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 1920px;
+	height: 834px;
+	overflow: hidden;
+	background: #020916;
+	transform-origin: center;
+}
+.blue-map-canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	touch-action: none;
+}
+.blue-vignette {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: radial-gradient(
+		ellipse at center,
+		transparent 32%,
+		#01071255 73%,
+		#01081499 100%
+	);
+}
+.blue-frame {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+.blue-shell-frame {
+	transform-box: fill-box;
+	transform-origin: center;
+}
+.blue-shell-frame-left {
+	--blue-shell-breath-x: 10px;
+}
+.blue-shell-frame-right {
+	--blue-shell-breath-x: -10px;
+}
+.blue-shell-breathing {
+	animation: blueShellBreathing 5.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+.blue-shell-edge {
+	stroke-opacity: 0.65;
+}
+@keyframes blueShellBreathing {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(var(--blue-shell-breath-x));
+	}
+}
+.blue-line-trail {
+	filter: drop-shadow(0 0 2px #23cfff99);
+}
+.blue-panels {
+	position: absolute;
+	top: 80px;
+	width: 396px;
+	bottom: 35px;
+}
+.blue-panels-left {
+	left: 24px;
+}
+.blue-panels-right {
+	right: 24px;
+}
+.blue-layers {
+	position: absolute;
+	left: 500px;
+	top: 33%;
+	display: flex;
+	flex-direction: column;
+	gap: calc(30px * var(--blue-control-scale));
+}
+.blue-map-tools {
+	position: absolute;
+	top: 42%;
+	right: 527px;
+	display: flex;
+	flex-direction: column;
+	gap: calc(14px * var(--blue-control-scale));
+}
+.blue-view-tabs {
+	position: absolute;
+	left: 50%;
+	bottom: 19px;
+	z-index: 2;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 14px;
+}
+.blue-monitor-anchor {
+	position: absolute;
+	z-index: 8;
+	width: 280px;
+	padding-bottom: 14px;
+	transform: translate(-50%, -100%);
+	pointer-events: none;
+}
+.blue-monitor {
+	position: relative;
+	box-sizing: border-box;
+	width: 100%;
+	border: 2px solid #2996cf;
+	border-bottom-color: transparent;
+	background: linear-gradient(180deg, #03325bd9, #064469d9);
+	box-shadow: 0 0 8px #1697d233;
+	font-size: 16px;
+	font-weight: 600;
+	color: #c5e3f5;
+	transform-origin: 50% calc(100% + 14px);
+	animation: blueMonitorIn 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	pointer-events: auto;
+}
+.blue-monitor::after {
+	content: "";
+	position: absolute;
+	left: -2px;
+	right: -2px;
+	bottom: -2px;
+	height: 2px;
+	background: linear-gradient(
+		90deg,
+		#2996cf 0 calc(50% - 14px),
+		transparent 0 calc(50% + 14px),
+		#2996cf 0
+	);
+}
+.blue-monitor-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 52px;
+	padding: 0 16px 0 24px;
+	border-bottom: 1px solid #3b97c84d;
+}
+.blue-monitor-header strong {
+	font-size: 19px;
+	line-height: 30px;
+	letter-spacing: 1px;
+	color: #edfaff;
+}
+.blue-monitor-data {
+	margin: 0;
+	padding: 10px 24px 12px;
+}
+.blue-monitor-data > div {
+	display: grid;
+	grid-template-columns: 104px 1fr;
+	align-items: center;
+	min-height: 40px;
+}
+.blue-monitor-data dt,
+.blue-monitor-data dd {
+	margin: 0;
+	line-height: 28px;
+}
+.blue-monitor-data dd {
+	font-family: "D-DIN", sans-serif;
+	font-size: 18px;
+	font-weight: 700;
+	color: #69c8ef;
+	letter-spacing: 2px;
+}
+.blue-monitor-close {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	padding: 4px;
+	background: none;
+	border: 0;
+	cursor: pointer;
+	color: #32b5e8;
+}
+.blue-monitor-close svg {
+	width: 100%;
+	height: 100%;
+	stroke: currentColor;
+	stroke-width: 2.5;
+	stroke-linecap: round;
+	filter: drop-shadow(0 0 3px #32b5e880);
+}
+.blue-monitor-close:hover {
+	color: #a2edff;
+}
+.blue-monitor-arrow {
+	position: absolute;
+	left: 50%;
+	bottom: -14px;
+	width: 28px;
+	height: 14px;
+	transform: translateX(-50%);
+	background: #2996cf;
+	clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.blue-monitor-arrow::after {
+	content: "";
+	position: absolute;
+	inset: 0 2px 2px;
+	background: #064469;
+	clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.blue-monitor-closing {
+	animation: blueMonitorOut 240ms cubic-bezier(0.55, 0, 1, 0.45) both;
+	pointer-events: none;
+}
+@keyframes blueMonitorIn {
+	from {
+		opacity: 0;
+		transform: scale(0.015);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+@keyframes blueMonitorOut {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.015);
+	}
+}
+.blue-loading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: #000;
+	z-index: 20;
+	font-family: "D-DIN", sans-serif;
+	color: #fff;
+}
+.blue-loading-progress {
+	font-size: 22px;
+	margin-bottom: 13px;
+}
+.blue-loading-progress small {
+	font-size: 13px;
+}
+.blue-loading-word {
+	font-size: 23px;
+	letter-spacing: 8px;
+	animation: blueLoadingBlur 1s ease-in-out infinite alternate;
+}
+.blue-shell button:focus-visible {
+	outline: 2px solid #4df1ff;
+	outline-offset: 4px;
+}
+.blue-panels {
+	opacity: 1;
+}
+.blue-panels .blue-panel {
+	transform: translateX(0);
+	opacity: 1;
+	transition:
+		transform 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+		opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.blue-panels .blue-panel:nth-child(2) {
+	transition-delay: 0.2s;
+}
+.blue-panels .blue-panel:nth-child(3) {
+	transition-delay: 0.4s;
+}
+.blue-layers,
+.blue-map-tools {
+	opacity: 1;
+	transform: translateX(0);
+}
+.blue-layers .blue-layer-button,
+.blue-map-tools button {
+	--blue-control-delay: 0s;
+	opacity: 1;
+	transform: translateX(0);
+	transition:
+		opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1) var(--blue-control-delay),
+		transform 1.5s cubic-bezier(0.16, 1, 0.3, 1) var(--blue-control-delay),
+		color 180ms ease,
+		text-shadow 180ms ease;
+}
+:is(.blue-layers, .blue-map-tools) button:nth-child(2) {
+	--blue-control-delay: 0.1s;
+}
+:is(.blue-layers, .blue-map-tools) button:nth-child(3) {
+	--blue-control-delay: 0.2s;
+}
+:is(.blue-layers, .blue-map-tools) button:nth-child(4) {
+	--blue-control-delay: 0.3s;
+}
+:is(.blue-layers, .blue-map-tools) button:nth-child(5) {
+	--blue-control-delay: 0.4s;
+}
+.blue-shell-frame {
+	opacity: 1;
+	transform: translateX(0);
+	transition:
+		opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s,
+		transform 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+}
+.blue-command-header,
+.blue-command-footer {
+	opacity: 1;
+	transform: translateY(0);
+	transition:
+		opacity 0.8s ease 0.04s,
+		transform 1s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
+}
+.blue-command-footer {
+	transition-delay: 0.08s;
+}
+.blue-view-tabs,
+.blue-freight-modes {
+	opacity: 1;
+	transform: translate(-50%, 0);
+	transition:
+		opacity 0.8s ease 0.12s,
+		transform 1s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+}
+.blue-freight-modes {
+	transition-delay: 0.2s;
+}
+.blue-header-nav .blue-header-menu {
+	--blue-header-delay: 0.08s;
+	opacity: 1;
+	transition:
+		opacity 0.75s ease var(--blue-header-delay),
+		color 180ms ease,
+		filter 180ms ease;
+}
+.blue-header-nav .blue-header-menu:nth-child(2) {
+	--blue-header-delay: 0.16s;
+}
+.blue-header-nav .blue-header-menu:nth-child(3) {
+	--blue-header-delay: 0.24s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-panels-left .blue-panel, .blue-layers .blue-layer-button) {
+	transform: translateX(-150%);
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-panels-right .blue-panel, .blue-map-tools button) {
+	transform: translateX(150%);
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	.blue-shell-frame-left {
+	transform: translateX(-150%);
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	.blue-shell-frame-right {
+	transform: translateX(150%);
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	.blue-command-header {
+	transform: translateY(-32px);
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	.blue-command-footer {
+	transform: translateY(32px);
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-view-tabs, .blue-freight-modes) {
+	transform: translate(-50%, 32px);
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(
+		.blue-panel,
+		.blue-layer-button,
+		.blue-map-tools button,
+		.blue-shell-frame,
+		.blue-command-header,
+		.blue-command-footer,
+		.blue-view-tabs,
+		.blue-freight-modes
+	) {
+	opacity: 0;
+	transition-duration: 1s;
+	transition-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
+	transition-delay: 0s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	.blue-panels
+	.blue-panel:nth-child(2) {
+	transition-delay: 0.12s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	.blue-panels
+	.blue-panel:nth-child(3) {
+	transition-delay: 0.24s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(
+		.blue-panels,
+		.blue-panel,
+		.blue-layers,
+		.blue-map-tools,
+		.blue-command-header,
+		.blue-view-tabs,
+		.blue-freight-modes
+	) {
+	pointer-events: none;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	.blue-header-nav
+	button {
+	opacity: 0;
+	transition-delay: 0s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-layers, .blue-map-tools)
+	button {
+	--blue-control-delay: 0s;
+	transition:
+		opacity 1s cubic-bezier(0.7, 0, 0.84, 0) var(--blue-control-delay),
+		transform 1s cubic-bezier(0.7, 0, 0.84, 0) var(--blue-control-delay),
+		color 180ms ease,
+		text-shadow 180ms ease;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-layers, .blue-map-tools)
+	button:nth-child(2) {
+	--blue-control-delay: 0.06s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-layers, .blue-map-tools)
+	button:nth-child(3) {
+	--blue-control-delay: 0.12s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-layers, .blue-map-tools)
+	button:nth-child(4) {
+	--blue-control-delay: 0.18s;
+}
+.blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
+	:is(.blue-layers, .blue-map-tools)
+	button:nth-child(5) {
+	--blue-control-delay: 0.24s;
+}
+.blue-shell:is(
+		[data-motion="exit"],
+		[data-motion="enter"],
+		.blue-view-transition,
+		:not(.blue-loaded)
+	)
+	:is(
+		.blue-panel,
+		.blue-layer-button,
+		.blue-map-tools button,
+		.blue-shell-frame,
+		.blue-command-header,
+		.blue-command-footer,
+		.blue-view-tabs,
+		.blue-freight-modes
+	) {
+	will-change: transform, opacity;
+}
+.blue-shell:is(
+		[data-motion="exit"],
+		[data-motion="enter"],
+		.blue-view-transition,
+		:not(.blue-loaded)
+	)
+	:is(.blue-shell-breathing, .blue-panel-beam) {
+	animation-play-state: paused;
+}
+/* SVG SMIL trails do not respond to CSS animation-play-state. */
+.blue-shell:is(
+		[data-motion="exit"],
+		[data-motion="enter"],
+		.blue-view-transition,
+		:not(.blue-loaded)
+	)
+	.blue-line-flow {
+	display: none;
+}
+.blue-region-path {
+	position: absolute;
+	left: 675px;
+	top: 110px;
+	max-width: 650px;
+	font-size: 20px;
+	color: #bcd8ee;
+	white-space: nowrap;
+}
+.blue-freight-modes {
+	position: absolute;
+	left: 50%;
+	bottom: 75px;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 20px;
+}
+@keyframes blueLoadingBlur {
+	to {
+		filter: blur(1.6px);
+		opacity: 0.5;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.blue-monitor {
+		animation-duration: 1ms;
+	}
+	.blue-shell-breathing {
+		animation: none;
+	}
+	.blue-panels,
+	.blue-panels .blue-panel,
+	.blue-layers,
+	.blue-map-tools,
+	.blue-layers .blue-layer-button,
+	.blue-map-tools button,
+	.blue-shell-frame,
+	.blue-command-header,
+	.blue-command-footer,
+	.blue-view-tabs,
+	.blue-freight-modes,
+	.blue-header-nav .blue-header-menu,
+	.blue-shell:is(
+			[data-motion="exit"],
+			.blue-view-transition,
+			:not(.blue-loaded)
+		)
+		:is(
+			.blue-panel,
+			.blue-layers,
+			.blue-map-tools,
+			.blue-layer-button,
+			.blue-map-tools button,
+			.blue-shell-frame,
+			.blue-command-header,
+			.blue-command-footer,
+			.blue-view-tabs,
+			.blue-freight-modes
+		) {
+		transition: none;
+	}
+	.blue-line-flow {
+		display: none;
+	}
+	.blue-loading-word {
+		animation: none;
+	}
+}

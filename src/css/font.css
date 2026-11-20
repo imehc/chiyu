@@ -1,32 +1,31 @@
-
 /* 定义 @font-face */
 @font-face {
-  font-family: "D-DIN";
-  src: url("/assets/font/D-DIN.otf") format("otf");
+	font-family: "D-DIN";
+	src: url("/assets/font/D-DIN.otf") format("opentype");
 }
 
 @font-face {
-  font-family: "D-DIN-Bold";
-  src: url("/assets/font/D-DIN-Bold.otf") format("otf");
+	font-family: "D-DIN-Bold";
+	src: url("/assets/font/D-DIN-Bold.otf") format("opentype");
 }
 
 @font-face {
-  font-family: "D-DIN-Italic";
-  src: url("/assets/font/D-DIN-Italic.otf") format("otf");
+	font-family: "D-DIN-Italic";
+	src: url("/assets/font/D-DIN-Italic.otf") format("opentype");
 }
 
 @font-face {
-  font-family: "Alibaba PuHuiTi";
-  src: url("/assets/font/AlibabaPuHuiTi.woff2") format("woff2");
+	font-family: "Alibaba PuHuiTi";
+	src: url("/assets/font/AlibabaPuHuiTi.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: "阿里妈妈数黑体 Bold";
-  font-weight: 700;
-  /* 必须用完整字库：EUt83SjhF4Bt.woff2 是只含「广东省数据可视化平台」10 个字形的子集，
+	font-family: "阿里妈妈数黑体 Bold";
+	font-weight: 700;
+	/* 必须用完整字库：EUt83SjhF4Bt.woff2 是只含「广东省数据可视化平台」10 个字形的子集，
      标题换成其它字样时（如“中国…”）会缺字回退到系统字体，观感与其它字不一致。 */
-  src: 
-    url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff2") format("woff2"),
-    url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff") format("woff");
-  font-display: swap;
+	src:
+		url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff2") format("woff2"),
+		url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff") format("woff");
+	font-display: swap;
 }

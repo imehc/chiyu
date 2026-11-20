@@ -1,6 +1,12 @@
-import { createSignal, onCleanup, onMount } from "solid-js";
+import {
+	createEffect,
+	createSignal,
+	onCleanup,
+	onMount,
+	Suspense,
+} from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { Pane } from "tweakpane";
+import type { Pane } from "tweakpane";
 import {
 	type ScreenId,
 	screenOptions,
@@ -42,8 +48,21 @@ export default function App() {
 	let panelRef!: HTMLDivElement;
 	let pane: Pane | undefined;
 	let fsButton: ReturnType<Pane["addButton"]> | undefined;
+	let disposed = false;
+	let paneLoading = false;
 
-	const [currentScreen, setCurrentScreen] = createSignal<ScreenId>("chongqing");
+	const requestedScreen = new URLSearchParams(window.location.search).get(
+		"screen",
+	);
+	const initialScreen: ScreenId =
+		requestedScreen && Object.hasOwn(screenRegistry, requestedScreen)
+			? (requestedScreen as ScreenId)
+			: "blue";
+	const [currentScreen, setCurrentScreen] =
+		createSignal<ScreenId>(initialScreen);
+	const [controlsVisible, setControlsVisible] = createSignal(
+		initialScreen !== "blue",
+	);
 	const [position, setPosition] = createSignal(
 		loadPosition() ??
 			clampPosition(
@@ -127,66 +146,122 @@ export default function App() {
 
 	const onWindowResize = () =>
 		setPosition((pos) => clampPosition(pos.x, pos.y));
+	const onControlKey = (event: KeyboardEvent) => {
+		if (
+			event.key.toLowerCase() === "s" &&
+			!event.ctrlKey &&
+			!event.metaKey &&
+			!event.altKey &&
+			!(
+				event.target instanceof HTMLElement &&
+				event.target.closest("input, textarea, select, [contenteditable]")
+			)
+		) {
+			setControlsVisible((visible) => !visible);
+		}
+	};
+
+	const setupPane = async () => {
+		if (pane || paneLoading) return;
+		paneLoading = true;
+		try {
+			const { Pane } = await import("tweakpane");
+			if (disposed) return;
+			pane = new Pane({ container: panelRef, expanded: true });
+
+			// 实测最长文案，得出面板统一宽度（展开/折叠一致，且不小于最小宽度）
+			const measure = (text: string) => {
+				const span = document.createElement("span");
+				span.style.cssText =
+					"position:fixed;visibility:hidden;white-space:nowrap;font-size:12px;";
+				span.textContent = text;
+				document.body.appendChild(span);
+				const w = span.offsetWidth;
+				span.remove();
+				return w;
+			};
+			const contentWidth = Math.max(
+				...screenIds.map((id) => measure(screenRegistry[id].label)),
+				measure("进入全屏"),
+				measure("退出全屏"),
+			);
+			setPanelWidth(
+				Math.min(
+					Math.max(PANEL_MIN_WIDTH, contentWidth + 28),
+					window.innerWidth - 8,
+				),
+			);
+
+			const params = { screen: currentScreen() };
+			pane
+				.addBinding(params, "screen", {
+					// label 传 undefined 时 Tweakpane 进入 nol 模式：隐藏 label、值占满整行
+					label: undefined,
+					options: screenOptions,
+				})
+				.on("change", (event) => {
+					const id = event.value as ScreenId;
+					// 选项值异常时保持当前大屏，避免渲染 undefined 组件
+					if (!id || !screenRegistry[id]) return;
+					setCurrentScreen(id);
+					const url = new URL(window.location.href);
+					url.searchParams.set("screen", id);
+					window.history.replaceState(null, "", url);
+				});
+
+			fsButton = pane.addButton({ title: "进入全屏" });
+			fsButton.on("click", toggleFullscreen);
+			onFullscreenChange();
+		} catch (error) {
+			console.error("Unable to load screen controls.", error);
+		} finally {
+			paneLoading = false;
+		}
+	};
 
 	onMount(() => {
-		pane = new Pane({ container: panelRef, expanded: true });
-
-		// 实测最长文案，得出面板统一宽度（展开/折叠一致，且不小于最小宽度）
-		const measure = (text: string) => {
-			const span = document.createElement("span");
-			span.style.cssText =
-				"position:fixed;visibility:hidden;white-space:nowrap;font-size:12px;";
-			span.textContent = text;
-			document.body.appendChild(span);
-			const w = span.offsetWidth;
-			span.remove();
-			return w;
-		};
-		const contentWidth = Math.max(
-			...screenIds.map((id) => measure(screenRegistry[id].label)),
-			measure("进入全屏"),
-			measure("退出全屏"),
-		);
-		setPanelWidth(
-			Math.min(
-				Math.max(PANEL_MIN_WIDTH, contentWidth + 28),
-				window.innerWidth - 8,
-			),
-		);
-
-		const params = { screen: currentScreen() };
-		pane
-			.addBinding(params, "screen", {
-				// label 传 undefined 时 Tweakpane 进入 nol 模式：隐藏 label、值占满整行
-				label: undefined,
-				options: screenOptions,
-			})
-			.on("change", (event) => {
-				const id = event.value as ScreenId;
-				// 选项值异常时保持当前大屏，避免渲染 undefined 组件
-				if (!id || !screenRegistry[id]) return;
-				setCurrentScreen(id);
-			});
-
-		fsButton = pane.addButton({ title: "进入全屏" });
-		fsButton.on("click", toggleFullscreen);
+		createEffect(() => {
+			if (controlsVisible()) void setupPane();
+		});
 		document.addEventListener("fullscreenchange", onFullscreenChange);
 		window.addEventListener("resize", onWindowResize);
+		window.addEventListener("keydown", onControlKey);
 	});
 
 	onCleanup(() => {
+		disposed = true;
 		document.removeEventListener("fullscreenchange", onFullscreenChange);
 		window.removeEventListener("resize", onWindowResize);
+		window.removeEventListener("keydown", onControlKey);
 		pane?.dispose();
 	});
 
 	return (
 		<>
-			<Dynamic component={screenRegistry[currentScreen()].component} />
+			<Suspense
+				fallback={
+					<div
+						role="status"
+						style={{
+							position: "fixed",
+							inset: "0",
+							display: "grid",
+							"place-items": "center",
+							background: "#050b18",
+							color: "#d7e5ff",
+						}}
+					>
+						正在加载{screenRegistry[currentScreen()].short}大屏…
+					</div>
+				}
+			>
+				<Dynamic component={screenRegistry[currentScreen()].component} />
+			</Suspense>
 			<div
 				class="screen-switcher"
 				classList={{ dragging: dragging() }}
 				style={{
+					display: controlsVisible() ? "block" : "none",
 					left: `${position().x}px`,
 					top: `${position().y}px`,
 					width: `${panelWidth()}px`,
