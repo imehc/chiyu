@@ -1,7 +1,16 @@
+/**
+ * 全国大屏的纯文字省份标签（演示数据）。
+ * 消费方：world.ts 的 createLabel → createMapLabels，
+ * 投影后渲染成 CSS3D 标签并参与入场时间线的错峰淡入。
+ */
 export interface ChinaLabelPoint {
+	/** 中文省名，标签主文案 */
 	name: string;
+	/** 英文名，作为标签副标题；沿用官方对外译名（如 TAIWAN, CHINA） */
 	enName: string;
+	/** 标签锚点，[经度, 纬度]，通常取省会坐标而非几何中心 */
 	center: [number, number];
+	/** 是否加模糊衬底，长英文名压在地图亮部时可提升可读性 */
 	blur?: boolean;
 }
 

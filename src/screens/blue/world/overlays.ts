@@ -1,3 +1,9 @@
+/**
+ * 叠加层工厂：程序化生成连续热力「山体」面与告警点（棱锥、光环、脉冲、光束、铭牌）。
+ * 只产出几何与材质，不决定挂到哪个容器——由 ChinaScene / Subdivisions 负责定位与层级。
+ * 实例由 WorldState 持有；frame.ts 每帧遍历 alertAnimations 推进脉冲，
+ * resources.disposeObject 在释放对象时同步移除对应条目。
+ */
 import {
 	AdditiveBlending,
 	BufferGeometry,
@@ -21,7 +27,18 @@ import {
 } from "three";
 import type SceneTextures from "./textures";
 
+/**
+ * 地图叠加层构建器。
+ * 自身不保存场景状态，只通过 SceneTextures 复用辉光与文字贴图；
+ * 告警点的动画参数集中登记在 alertAnimations，由渲染循环统一推进，避免逐点创建补间。
+ */
 export default class MapOverlays {
+	/**
+	 * 已创建告警点的动画句柄：
+	 * point 是整体分组，body 是浮动/自转的棱锥，pulse 用 time uniform 驱动扩散环；
+	 * label 与 edge 在俯视时会被淡出，scale 是该点的统一缩放，offset 是与其它点错开的相位。
+	 * 生命周期跟随场景对象：对象被 dispose 时由 resources 从这里移除。
+	 */
 	readonly alertAnimations: {
 		point: Group;
 		body: Group;
@@ -33,15 +50,24 @@ export default class MapOverlays {
 	}[] = [];
 	constructor(private readonly textures: SceneTextures) {}
 
+	/**
+	 * 由散点簇生成一整张连续的热力「山体」曲面。
+	 * 每个顶点的高度与颜色都取所有簇高斯叠加后的密度，因此相邻峰会自动连成山脊，
+	 * 而不是一组互不相交的热力圆。
+	 * @param clusters 簇中心（世界坐标）、影响半径 size 与强度 intensity（约 0.3~1.5）
+	 * @returns 带 heat 顶点属性与位移的 Mesh，定位与挂载由调用方负责
+	 */
 	createHeatSurface(
 		clusters: { position: Vector3; size: number; intensity: number }[],
 	) {
+		// 0.65 是边界外扩系数，给高斯尾部留出衰减空间，否则边缘会被裁成硬切面
 		const minX = Math.min(...clusters.map((c) => c.position.x - c.size * 0.65));
 		const maxX = Math.max(...clusters.map((c) => c.position.x + c.size * 0.65));
 		const minY = Math.min(...clusters.map((c) => c.position.y - c.size * 0.65));
 		const maxY = Math.max(...clusters.map((c) => c.position.y + c.size * 0.65));
 		const width = maxX - minX,
 			height = maxY - minY;
+		// 长边固定约 180 段，短边按同一密度换算；上下限 32 段防止小面片过疏
 		const resolution = 180 / Math.max(width, height);
 		const geometry = new PlaneGeometry(
 			width,
@@ -56,15 +82,17 @@ export default class MapOverlays {
 		for (let index = 0; index < vertices.count; index++) {
 			const x = vertices.getX(index) + (minX + maxX) / 2;
 			const y = vertices.getY(index) + (minY + maxY) / 2;
-			// Sum density before creating height: neighbouring peaks share slopes and valleys.
+			// 先累加密度再统一抬升高度：相邻峰共享同一段坡面，谷地才会自然衔接
 			let density = 0;
 			for (const cluster of clusters) {
 				const radius =
 					((x - cluster.position.x) ** 2 + (y - cluster.position.y) ** 2) /
 					(cluster.size * 0.5) ** 2;
+				// 2.6 控制衰减陡峭度：越大峰越尖，越小越平缓
 				density += Math.exp(-radius * 2.6) * cluster.intensity;
 			}
 			values[index] = density;
+			// 0.045 是底噪阈值，低于它的区域保持贴地，避免整块面漂浮
 			vertices.setZ(
 				index,
 				Math.max(0, density - 0.045) ** 0.9 * averageSize * 0.3,
@@ -78,6 +106,8 @@ export default class MapOverlays {
 				vertexShader: `attribute float heat;varying float density;varying vec3 surfaceNormal;
 				void main(){density=heat;surfaceNormal=normal;
 				gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+				// 四段 smoothstep 把密度映射成「蓝 → 绿 → 黄绿 → 黄 → 橙」的连续色阶，
+				// 再用固定方向光做简单明暗，让山体有体积感
 				fragmentShader: `varying float density;varying vec3 surfaceNormal;
 				void main(){float value=density;
 				vec3 c=mix(vec3(.015,.24,.70),vec3(.015,.87,.34),smoothstep(.045,.24,value));
@@ -99,13 +129,24 @@ export default class MapOverlays {
 			(minY + maxY) / 2,
 			Math.min(...clusters.map((c) => c.position.z)),
 		);
+		// 排在描边（默认 0）之后绘制，叠加时以热力色为准，但不写深度以免遮挡后续元素
 		surface.renderOrder = 9;
 		return surface;
 	}
 
+	/**
+	 * 生成一组告警点：每个点由棱锥本体、外环、地面脉冲、十字光束、辉光贴片与铭牌组成，
+	 * 除铭牌外的元素都关闭 depthTest，保证在任何俯角下都不会被地图块或热力面遮住。
+	 * @param pointLayer 目标容器，通常是某个业务图层分组
+	 * @param positions 告警点位置（世界坐标），最多取前 4 个
+	 * @param spatialScale 当前图层的空间缩放，标记尺寸随下钻层级等比收缩
+	 */
 	createAlertPoints(pointLayer: Group, positions: Vector3[], spatialScale = 1) {
+		// 0.65 让标记略小于所在层级的基面尺度，密集排布时仍能分辨各自的轮廓
 		const markerScale = spatialScale * 0.65;
+		// 固定 4 个点：编号与铭牌文案「告警点#n」一一对应，超出部分直接忽略
 		positions.slice(0, 4).forEach((position, index) => {
+			// 交替两种主色，在暗背景下用色相区分相邻告警点
 			const color = index % 2 === 0 ? "#97f7d7" : "#ff9bd9";
 			const point = new Group();
 			point.name = `ChinaAlertPoint-${index + 1}`;
@@ -113,6 +154,7 @@ export default class MapOverlays {
 			const body = new Group();
 			body.position.z = 0.46 * markerScale;
 			const geometry = new BufferGeometry();
+			// 手工给出 6 个顶点（上下两个尖点 + 腰部四点）与三角面索引，省掉对额外几何体的依赖
 			const facets = [
 				[0, 0, 0.29],
 				[0, 0, -0.34],
@@ -138,6 +180,7 @@ export default class MapOverlays {
 				geometry,
 				new MeshPhongMaterial({
 					color,
+					// 自发光取主色的 25%，暗场里保留一点材质本色而不至于死黑
 					emissive: new Color(color).multiplyScalar(0.25),
 					flatShading: true,
 					shininess: 70,
@@ -147,6 +190,7 @@ export default class MapOverlays {
 					depthTest: false,
 				}),
 			);
+			// 棱线用不透明度 0.48 的冷白描边，强化多面体的轮廓
 			body.add(
 				pyramid,
 				new LineSegments(
@@ -159,6 +203,7 @@ export default class MapOverlays {
 					}),
 				),
 			);
+			// 加法混合的细环，让标记在叠色区域依然发亮
 			const ring = new Mesh(
 				new TorusGeometry(0.28 * markerScale, 0.014 * markerScale, 6, 64),
 				new MeshBasicMaterial({
@@ -170,6 +215,7 @@ export default class MapOverlays {
 					depthTest: false,
 				}),
 			);
+			// 地面脉冲：offset 让每个点的扩散相位错开，避免整屏同时呼吸
 			const pulse = new Mesh(
 				new PlaneGeometry(1.35 * markerScale, 1.35 * markerScale),
 				new ShaderMaterial({
@@ -196,6 +242,7 @@ export default class MapOverlays {
 					side: DoubleSide,
 				}),
 			);
+			// 面片原点先挪到底边中点，旋转 90° 后光束才是从标记根部向上竖起
 			const beamGeometry = new PlaneGeometry(
 				0.42 * markerScale,
 				0.48 * markerScale,
@@ -219,6 +266,7 @@ export default class MapOverlays {
 			});
 			const beam = new Mesh(beamGeometry, beamMaterial);
 			beam.rotation.x = Math.PI / 2;
+			// 复制一份绕 y 轴转 90°，两片面片交叉成十字，任何水平视角都能看到光束
 			const beamPartner = beam.clone();
 			beamPartner.rotation.y = Math.PI / 2;
 			const glow = new Sprite(
@@ -234,6 +282,7 @@ export default class MapOverlays {
 			glow.scale.setScalar(0.42 * markerScale);
 			glow.position.z = 0.025 * markerScale;
 			point.add(body, ring, pulse, beam, beamPartner, glow);
+			// 棱锥最后画（15），其余元素统一 14：确保辉光不会盖住本体轮廓
 			point.traverse((object) => {
 				if (
 					object instanceof Mesh ||
@@ -243,6 +292,7 @@ export default class MapOverlays {
 					object.renderOrder = object === pyramid ? 15 : 14;
 			});
 			pointLayer.add(point);
+			// 画布尺寸 384×112，绘制坐标整体放大 2 倍：等价于 192×56 的 2 倍超采样，远景不糊
 			const texture = this.textures.canvas(384, 112, (context) => {
 				context.scale(2, 2);
 				context.fillStyle = index % 2 ? "#27102580" : "#03262980";
@@ -265,8 +315,10 @@ export default class MapOverlays {
 				context.fillText(`告警点#${index + 1}`, 96, 28);
 			});
 			const labelWidth = 1.7 * spatialScale;
+			// 保持贴图 384:112 的宽高比，避免文字被横向拉伸
 			const labelHeight = (labelWidth * 112) / 384;
 			const label = new Mesh(
+				// 原点下移半个高度：旋转后铭牌底边正好落在锚点上
 				new PlaneGeometry(labelWidth, labelHeight).translate(
 					0,
 					labelHeight / 2,
@@ -282,10 +334,11 @@ export default class MapOverlays {
 				}),
 			);
 			label.name = `ChinaAlertLabel-${index + 1}`;
-			// Stand the plate in the map's XZ plane, anchored just above the pyramid tip.
+			// 立在地图的 XZ 平面内，底边贴住棱锥尖端上方，像一块竖起的铭牌
 			label.rotation.x = Math.PI / 2;
 			label.position.z = 0.6 * spatialScale;
 			label.renderOrder = 20;
+			// 铭牌不参与射线拾取，否则会挡住它身后省份的点击下钻
 			label.raycast = () => undefined;
 			label.userData.alertLabel = true;
 			const edge = new Line(
@@ -305,6 +358,7 @@ export default class MapOverlays {
 			edge.raycast = () => undefined;
 			label.add(edge);
 			point.add(label);
+			// 登记动画句柄：frame 每帧据此推脉冲 uniform 与浮动，dispose 时按 point 反查移除
 			this.alertAnimations.push({
 				point,
 				body,

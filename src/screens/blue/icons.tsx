@@ -1,15 +1,33 @@
+/**
+ * 内联 SVG 图标集：全部图形绘制在 24×24 网格内、统一 1.5px 描边，
+ * 由地图控件、图层按钮与指标卡共用，不依赖图标字体或外部图片资源。
+ */
 import type { JSX } from "solid-js";
 
+/**
+ * 图标入参。
+ */
 type BlueIconProps = {
+	/** 图形名称，取值见下方 switch 分支，未命中时回落到十字方框 */
 	name: string;
+	/** 图标边长（px），宽高同值，默认 14；按钮缩放时由调用方按比例传入 */
 	size?: number;
 };
 
-/** Small, code-native pictograms shared by the map controls and metric cards. */
+/**
+ * 按名称渲染一个图标。
+ * 描边色取 currentColor，填充色也取 currentColor，因此父级改 color 即可整体换色；
+ * fill-opacity 只用来区分「实体块」与「轮廓」两种质感，不影响外部配色。
+ */
 export default function BlueIcon(props: BlueIconProps) {
+	/**
+	 * 将 name 映射为一组 SVG 子元素。
+	 * 写成函数而不是常量表，是为了每次调用都重新读取 props.name，保持响应式。
+	 */
 	const shape = (): JSX.Element => {
 		switch (props.name) {
 			case "scan":
+				// 扫描：地球轮廓 + 一道横向扫描环 + 向下箭头，表示逐行扫过地图
 				return (
 					<>
 						<circle cx="12" cy="12" r="9" />
@@ -25,6 +43,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "graticule":
+				// 经纬网：外圆 + 一条经线椭圆 + 赤道与两条纬线，代表球面网格
 				return (
 					<>
 						<circle cx="12" cy="12" r="9" />
@@ -33,6 +52,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "coast":
+				// 海岸线：左侧折线是参差不齐的陆地边界，右侧四段弧线是向外扩散的浪花
 				return (
 					<>
 						<path d="m4 3 4 3-1 4 4 2-2 4 3 5" />
@@ -40,6 +60,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "label":
+				// 标注：带左下小尾巴的对话气泡，内部两条横线示意文字
 				return (
 					<>
 						<path
@@ -51,6 +72,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "point":
+				// 点标记：水滴形定位针（上圆下尖）+ 中心圆点
 				return (
 					<>
 						<path
@@ -63,6 +85,7 @@ export default function BlueIcon(props: BlueIconProps) {
 				);
 			case "flyline":
 			case "plane":
+				// 飞线：纸飞机造型，同一路径先做半透明填充再描边（一形两用），末尾两段短线表示尾迹
 				return (
 					<>
 						<path
@@ -74,6 +97,8 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "scatter":
+				// 散点：中心大点 + 四角小点，中间四条斜短线暗示分布扩散；
+				// 中心实心点用 stroke="none" 去掉描边，避免小尺寸下糊成一团
 				return (
 					<>
 						<circle
@@ -92,6 +117,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "heat":
+				// 热力：外层火焰轮廓（低透明度填充）+ 内层火心（高透明度填充），靠透明度叠出层次
 				return (
 					<>
 						<path
@@ -107,6 +133,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "region":
+				// 区域：折页地图（三联折面，用竖线分格），内部小斜线表示地貌
 				return (
 					<>
 						<path
@@ -118,8 +145,10 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "back":
+				// 返回：向左箭头 + 回环弧线，对应「上一级 / 退出下钻」
 				return <path d="m8 5-5 5 5 5M3 10h11a6 6 0 0 1 0 12h-2" />;
 			case "factory":
+				// 工厂：锯齿形厂房剖面 + 右侧烟囱，两条虚线表示窗格
 				return (
 					<>
 						<path
@@ -131,6 +160,8 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "truck":
+				// 卡车：车厢 + 车头轮廓，两个车轮用 #06324a 实心填充以遮住车身底色，
+				// 这里的深色是车轮专用值，不随 currentColor 变化
 				return (
 					<>
 						<path
@@ -144,6 +175,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "building":
+				// 楼宇：高低两栋体块先铺半透明底，再用线条勾窗格与地面线
 				return (
 					<>
 						<path d="M3 21h18M5 21V7h6v14m0-17h8v17M7 10h2m-2 4h2m-2 4h2m4-11h4m-4 4h4m-4 4h4" />
@@ -155,6 +187,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "ship":
+				// 船舶：船体 + 上层驾驶舱 + 桅杆，底部波浪用四段连续弧表现水面
 				return (
 					<>
 						<path
@@ -166,6 +199,7 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			case "tools":
+				// 工具：斜置扳手 + 螺丝刀，右上缺口用弧线切出扳手开口
 				return (
 					<>
 						<path
@@ -177,9 +211,12 @@ export default function BlueIcon(props: BlueIconProps) {
 					</>
 				);
 			default:
+				// 兜底图形：方框加十字分割线，名称拼错时仍能看出是占位图标
 				return <path d="M4 4h16v16H4ZM4 12h16M12 4v16" />;
 		}
 	};
+	// 外层 svg 统一承担尺寸与描边样式：size 未传时按 14px 渲染；
+	// inline-block + vertical-align:middle 让图标与文字基线对齐，flex-shrink:0 防止在 flex 行内被压扁
 	return (
 		<svg
 			viewBox="0 0 24 24"

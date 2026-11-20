@@ -1,22 +1,36 @@
+/**
+ * 大屏顶栏：渐变标题、英文副标题、左右插槽（时间/天气等）以及两侧的流动光带装饰。
+ * 各屏直接复用；#header 的入场动画由 shared/map/map-3d 的 GSAP 时间线统一驱动。
+ */
+
+import { cn } from "cn";
 import type { JSXElement } from "solid-js";
 import SvgLineAnimation from "../componnets/svg-line-animation";
-import { cn } from "../utils/cn";
 
 interface HeaderProps {
-	/** 标题 @default '数据可视化大屏' */
+	/** 主标题 @default '数据可视化大屏' */
 	title?: string;
-	/** 副标题 @default 'Visualization Platform' */
+	/** 英文副标题，会做大写间距排版 @default 'Visualization Platform' */
 	subText?: string;
+	/** 左上角插槽，通常放天气 */
 	leftChindren?: JSXElement;
+	/** 右上角插槽，通常放实时时钟 */
 	rightChindren?: JSXElement;
 }
 
+/**
+ * 顶栏组件。
+ * 根节点保留 id="header"，GSAP 依据该 id 查找元素做位移与淡入。
+ */
 export default function Header({
 	title = "数据可视化大屏",
 	subText = "Visualization Platform",
 	leftChindren,
 	rightChindren,
 }: HeaderProps) {
+	// 首帧状态：opacity-0 与 -translate-y-full 供 GSAP 入场补间（时间线只补到 y:0 / opacity:1）；
+	// 背景条按设计稿 480 宽度居中，视口更窄时由外层裁切；
+	// 四条光带两两镜像：左半用 -scale-x-100 复用同一段 path，再靠 mr/ml 微调避免中缝完全重合
 	return (
 		<div
 			id="header"

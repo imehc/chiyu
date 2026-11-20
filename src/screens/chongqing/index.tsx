@@ -1,4 +1,10 @@
+/**
+ * 重庆市大屏页面骨架：负责等比缩放、3D 地图挂载与 UI 布局。
+ * 通过 ./config 提供资源清单与统计卡数据，通过 ./world 提供场景编排；
+ * 由 src/screens/registry.ts 以懒加载方式注册为大屏路由。
+ */
 import autofit from "autofit.js";
+import { cn } from "cn";
 import { type Component, createSignal, onCleanup, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import BulkCommoditySales from "../../charts/bulk-commodity-sales";
@@ -21,19 +27,35 @@ import StatisticalCard, {
 	type Statistical,
 } from "../../layouts/statistical-card";
 import Map3D from "../../shared/map/map-3d";
-import { cn } from "../../utils/cn";
 import { chongqingAssets, chongqingStatisticalCards } from "./config";
 import ChongqingWorld from "./world";
 
+/** 页面级响应式状态：加载进度、顶部菜单选中项与统计卡列表 */
 interface ChongqingScreenState {
+	/** GeoJSON / 贴图加载百分比，0~100，直接显示在 loading 层上 */
 	progress: number;
+	/** 顶部菜单选中项，对应 MenuItem 的 index，默认停在「经济概览」 */
 	activeIndex: string | number;
+	/** 顶部统计卡数据，来源于 ./config */
 	statisticalCards: Statistical[];
 }
 
+/**
+ * 重庆市数据可视化大屏。
+ *
+ * 布局分三层：全屏 canvas 铺底渲染 3D 场景；`#chongqing-large-screen`
+ * 作为 1920×1080 的设计画布承载所有 DOM 面板（顶栏、菜单、左右图表列、底部托盘、
+ * 底部雷达、左右装饰线与 loading 遮罩），层级由 z-index 控制；
+ * 遮罩层整体 pointer-events-none，避免透明区域拦截 canvas 的鼠标拾取。
+ *
+ * 生命周期：onMount 中先启动 autofit，再 new Map3D 并 initAssets；
+ * 资源加载完成后 hideLoading + play 触发 3D 入场，随后由 Map3D 播放 UI 入场；
+ * onCleanup 中销毁场景并解绑 autofit，避免路由切换后残留定时器与缩放监听。
+ */
 const ChongqingScreen: Component = () => {
 	let containerRef!: HTMLDivElement;
 	let el!: HTMLCanvasElement;
+	/** 场景实例；initAssets 之前为空，销毁后不再使用 */
 	const [map3d, setMap3d] = createSignal<Map3D>();
 	const [state, setState] = createStore<ChongqingScreenState>({
 		progress: 0,
@@ -42,6 +64,8 @@ const ChongqingScreen: Component = () => {
 	});
 
 	onMount(() => {
+		// 以 1920×1080 为设计稿，autofit 用 transform 等比缩放到当前视口，
+		// resize: true 让窗口变化时重新计算，因此内部一律按 px 写死尺寸
 		autofit.init({
 			dh: 1080,
 			dw: 1920,
@@ -54,6 +78,7 @@ const ChongqingScreen: Component = () => {
 			world: ChongqingWorld,
 			assets: chongqingAssets,
 		});
+		// 资源就绪后再播放：先淡出 loading，再启动 world 的入场时间轴
 		map.initAssets(
 			async () => {
 				await map.hideLoading();
@@ -71,10 +96,14 @@ const ChongqingScreen: Component = () => {
 	}
 
 	onCleanup(() => {
+		// 顺序不可颠倒：先销毁场景释放 WebGL 资源与定时器，再解除 autofit 监听
 		map3d()?.destroy();
 		autofit.off("#chongqing-large-screen");
 	});
 
+	// #top-menu、#bottom-tray、#bottom-radar 的初始位移与透明由这里的内联 class 给出，
+	// Map3D 的 UI 时间轴按 id 查找到它们后补回原位；loading 层同理按 id 淡出。
+	// 左右图表列用 perspective + rotate-y 做出向中心收拢的假 3D 倾斜。
 	return (
 		<div
 			class={cn(

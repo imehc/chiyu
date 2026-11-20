@@ -1,33 +1,73 @@
+/**
+ * 大屏顶部导航条：绘制顶栏的渐变底板、双层发光描边、网格与电路纹理，
+ * 并在其上叠加中央标题、左侧欢迎语、右侧时钟与左右两组梯形菜单按钮。
+ * props 全部由上层大屏容器注入，组件自身不持有时钟计时器。
+ */
 import { createUniqueId, For } from "solid-js";
 import BlueLineFlow from "./line-flow";
 import "./header.css";
 
+/**
+ * 顶部导航条的外部入参。
+ */
 interface BlueHeaderProps {
+	/** 已格式化好的时间文本，由上层定时器每秒刷新，本组件只负责展示 */
 	clock: string;
+	/** 当前激活项的全局索引（0~5），与 navigation 中的 offset 相加后比较 */
 	activeNav: number;
+	/** 点击导航项时回调，参数为换算后的全局索引 */
 	onNavigate: (index: number) => void;
 }
 
+/**
+ * 顶栏主轮廓折线，坐标系为 viewBox 0 0 1920 76（等比设计稿尺寸）。
+ * 两侧走 y=18 的平直段，向中间分两级抬到 66 与 60，形成中央凸出的梯形台；
+ * 此常量被「模糊底描边 + 细描边」两条 path 复用，保证两遍描边严格重合。
+ */
 const rim = "M0 18H688L735 66H919L929 60H991L1001 66H1185L1232 18H1920";
+/**
+ * 流光轨迹：左右各一条，都从端头沿轮廓爬升，并在 x=960 处汇合，
+ * 使两条动画在同一锚点收束，视觉上像信号汇入中央金色装饰。
+ */
 const flowPaths = [
 	"M0 18H688L735 66H919L929 60H960",
 	"M1920 18H1232L1185 66H1001L991 60H960",
 ];
+/**
+ * 两组菜单配置。offset 把组内下标换算成全局下标（左组 0/1/2，右组 3/4/5），
+ * 这样 activeNav 只需一个数字就能覆盖左右两栏，无需区分所在侧。
+ */
 const navigation = [
 	{ side: "left", labels: ["经济概览", "一级按钮", "一级按钮"], offset: 0 },
 	{ side: "right", labels: ["一级按钮", "一级按钮", "一级按钮"], offset: 3 },
 ];
 
+/**
+ * 顶栏组件本体。
+ * 背景是一条 1920×76、preserveAspectRatio="none" 的 SVG，随容器横向拉伸铺满；
+ * 文本与按钮则以绝对定位叠在 SVG 之上，避免字形跟着 SVG 一起被拉伸变形。
+ */
 export default function BlueHeader(props: BlueHeaderProps) {
+	// 同一页面可能存在多个实例，defs 内的 id 必须唯一，否则渐变/滤镜会互相覆盖
 	const id = createUniqueId();
+	// 背景层：fill 为底板垂直渐变，edge 为轮廓横向高光，glow 为描边用的高斯模糊滤镜
 	const fill = `blue-header-fill-${id}`;
 	const edge = `blue-header-edge-${id}`;
 	const glow = `blue-header-glow-${id}`;
+	// 纹理层：grid 是横向十字网格，circuit 是折线电路纹理
 	const grid = `blue-header-grid-${id}`;
 	const circuit = `blue-header-circuit-${id}`;
+	// 菜单层：menuFill 常态底色，menuActive 激活态底色，menuEdge 顶边高光
 	const menuFill = `blue-header-menu-fill-${id}`;
 	const menuActive = `blue-header-menu-active-${id}`;
 	const menuEdge = `blue-header-menu-edge-${id}`;
+	// 以下 JSX 的绘制顺序即成图顺序：底板 → 网格/电路纹理 → 内层暗线 → 双层发光描边
+	// → 流光 → 中央金色装饰 → 底部短划线细节，后绘制的内容覆盖先绘制的内容。
+	// edge 渐变在 37%/63% 处各放一个近白色 stop，对应轮廓两处转折的「金属反光」；
+	// glow 滤镜区域写成 y=-100% height=300%，给 6px 描边的高斯模糊留出上下溢出空间，否则会被裁切。
+	// grid 与 circuit 都用 userSpaceOnUse 平铺，88×32、26×9 的周期与设计稿网格对齐，缩放时不会随元素变形。
+	// 菜单底形是「左右尖角 + 上下平边」的六边形（M12 1H132L143 18L132 34H12L1 18Z），
+	// 宽 128 高 34 的按钮里塞 144×36 的 viewBox，留出的余量用来容纳描边和激活态的辉光。
 	return (
 		<header class="blue-header blue-command-header">
 			<svg

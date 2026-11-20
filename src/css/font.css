@@ -1,4 +1,13 @@
+/**
+ * 字体声明：项目用到的几套展示字体，文件统一放在 /assets/font 下由 Vite 静态托管。
+ * 这里只负责注册字体族，具体在哪些元素上使用由 index.css 的 --font-* 主题变量决定；
+ * 字体未加载完成时浏览器按 @font-face 的顺序回退到系统字体。
+ */
 /* 定义 @font-face */
+
+/* ===== 英文字体 D-DIN ===== */
+/* 常规/粗体/斜体分别注册成三个独立族名（而非同族的三个 font-weight），
+   因为 otf 文件内部元数据不统一，按族名直接引用比依赖字重映射更可控 */
 @font-face {
 	font-family: "D-DIN";
 	src: url("/assets/font/D-DIN.otf") format("opentype");
@@ -14,11 +23,14 @@
 	src: url("/assets/font/D-DIN-Italic.otf") format("opentype");
 }
 
+/* ===== 中文黑体 ===== */
+/* 普惠体用于常规中文文案；woff2 体积最小且现代浏览器全面支持，无需再声明 ttf 兜底 */
 @font-face {
 	font-family: "Alibaba PuHuiTi";
 	src: url("/assets/font/AlibabaPuHuiTi.woff2") format("woff2");
 }
 
+/* 数黑体只用于大屏主标题；font-weight 固定 700，避免浏览器再合成一次粗体导致笔画糊连 */
 @font-face {
 	font-family: "阿里妈妈数黑体 Bold";
 	font-weight: 700;
@@ -27,5 +39,6 @@
 	src:
 		url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff2") format("woff2"),
 		url("/assets/font/alimama/AlimamaShuHeiTi-Bold.woff") format("woff");
+	/* swap：先用回退字体立即绘制，字体就绪后替换，避免标题长时间空白 */
 	font-display: swap;
 }

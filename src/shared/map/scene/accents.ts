@@ -1,3 +1,7 @@
+/**
+ * 地图点缀元素工厂：光柱、柱子底部光圈、旋转装饰边框。
+ * 由各屏 world 类在搭建场景时调用，依赖 Assets 提供贴图；返回的 mesh 由调用方加入对应 Group 并补间入场。
+ */
 import {
 	AdditiveBlending,
 	DoubleSide,
@@ -15,12 +19,20 @@ import type Assets from "../assets";
 import Plane from "../world-core/components/plane";
 import type { SceneContext } from "./types";
 
+/**
+ * 创建竖直光柱：用三张交叉的透明平面模拟体积光。
+ * @param assets 资源加载器，取 huiguang 贴图
+ * @param h 光柱高度（世界坐标）
+ * @param color 光柱颜色，0x 十六进制
+ * @returns 三张沿 y 轴旋转 0°/60°/120° 的平面，需调用方自行加入场景
+ */
 export function createGlowPillar(
 	assets: Assets | undefined,
 	h: number,
 	color: number,
 ) {
 	const geometry = new PlaneGeometry(0.35, h);
+	// 把几何体原点平移到柱底，这样 mesh 摆在地面时直接对位，不用再算半高
 	geometry.translate(0, h / 2, 0);
 	const texture = assets?.instance.getResource("huiguang") as Texture;
 	if (!texture) {
@@ -39,7 +51,9 @@ export function createGlowPillar(
 		blending: AdditiveBlending,
 	});
 	const mesh = new Mesh(geometry, material);
+	// 叠加混合的元素抬高渲染顺序，避免被地图表面按深度提前盖住
 	mesh.renderOrder = 10;
+	// 平面默认位于 xy 平面，绕 x 轴转 90° 后躺平到 xz 平面，竖直由调用方旋转父组实现
 	mesh.rotateX(Math.PI / 2);
 	const mesh2 = mesh.clone();
 	const mesh3 = mesh.clone();
@@ -48,6 +62,12 @@ export function createGlowPillar(
 	return [mesh, mesh2, mesh3];
 }
 
+/**
+ * 创建柱子底部的双层光圈。
+ * 两张同心圆面片共用一个几何体，第二张微下沉 0.001 以避免 z-fighting。
+ * @param position 光圈中心的世界坐标，通常与柱子底部对齐
+ * @returns group 为光圈组合，rotatingMesh 供调用方做持续旋转
+ */
 export function createBarHalo(
 	assets: Assets | undefined,
 	position: Vector3Like,
@@ -87,6 +107,7 @@ export function createBarHalo(
 	mesh1.position.copy(position);
 	mesh2.position.copy(position);
 	mesh2.position.y -= 0.001;
+	// 初始缩到 0，入场时由外部补间放大，形成从柱底绽开的效果
 	mesh1.scale.set(0, 0, 0);
 	mesh2.scale.set(0, 0, 0);
 	const quanGroup = new Group();
@@ -94,11 +115,17 @@ export function createBarHalo(
 	return { group: quanGroup, rotatingMesh: mesh1 };
 }
 
+/**
+ * 创建地图外围的两圈旋转装饰边框。
+ * 两圈转向相反（rotateSpeed 一正一负）形成交织感；宽度略大于地图本身，营造托底光环。
+ * @returns 依次为外圈与内圈 mesh，供调用方做透明度或缩放补间
+ */
 export function createRotationBorders({
 	scene,
 	time,
 	assets,
 }: SceneContext): [Mesh, Mesh] {
+	// 地图基准宽度，两圈在此之上分别放大 1.178 / 1.116 倍
 	const max = 12;
 	const rotationBorder1 = assets?.instance.getResource("rotationBorder1") as
 		| Texture
@@ -129,9 +156,11 @@ export function createRotationBorders({
 	);
 	plane01.instance.rotation.x = -Math.PI / 2;
 	plane01.instance.renderOrder = 6;
+	// 与光圈一致，先从 0 开始，由入场时间轴放大
 	plane01.instance.scale.set(0, 0, 0);
 	plane01.setParent(scene);
 
+	// 内圈转向取负值，与外圈反向旋转
 	const plane02 = new Plane(
 		{ time: time },
 		{

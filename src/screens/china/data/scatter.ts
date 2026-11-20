@@ -1,4 +1,9 @@
-/** 全国重点城市散点，演示数据。 */
+/**
+ * 全国重点城市散点（演示数据）。
+ * 字段：value 为演示指标（数值越大点越亮/越大，仅用于视觉分层）；
+ * lng / lat 为该城市经纬度，东经与北纬为正，单位：度。
+ * 消费方：world.ts 的 createScatter，经 sortByValue 降序后交给 populateMapScatter 绘制。
+ */
 const chinaScatterPoints: { value: number; lng: number; lat: number }[] = [
 	{ value: 187, lng: 116.405285, lat: 39.904989 },
 	{ value: 196, lng: 121.472644, lat: 31.231706 },

@@ -1,17 +1,28 @@
+/*
+ * 蓝色大屏左右面板列的样式表：面板外壳（边框流光、标题栏）、
+ * 立体环形图与滚动明细、仪表盘与占比表、指标卡宫格，以及右侧列的镜像规则。
+ * 由 panels/index.tsx 引入；尺寸大多相对面板容器，靠 flex 均分高度而非固定像素，
+ * 以便整屏在 1080p 与 2K 下都能保持同样的结构比例。
+ */
+
+/* ===== 面板列与外壳 ===== */
 .blue-panel-column {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 	width: 100%;
 	height: 100%;
+	/* 允许子项在高度不足时收缩，否则三块面板会把列撑破 */
 	min-height: 0;
 }
 
-/* Decorative layers stay independent of the view-switching panel transform. */
+/* 装饰图层需要独立于「视图切换时作用在面板上的 transform」。 */
 .blue-panel {
 	position: relative;
+	/* isolate 建立独立层叠上下文，边框才能用 z-index: -1 沉到内容下方又不漏到别的面板后面 */
 	isolation: isolate;
 	width: 100%;
+	/* flex-basis 0 + flex-grow 1：三块面板严格等分列高 */
 	flex: 1 1 0;
 	min-height: 0;
 	color: #e1f2fa;
@@ -23,6 +34,7 @@
 .blue-panel-frame {
 	position: absolute;
 	inset: 0;
+	/* 边框 SVG 铺满面板但压在内容之下；pointer-events 关闭避免挡住图表交互 */
 	z-index: -1;
 	width: 100%;
 	height: 100%;
@@ -34,6 +46,7 @@
 	top: 0;
 	left: 0;
 	width: 100%;
+	/* 33px 与下方 .blue-panel-title / .blue-panel-content 的 top 保持一致，三段才能严丝合缝 */
 	height: 33px;
 	pointer-events: none;
 }
@@ -41,6 +54,7 @@
 .blue-panel-flow-frame {
 	position: absolute;
 	inset: 0;
+	/* 流光层压到内容之上（z-index: 2），让描边光效能盖住逼近边缘的图表 */
 	z-index: 2;
 	width: 100%;
 	height: 100%;
@@ -48,6 +62,7 @@
 	pointer-events: none;
 }
 
+/* 静态态把边框压到 0.9/0.85，避免装饰比数据更抢眼；悬停再回到全亮 */
 .blue-panel-base {
 	opacity: 0.9;
 	transition: opacity 220ms ease;
@@ -58,6 +73,7 @@
 	transition: opacity 220ms ease;
 }
 
+/* 悬停与键盘聚焦（focus-within）共用同一档提亮，保证纯键盘操作也能得到反馈 */
 .blue-panel:hover .blue-panel-base,
 .blue-panel:focus-within .blue-panel-base,
 .blue-panel:hover .blue-panel-edge,
@@ -67,11 +83,16 @@
 
 .blue-panel-beam {
 	opacity: 0.55;
+	/* 描边偏移量从 0 起跑，配合下方 keyframes 匀速跑到 -100，形成沿边框流动的光带 */
 	stroke-dashoffset: 0;
 	filter: drop-shadow(0 0 2px #30b4d96b);
 	animation: blue-panel-border-flow 9.6s linear infinite;
 }
 
+/*
+ * 负的 animation-delay 不会让动画等待，而是直接把进度跳到对应时刻，
+ * 用 -1/3、-2/3 的错峰让三块面板的光带不同步，看起来像光在列内随机游走。
+ */
 .blue-panel:nth-child(2) .blue-panel-beam {
 	animation-delay: -3.2s;
 }
@@ -98,8 +119,10 @@
 	}
 }
 
+/* ===== 面板标题栏 ===== */
 .blue-panel-title {
 	position: relative;
+	/* 与 .blue-panel-title-art 和 .blue-panel-content 的 33px 共用同一条基准线 */
 	height: 33px;
 	display: flex;
 	align-items: center;
@@ -118,6 +141,7 @@
 	top: 14px;
 	width: 4px;
 	height: 4px;
+	/* 4×4 的小方块旋转 45° 变成菱形标记，比直接画旋转图形省一个 SVG 节点 */
 	transform: rotate(45deg);
 	background: #7ed6ec;
 	box-shadow: 0 0 5px #4baed266;
@@ -156,6 +180,11 @@
 	opacity: 0.8;
 }
 
+/* ===== 右侧列镜像 ===== */
+/*
+ * 右列复用左列同一套边框 SVG，用 scaleX(-1) 整体镜像；
+ * 因为镜像会连带把文字翻过来，标题改由 DOM 渲染并单独改成右对齐。
+ */
 .blue-panel-right .blue-panel-frame,
 .blue-panel-right .blue-panel-flow-frame,
 .blue-panel-right .blue-panel-title-art {
@@ -164,6 +193,7 @@
 
 .blue-panel-right .blue-panel-title {
 	justify-content: flex-end;
+	/* 左右内边距对调：镜像之后标题靠近面板外侧，与左侧列的视觉重心保持一致 */
 	padding: 0 27px 0 0;
 }
 
@@ -178,20 +208,25 @@
 	right: auto;
 }
 
+/* ===== 内容槽与图表容器 ===== */
 .blue-panel-content {
 	position: absolute;
+	/* 上方让出 33px 标题栏，下方与左右各留出边框内衬的呼吸位 */
 	top: 33px;
 	bottom: 5px;
 	left: 8px;
 	right: 8px;
+	/* 内容不得溢出面板轮廓，超出部分直接裁掉（图表依赖容器有确定像素尺寸） */
 	overflow: hidden;
 }
 
 .blue-chart {
+	/* ECharts 依赖容器的确定像素尺寸，父级是绝对定位的内容槽，这里才能拿到 100% 的真实高度 */
 	width: 100%;
 	height: 100%;
 }
 
+/* ===== 立体环形图 ===== */
 .blue-donut {
 	height: 100%;
 	display: flex;
@@ -204,6 +239,7 @@
 .blue-donut svg {
 	display: block;
 	width: 100%;
+	/* 145px 是环形图含底座与中心文字的最小可用高度，再多由 flex 拉伸到 180px 封顶 */
 	height: 145px;
 	max-height: 180px;
 	min-height: 0;
@@ -218,6 +254,7 @@
 }
 
 .blue-flat-donut > .blue-chart {
+	/* 192px 与 options.ts 中 globeDonutOption 的 380×192 设计基准对齐，graphic 装饰才能等比落位 */
 	height: 192px;
 	max-height: 100%;
 }
@@ -245,26 +282,31 @@
 	cursor: pointer;
 }
 
+/* 顶面的加亮与描边加粗过渡只服务悬停/选中态；抬升块另有规则禁用过渡 */
 .blue-donut-face {
 	transition:
 		filter 180ms ease,
 		stroke-width 180ms ease;
 }
 
+/* 选中态整体提亮并加粗描边，与顶面抬起叠加后，「当前扇区」在大屏上能一眼识别 */
 .blue-donut-sector[aria-pressed="true"] .blue-donut-face {
 	filter: brightness(1.12);
 	stroke-width: 1.2;
 }
 
+/* 键盘聚焦另用一档更亮的白描边，与鼠标选中态区分开 */
 .blue-donut-sector:focus-visible .blue-donut-face {
 	stroke: #edffff;
 	stroke-width: 1.5;
 }
 
+/* 抬升块的几何由 GSAP 逐帧重建，这里必须关掉过渡，否则 CSS 过渡叠加补间会出现滞后拖影 */
 .blue-donut-raised-face {
 	transition: none;
 }
 
+/* 中心数值与说明文字不参与命中，否则会挡住扇区的鼠标交互 */
 .blue-donut svg text {
 	pointer-events: none;
 }
@@ -273,6 +315,7 @@
 	display: flex;
 	justify-content: space-around;
 	padding: 0 12px;
+	/* 上提 11px 吃掉 SVG 里为底座壁厚（73→84）留的空白，图例才能贴住环底而不是悬空 */
 	margin-top: -11px;
 	flex-shrink: 0;
 }
@@ -291,6 +334,7 @@
 	font-weight: 400;
 }
 
+/* 颜色来自内联 style 的 border-color，这里只定义尺寸与形状，便于四个类型复用同一套样式 */
 .blue-donut-legend i {
 	display: inline-block;
 	width: 6px;
@@ -307,11 +351,13 @@
 	color: #a3c2d3;
 }
 
+/* ===== 滚动明细行 ===== */
 .blue-data-rows {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 	min-height: 0;
+	/* 上 9px 与标题拉开距离，下 4px 防止最后一行压到面板底边 */
 	padding: 9px 10px 4px;
 }
 
@@ -326,24 +372,32 @@
 	flex-direction: column;
 	gap: 4px;
 	height: 100%;
+	/* 未位移时的基准位置；.moving 在此基础上上移一行，复位时靠 JS 换索引保证视觉连续 */
 	transform: translateY(0);
 }
 
 .blue-data-row-list.moving {
+	/*
+	 * 4 行均分高度时 25% 等于「一行高 + 3px」，而含 gap 的实际步进是「一行高 + 4px」，
+	 * 所以额外 -1px 才能让第 5 行（首行副本）正好落到原位置；时长与 metrics.tsx 里的 650ms 对齐。
+	 */
 	transform: translateY(calc(-25% - 1px));
 	transition: transform 0.65s ease-in-out;
 }
 
 .blue-data-row {
 	display: grid;
+	/* 图标定宽 30px，名称列吃掉剩余空间，三个计数列各 65px 保证纵向数字对齐 */
 	grid-template-columns: 30px 1fr 65px 65px 65px;
 	align-items: center;
+	/* 每行固定占 (100% - 3 个 gap) / 4，配合轮播的 25% 位移刚好一整行 */
 	flex: 0 0 calc((100% - 12px) / 4);
 	min-height: 0;
 	padding: 0 7px;
 	background: linear-gradient(100deg, #0a355180, #06223bc4);
 	border-top: 1px solid #24769c33;
 	border-bottom: 1px solid #12496b45;
+	/* 左上、右下各切 5px 斜角，做出科技感的斜边卡片（不改盒模型，不影响内部 grid 对齐） */
 	clip-path: polygon(
 		5px 0,
 		100% 0,
@@ -396,10 +450,12 @@
 	color: #56cedd;
 }
 
+/* 告警列单独用蓝色标出（倒数第二列），其余计数保持青色，靠颜色区分指标性质 */
 .blue-data-row > div:nth-last-child(2) b {
 	color: #32a5fa;
 }
 
+/* ===== 仪表盘与占比表 ===== */
 .blue-gauges-panel {
 	display: flex;
 	flex-direction: column;
@@ -412,11 +468,13 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 5px 9px 0;
+	/* 仪表区吸收表格固定高度之外的全部剩余空间，面板变矮时优先压缩这里 */
 	flex: 1 1 auto;
 	min-height: 0;
 }
 
 .blue-gauge {
+	/* 三块仪表固定 110px 宽，靠 flex 的 space-between 均分整行间距 */
 	width: 110px;
 	max-height: 100%;
 }
@@ -442,12 +500,14 @@
 
 .blue-gauges-table {
 	padding: 0 10px;
+	/* 表格区固定 81px（表头 23 + 两行 26×2 + 每行 6px 行距，实际内容共 87px），剩余高度让给上方仪表 */
 	flex: 0 0 81px;
 }
 
 .blue-gauges-table-head,
 .blue-gauges-table-row {
 	display: grid;
+	/* 前三列定宽保证表头与数据列对齐，占比列吃掉剩余宽度 */
 	grid-template-columns: 88px 88px 88px 1fr;
 	align-items: center;
 	text-align: center;
@@ -464,6 +524,7 @@
 	margin-bottom: 6px;
 	background: linear-gradient(100deg, #0a355188, #06243ccc);
 	border-block: 1px solid #24769c26;
+	/* 与明细行同一套斜角，切口取 4px：行高只有 26px，切太大会吃掉文字空间 */
 	clip-path: polygon(
 		4px 0,
 		100% 0,
@@ -495,8 +556,10 @@
 	height: 12px;
 	border-radius: 50%;
 	border: 1px solid #174665;
+	/* 只给左上两边上亮色，缺口弧就成为旋转指示器 */
 	border-left-color: #4bb7db;
 	border-top-color: #4bb7db;
+	/* 圆形行内元素基线偏低，上提 2px 才能与旁边的百分比数字对齐 */
 	vertical-align: -2px;
 	margin-right: 7px;
 	animation: blue-table-circle 6s linear infinite;
@@ -508,9 +571,11 @@
 	}
 }
 
+/* ===== 指标卡宫格 ===== */
 .blue-metric-cards {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
+	/* minmax(0, 1fr) 允许行高被压缩，长数字不会把卡片撑出面板 */
 	grid-template-rows: repeat(3, minmax(0, 1fr));
 	gap: 7px 12px;
 	padding: 6px;
@@ -525,6 +590,7 @@
 	position: relative;
 	background: linear-gradient(155deg, #08223c99, #0a3b5b99);
 	border: 1px solid #246b9255;
+	/* 与明细行同一套斜角语言，但切口更大（7px）以匹配卡片尺寸 */
 	clip-path: polygon(
 		7px 0,
 		100% 0,
@@ -533,12 +599,14 @@
 		0 100%,
 		0 7px
 	);
+	/* 内阴影压住底边，让卡片看起来是凹进面板的一层 */
 	box-shadow: inset 0 -2px 6px #0c608021;
 	transition:
 		background 220ms ease,
 		border-color 220ms ease;
 }
 
+/* 悬停只提亮背景与边框，不做位移，避免在密集宫格里引起布局抖动 */
 .blue-metric-card:hover {
 	background: linear-gradient(155deg, #0c304bba, #0c4a6bb0);
 	border-color: #3989b280;
@@ -547,6 +615,7 @@
 .blue-metric-card::after {
 	content: "";
 	position: absolute;
+	/* 左缘一段 1×17 的细线，补足剪角处的边框缺口，纯装饰不可交互 */
 	left: 0;
 	top: 12px;
 	width: 1px;
@@ -571,6 +640,7 @@
 	border: 3px double #245c89;
 	border-radius: 50%;
 	background: radial-gradient(ellipse, #174771, #061b36);
+	/* 第一道阴影不带模糊，充当底座侧壁的厚度，让扁平椭圆读成一块圆台 */
 	box-shadow:
 		0 5px 0 #0b2c4d,
 		0 6px 3px #1b577e;
@@ -584,9 +654,11 @@
 	height: 26px;
 	color: #8eeaff;
 	filter: drop-shadow(0 0 4px #119ac377);
+	/* 6.8s 的缓慢浮动，幅度只有 2px，避免宫格里六个图标同时动造成干扰 */
 	animation: blue-metric-float 6.8s ease-in-out infinite;
 }
 
+/* 负延迟错峰：同列卡片相位相差半个周期，一眼看过去像是随机漂浮 */
 .blue-metric-card:nth-child(2n) .blue-metric-icon > svg {
 	animation-delay: -3.4s;
 }
@@ -607,11 +679,13 @@
 
 .blue-metric-card small {
 	display: block;
+	/* 卡名比数值小两档、颜色更灰，保证视线先落在右侧数值上 */
 	font-size: 10px;
 	margin-bottom: 4px;
 }
 
 .blue-metric-card strong {
+	/* D-DIN 的数字宽度一致，六张卡纵向排列时数值不会因字宽差异而左右跳动 */
 	font:
 		17px "D-DIN",
 		sans-serif;
@@ -624,6 +698,12 @@
 	color: #9cc2d8;
 }
 
+/* ===== 减少动效偏好 ===== */
+/*
+ * 系统开启「减少动态效果」时：过渡全部归零（状态切换变成瞬时），
+ * 装饰性循环动画（呼吸点、表盘转圈、图标浮动、边框流光）直接停掉，
+ * 流光帧连元素一起隐藏，避免停在某个中间偏移上留下一条断线。
+ */
 @media (prefers-reduced-motion: reduce) {
 	.blue-donut-sector,
 	.blue-donut-face,

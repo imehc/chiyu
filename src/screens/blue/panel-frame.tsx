@@ -1,13 +1,32 @@
+/**
+ * 数据面板的 SVG 边框皮肤，由三层独立 SVG 叠放组成：
+ * 主体底框（渐变填充 + 网格 + 切角描边）、顶部标题装饰条、以及只画一段短划的「巡边光束」。
+ * 拆成三层是因为三者的拉伸比例不同（标题条高度固定），且巡边动画只应作用在最后一条路径上。
+ * 尺寸基准为 396×230 的设计稿，配合 preserveAspectRatio="none" 跟随面板实际大小变形。
+ */
 import { createUniqueId } from "solid-js";
 
+/**
+ * 面板主轮廓：396×230 的矩形，四个角各切掉 13px 斜角（M13 1 → L395 13 → L383 229 → L1 217）。
+ * 填充、网格铺底、描边、巡边四条路径共用同一个 d，保证任何一处描边都与填充严丝合缝。
+ */
 const outline = "M13 1H383L395 13V217L383 229H13L1 217V13Z";
 
+/**
+ * 面板边框组件，无 props，纯装饰（各 SVG 均 aria-hidden）。
+ */
 export default function BluePanelFrame() {
+	// 同一页面会渲染多个面板，defs 的 id 必须逐实例唯一，否则后渲染的会覆盖前者的渐变与图案
 	const id = createUniqueId();
 	const fill = `blue-panel-fill-${id}`;
 	const edge = `blue-panel-edge-${id}`;
 	const title = `blue-panel-title-fill-${id}`;
 	const grid = `blue-panel-grid-${id}`;
+	// 三块 SVG 的叠放顺序：底框在最下，标题条叠在面板顶部（viewBox 396×33），
+	// 巡边层最上且 overflow 可见，让短划能贴着轮廓走而不被 viewBox 裁掉。
+	// 底框内部再分：填充 → 网格 → 主描边 → 内侧细线 → 亮角 → 底部短线。
+	// 巡边层用 pathLength="100" 把周长归一化，dasharray "7 93" 因此恒表示「亮段占周长 7%」，
+	// 与面板实际像素尺寸无关；位移由 panels.css 的 blue-panel-border-flow 关键帧驱动。
 	return (
 		<>
 			<svg

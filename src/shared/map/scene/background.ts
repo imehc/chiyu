@@ -1,3 +1,7 @@
+/**
+ * 地图背景层：网格底、海面、扩散光波与模糊边线。
+ * 位于地图主体之下（y 更小），由各屏 world 在初始化时依次调用创建，营造纵深与科技感。
+ */
 import gsap from "gsap";
 import {
 	AddEquation,
@@ -16,6 +20,10 @@ import Grid from "../world-core/components/grid";
 import DiffuseShader from "../world-core/shader/diffuse-shader";
 import type { SceneContext } from "./types";
 
+/**
+ * 铺一层 50×50 的网格地面，用作地图底衬。
+ * 网格的呼吸动画由 Grid 组件内部依赖 time 自行驱动，这里只负责配色与密度。
+ */
 export function createMapGrid({ scene, time }: SceneContext) {
 	new Grid(
 		{
@@ -34,6 +42,10 @@ export function createMapGrid({ scene, time }: SceneContext) {
 	);
 }
 
+/**
+ * 在最底层铺一张 20×20 的海面贴图。
+ * 位置压到 y = -0.7，低于网格与地图，形成「海面 → 网格 → 陆地」的层次。
+ */
 export function createMapOcean({ scene, assets }: SceneContext) {
 	const geometry = new PlaneGeometry(20, 20);
 	const texture = assets?.instance.getResource("ocean") as Texture | undefined;
@@ -55,6 +67,10 @@ export function createMapOcean({ scene, assets }: SceneContext) {
 	scene.add(mesh);
 }
 
+/**
+ * 铺一层全屏扩散光波，用自定义 shader 做周期性涟漪。
+ * 混合模式为「目标色 × 源 + 目标色」，等价于在原图之上做提亮，因此背景越亮涟漪越明显。
+ */
 export function createMapDiffuse({ scene, time }: SceneContext) {
 	const geometry = new PlaneGeometry(200, 200);
 	const material = new MeshBasicMaterial({
@@ -74,7 +90,9 @@ export function createMapDiffuse({ scene, time }: SceneContext) {
 		diffuseColor: 0x71918e,
 		diffuseWidth: 2.0,
 		callback: (pointShader) => {
+			// 延迟 3ms 再启动补间，等 shader 完成首次编译、uniform 已挂载
 			setTimeout(() => {
+				// uTime 从 0 补到 4 后无限循环，形成持续的扩散脉冲
 				gsap.to(pointShader.uniforms.uTime, {
 					value: 4,
 					repeat: -1,
@@ -91,6 +109,10 @@ export function createMapDiffuse({ scene, time }: SceneContext) {
 	scene.add(mesh);
 }
 
+/**
+ * 在板块外围叠一张模糊线条贴图，补足地图边缘的光晕。
+ * 用 NearestFilter 且关闭 mipmap：贴图本身是光斑，放大后不需要插值，可省显存也避免糊边。
+ */
 export function createMapBlurLine({ scene, assets }: SceneContext) {
 	const geometry = new PlaneGeometry(147, 147);
 	const texture = assets?.instance.getResource("chinaBlurLine") as

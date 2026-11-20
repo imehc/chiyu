@@ -1,17 +1,38 @@
+/**
+ * 大屏底部装饰条：与顶栏同构的渐变底板、网格与电路纹理、双层描边，
+ * 另有一条向上凸起的梯形台与中央金色光条，与顶栏形成上下呼应。
+ * 整块为纯装饰（外层 aria-hidden），不承载交互，也不接收任何 props。
+ */
 import { createUniqueId } from "solid-js";
 import BlueLineFlow from "./line-flow";
 import "./footer.css";
 
+/**
+ * 底栏主轮廓折线，坐标系为 viewBox 0 0 1920 62。
+ * 两侧走 y=40，向中央抬升到 y=4，形成向上凸起的梯形台阶；
+ * 底板 path 在此基础上再向下闭合到 y=62，因此只需维护这一条轮廓线。
+ */
 const rim = "M0 40H610L648 4H1272L1310 40H1920";
+/**
+ * 流光轨迹：左右各一条，沿轮廓爬升到中央。
+ * 与顶栏的区别是底部为凸台（向上抬），故路径先水平后斜升。
+ */
 const flowPaths = ["M0 40H610L648 4H960", "M1920 40H1310L1272 4H960"];
 
+/**
+ * 底栏装饰组件。
+ * 只输出一条 1920×62 的 SVG（preserveAspectRatio="none" 横向拉伸），无文本与交互。
+ */
 export default function BlueFooter() {
+	// 渐变、滤镜、图案的 id 按实例唯一化，避免与顶栏或其它实例的同名 defs 冲突
 	const id = createUniqueId();
 	const fill = `blue-footer-fill-${id}`;
 	const edge = `blue-footer-edge-${id}`;
 	const glow = `blue-footer-glow-${id}`;
 	const grid = `blue-footer-grid-${id}`;
 	const circuit = `blue-footer-circuit-${id}`;
+	// 绘制顺序：底板 → 网格/电路 → 内层暗线 → 双层发光描边 → 流光 → 中央金色光条。
+	// 金色光条最后绘制，落在最上层，突出中央视觉重心。
 	return (
 		<div class="blue-command-footer" aria-hidden="true">
 			<svg

@@ -1,3 +1,15 @@
+/**
+ * 全国省级行政区装饰标签数据，共 34 项。
+ * 仅被 world.ts 的 createLabel 传给 shared/map 的 createMapLabels 使用，
+ * 不参与地图几何生成；本屏用 hide / blur 把视觉重心压到重庆。
+ *
+ * 字段说明：
+ * - name：行政区全称，直接作为标签文案；
+ * - center：[经度, 纬度]，标签锚点（驻地），不是几何中心；
+ * - centroid：[经度, 纬度]，辖区重心，本屏标签不消费，保留供其他场景复用；
+ * - hide：为 true 时不生成标签（createMapLabels 会跳过），用于清空画面；
+ * - blur：为 true 时加轻微模糊，弱化周边省份以突出主体。
+ */
 export default [
 	{
 		name: "北京市",
@@ -99,6 +111,7 @@ export default [
 		name: "湖北省",
 		center: [114.298572, 30.584355],
 		centroid: [112.271301, 30.987527],
+		// 与重庆接壤的省份保留标签但加模糊，既交代地理关系又不抢主体
 		blur: true,
 	},
 	{
@@ -129,6 +142,7 @@ export default [
 		name: "重庆市",
 		center: [106.504962, 29.533155],
 		centroid: [107.8839, 30.067297],
+		// 重庆另有大号中心主标签（见 world.ts 的 defaultMapFocusLabelInfo），这里跳过避免重名
 		hide: true,
 	},
 	{

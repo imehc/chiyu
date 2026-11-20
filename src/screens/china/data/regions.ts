@@ -1,12 +1,23 @@
+/**
+ * 全国 34 个省级行政区的基础信息与演示指标。
+ * 消费方：world.ts 取指标柱省份（getBarRegions）与飞线终点，
+ * panels/options.ts 取榜单前 7 名渲染左侧条形图。
+ * 数值均为演示用的「指数」，无真实统计口径。
+ */
 export interface ChinaRegion {
+	/** 省级行政区全称，需与 GeoJSON 里的 name 完全一致才能对上轮廓 */
 	name: string;
+	/** 英文名，标签副标题用 */
 	enName: string;
+	/** 行政中心坐标 [经度, 纬度]，通常取省会 */
 	center: [number, number];
+	/** 地理质心坐标 [经度, 纬度]，光柱与点位按质心落位才不会偏到省界外 */
 	centroid: [number, number];
 	/** 演示指标，非真实统计数据。 */
 	value: number;
 }
 
+/** 34 个省级行政区，按行政区划代码顺序排列。 */
 export const chinaRegions: ChinaRegion[] = [
 	{
 		name: "北京市",
@@ -248,6 +259,10 @@ export const chinaRegions: ChinaRegion[] = [
 	},
 ];
 
+/**
+ * 指标值最高的 7 个区域，供左侧「省级数据指数排行」图表使用。
+ * 先浅拷贝再排序，避免 sort 原地改写 chinaRegions——它是多个图层的共享数据源。
+ */
 export const chinaTopRegions = [...chinaRegions]
 	.sort((a, b) => b.value - a.value)
 	.slice(0, 7);

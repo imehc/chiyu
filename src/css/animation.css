@@ -1,10 +1,21 @@
+/**
+ * 全局关键帧合集：只定义 @keyframes，具体时长、延迟与循环方式由使用处的
+ * animate-[...] 工具类决定（Tailwind 任意值写法）。
+ */
 /* 定义关键帧动画 */
+
+/* ===== 模糊呼吸 ===== */
+/* 注册为 --animate-blur-ani（见 index.css @theme）：配合 alternate 在 0 与 3px 之间往复，
+   用 blur 而非 opacity 是为了让边缘“晕开”；使用处的 --index 决定各自延迟，形成错峰 */
 @keyframes blurAni {
   to {
     filter: blur(3px);
   }
 }
 
+/* ===== 箭头循环位移 ===== */
+/* 向右移动自身宽度的往返动画，用在提示「可继续下钻」的箭头上；
+   100% 回到 0，因此不需要 alternate 也能无缝衔接下一轮 */
 @keyframes arrowAnimate {
   0% {
     transform: translateX(0);
@@ -17,6 +28,7 @@
   }
 }
 
+/* 与 arrowAnimate 相同，但中段只走 90%，留给成对箭头错开半个身位的间隙 */
 @keyframes arrowAnimate2 {
   0% {
     transform: translateX(0);
@@ -29,6 +41,8 @@
   }
 }
 
+/* ===== 侧边装饰线明暗呼吸 ===== */
+/* 左右两侧长条框线的呼吸效果：最低压到 0.2 而不是 0，避免闪烁感过强 */
 @keyframes screenLineAnimate {
   0% {
     opacity: 1;
@@ -41,6 +55,8 @@
   }
 }
 
+/* ===== 匀速旋转 ===== */
+/* 雷达扫描、环形装饰等素材本身画有缺口/光段，靠整体旋转产生扫描感 */
 @keyframes rotate360Animate {
   0% {
     transform: rotate(0);
@@ -50,6 +66,9 @@
   }
 }
 
+/* ===== 卡片扫描光 ===== */
+/* card 标题栏的扫光贴图：从左侧 -160px 移到 2000px，
+   起点为负、终点远大于常见卡宽，保证进出画面时都在可视区之外，不会突然出现或消失 */
 @keyframes saoguangMove {
     from {
         transform: translateX(-160px);
@@ -60,6 +79,9 @@
     }
 }
 
+/* ===== 菜单激活光晕 ===== */
+/* menu-item 选中态 ::after 的扩散动画：先撑到 1.1/1.2 倍再淡出到透明，
+   末帧停在同一尺寸上，配合无限循环形成每秒一次的脉冲光环 */
 @keyframes menuActiveScale {
   0% {
     transform: scale(1);

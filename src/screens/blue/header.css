@@ -1,3 +1,12 @@
+/* ==========================================================================
+   顶部导航条：76px 高的固定顶栏，内含 SVG 背景装饰、中央标题、左右欢迎语与时时钟、
+   以及左右两组梯形菜单按钮。
+   背景形状与渐变在 header.tsx，这里只负责定位、字体排版与菜单的悬停/激活态。
+   ========================================================================== */
+
+/* ===== 顶栏容器 ===== */
+/* 高度 76px 与 SVG 的 viewBox 高度一致，避免等比拉伸时图形被压扁；
+   z-index: 2 高于底栏（1），isolation 让内部负 z-index 的 SVG 只在本层内比较 */
 .blue-command-header {
 	position: absolute;
 	left: 0;
@@ -7,6 +16,7 @@
 	z-index: 2;
 	isolation: isolate;
 }
+/* 装饰 SVG 铺满整个顶栏，pointer-events: none 保证不挡住菜单按钮的点击 */
 .blue-command-header .blue-header-art {
 	position: absolute;
 	inset: 0;
@@ -15,6 +25,9 @@
 	overflow: visible;
 	pointer-events: none;
 }
+/* ===== 标题 ===== */
+/* 标题固定 440px 宽并水平居中：宽度写死是为了让两侧导航按「中心 + 280px」对称让位，
+   若随内容自适应，长标题会把左右菜单挤开 */
 .blue-command-header .blue-header-title {
 	position: absolute;
 	left: 50%;
@@ -35,6 +48,8 @@
 		0 1px 1px #9bd8ee66,
 		0 0 14px #5abaff38;
 }
+/* ===== 欢迎语与时钟 ===== */
+/* 左右对称贴在顶栏两端，top: 30px 与 SVG 装饰的平直段对齐，避开展示中央凸台的区域 */
 .blue-header-welcome {
 	position: absolute;
 	left: 31px;
@@ -44,6 +59,7 @@
 	color: #a4c8de;
 	white-space: nowrap;
 }
+/* white-space: pre 保留上层格式化时间字符串里的空格，防止日期与星期被折叠成一行 */
 .blue-header-clock {
 	position: absolute;
 	right: 35px;
@@ -54,6 +70,9 @@
 	line-height: 20px;
 	white-space: pre;
 }
+/* ===== 导航布局 ===== */
+/* 两组导航以顶栏中心为基准左右分开 280px（约为标题半宽 220 再加 60 的间距），
+   保证任何宽度下都与标题保持对称留白 */
 .blue-header-nav {
 	position: absolute;
 	top: 29px;
@@ -66,6 +85,9 @@
 .blue-header-nav-right {
 	left: calc(50% + 280px);
 }
+/* ===== 菜单按钮 ===== */
+/* 按钮尺寸 128×34：略小于 SVG 的 144×36 viewBox，留出余量给激活态的辉光溢出；
+   isolation 让内部 z-index: -1 的背景 SVG 被限制在按钮内，不会掉到页面最底层 */
 .blue-header-menu {
 	position: relative;
 	isolation: isolate;
@@ -85,6 +107,7 @@
 		color 180ms ease,
 		filter 180ms ease;
 }
+/* 背景 SVG 压到文字下方（z-index: -1），overflow: visible 让描边辉光不被按钮边界裁掉 */
 .blue-header-menu > svg {
 	position: absolute;
 	inset: 0;
@@ -94,6 +117,8 @@
 	overflow: visible;
 	pointer-events: none;
 }
+/* ===== 菜单状态 ===== */
+/* 激活态的填充层与金色底标默认透明，由 class / 悬停逐层点亮 */
 .blue-header-menu-lit,
 .blue-header-menu-gold {
 	opacity: 0;
@@ -106,25 +131,33 @@
 	text-shadow: 0 0 7px #70d5ff66;
 	filter: drop-shadow(0 2px 5px #0a99e22e);
 }
+/* 悬停/聚焦只点亮填充层；金色底标仅给真正激活的项，避免鼠标划过时出现「假选中」 */
 .blue-header-menu:hover .blue-header-menu-lit,
 .blue-header-menu:focus-visible .blue-header-menu-lit,
 .blue-header-menu.active .blue-header-menu-lit,
 .blue-header-menu.active .blue-header-menu-gold {
 	opacity: 1;
 }
+/* 金色底标再加一层同色外发光，让激活项在整排按钮中一眼可辨 */
 .blue-header-menu.active .blue-header-menu-gold {
 	filter: drop-shadow(0 0 3px #e7b94088);
 }
+/* 键盘聚焦用 1px 青色描边 + 4px 偏移，叠在梯形边框外侧而不遮挡图形 */
 .blue-header-menu:focus-visible {
 	outline: 1px solid #72d8ff;
 	outline-offset: 4px;
 }
+/* 按下瞬间整体提亮，给出物理按压的即时反馈 */
 .blue-header-menu:active {
 	filter: brightness(1.2);
 }
+/* ===== 装饰细节 ===== */
+/* 中央金色光条的常态辉光强度，与底栏保持同一取值 */
 .blue-header-gold-glow {
 	opacity: 0.4;
 }
+/* ===== 降低动态效果偏好 ===== */
+/* 关闭菜单过渡并隐藏流光：SMIL 流光无法用 CSS 暂停，只能整组移除 */
 @media (prefers-reduced-motion: reduce) {
 	.blue-header-menu,
 	.blue-header-menu-lit,

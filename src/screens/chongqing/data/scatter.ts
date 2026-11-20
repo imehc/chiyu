@@ -1,4 +1,11 @@
+/**
+ * 散点层示例数据：24 个业务点位的指标值与经纬度。
+ * 由 world.ts 的 createScatter 消费，先经 sortByValue 降序再交给
+ * shared/map 的 populateMapScatter，散点高度 / 大小按 value 比例计算。
+ * 坐标为 [经度, 纬度]，均落在重庆市域内；数值为演示数据，无实际统计口径。
+ */
 export default [
+	// value 示例指标，规模 120~190；lng 经度（东经）、lat 纬度（北纬）
 	{ value: 159, lng: 108.77306, lat: 29.53957 },
 	{ value: 184, lng: 108.00211, lat: 30.90922 },
 	{ value: 121, lng: 109.35039, lat: 31.33162 },

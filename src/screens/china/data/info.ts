@@ -1,8 +1,17 @@
+/**
+ * 全国重点枢纽节点（演示数据，非真实统计）。
+ * 消费方：world.ts 的 createInfoPoint，把每个点投影成 Sprite 图标并挂一张 3D 卡片标签。
+ */
 export interface ChinaInfoPoint {
+	/** 节点名称，同时作为卡片标题与 Sprite 的 userData.name */
 	name: string;
+	/** 评级文案（优 / 良 / 中），仅用于卡片展示，不参与排序 */
 	level: string;
+	/** 算力指数，0~100 的演示值，决定 Sprite 半径与卡片数值 */
 	value: number;
+	/** 经度，东经为正，单位：度 */
 	lng: number;
+	/** 纬度，北纬为正，单位：度 */
 	lat: number;
 }
 
@@ -12,6 +21,7 @@ export interface ChinaInfoPoint {
  * 1. 避开指标柱所在省份（广东、上海、四川、北京、新疆、黑龙江），防止图标压在光柱底座上；
  * 2. 卡片按 170×106 显示，面积较大，因此尽量落在西部与中部空旷区域，
  *    不要把节点放在上海、广东这类指标柱密集的东部沿海。
+ * 轮播顺序不取决于本数组：world.ts 会先拷贝并按 value 降序（sortByValue）再创建与轮播。
  */
 const chinaInfoPoints: ChinaInfoPoint[] = [
 	{

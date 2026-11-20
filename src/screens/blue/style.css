@@ -1,9 +1,20 @@
+/* ==========================================================================
+   大屏整体布局、动画编排与加载态。
+   负责：1920×834 设计稿舞台的定位与等比缩放、左右面板/图层/工具/页签的锚点、
+   监测气泡的展开与收起、以及「加载完成 → 入场」「切换视图 → 离场」两套过渡。
+   控件与页签的配色和状态样式在 controls.css，顶栏、底栏分别在 header.css、footer.css。
+   ========================================================================== */
+
+/* ===== 表单重置 ===== */
 .blue-shell fieldset {
 	border: 0;
 	margin: 0;
 	padding: 0;
 	min-width: 0;
 }
+/* ===== 舞台与外壳 ===== */
+/* 外壳锁定一屏：宽度取 100vw，高度取 100dvh（跟随移动端地址栏收起后的可视高度），
+   配合 overflow: hidden 让内部绝对定位元素不会撑出滚动条 */
 .blue-shell {
 	position: relative;
 	width: 100vw;
@@ -13,6 +24,9 @@
 	color: #d5eaf8;
 	font-family: "Alibaba PuHuiTi", "PingFang SC", sans-serif;
 }
+/* 舞台是 1920×834 的固定设计稿坐标系：先左上角对准视口中心，
+   再由脚本按视口比例写入 scale 完成整体等比缩放；
+   transform-origin: center 让缩放围绕舞台中心进行，避免缩放后位置漂移 */
 .blue-stage {
 	position: absolute;
 	left: 50%;
@@ -23,6 +37,7 @@
 	background: #020916;
 	transform-origin: center;
 }
+/* touch-action: none 关闭浏览器默认的平移/缩放手势，把触控事件完整交给 Three.js 控制器 */
 .blue-map-canvas {
 	position: absolute;
 	inset: 0;
@@ -30,6 +45,8 @@
 	height: 100%;
 	touch-action: none;
 }
+/* 暗角层：radial-gradient 中心透明、向外叠加两层深色，把视觉焦点收拢到地图中部；
+   pointer-events: none 保证它只是一层视觉遮罩，不拦截下方地图的拖拽与点击 */
 .blue-vignette {
 	position: absolute;
 	inset: 0;
@@ -41,6 +58,7 @@
 		#01081499 100%
 	);
 }
+/* ===== 外框装饰 ===== */
 .blue-frame {
 	position: absolute;
 	inset: 0;
@@ -48,10 +66,13 @@
 	height: 100%;
 	pointer-events: none;
 }
+/* transform-box: fill-box 把参考系从 SVG 的 viewBox 改为元素自身包围盒，
+   否则左右两条边框的 transform-origin: center 会落到整张画布中心，位移方向全错 */
 .blue-shell-frame {
 	transform-box: fill-box;
 	transform-origin: center;
 }
+/* 左右边框各持有一个位移变量，值互为相反数，使呼吸动画呈「向外张开」而非同向漂移 */
 .blue-shell-frame-left {
 	--blue-shell-breath-x: 10px;
 }
@@ -64,6 +85,8 @@
 .blue-shell-edge {
 	stroke-opacity: 0.65;
 }
+/* 呼吸动画：5.4s 一个来回，缓动取对称的 ease-in-out 曲线，
+   让边框缓慢外扩再回位，模拟设备通电时的轻微起伏 */
 @keyframes blueShellBreathing {
 	0%,
 	100% {
@@ -73,9 +96,15 @@
 		transform: translateX(var(--blue-shell-breath-x));
 	}
 }
+/* ===== 流光拖尾 ===== */
+/* 20 条拖尾 path 共用一层 drop-shadow，比逐条加滤镜省一遍合成；
+   数量固定且只作用于 SVG 局部，开销可接受 */
 .blue-line-trail {
 	filter: drop-shadow(0 0 2px #23cfff99);
 }
+/* ===== 布局锚点 ===== */
+/* 左右面板条：上边留 80px 避开 76px 高的顶栏，下边留 35px 让出底栏，
+   宽度固定 396px 与面板边框设计稿一致 */
 .blue-panels {
 	position: absolute;
 	top: 80px;
@@ -88,6 +117,7 @@
 .blue-panels-right {
 	right: 24px;
 }
+/* 图层按钮列：纵向排列，间距随 --blue-control-scale 等比缩放，保持与按钮尺寸同步 */
 .blue-layers {
 	position: absolute;
 	left: 500px;
@@ -104,6 +134,9 @@
 	flex-direction: column;
 	gap: calc(14px * var(--blue-control-scale));
 }
+/* 视图页签固定在底部居中：水平居中依赖 translateX(-50%)，故入场/离场动画里凡是要改 transform，
+   都必须把这一半宽度一并写进位移值；z-index: 2 保证它压在底栏装饰之上；
+   gap 14px 为兜底值，controls.css 中会以 16px 覆盖 */
 .blue-view-tabs {
 	position: absolute;
 	left: 50%;
@@ -113,6 +146,9 @@
 	display: flex;
 	gap: 14px;
 }
+/* 监测气泡锚点：z-index 8 高于面板与页签、低于加载遮罩（20）；
+   translate(-50%, -100%) 把气泡底边中点对齐到地图上的标记点，
+   再靠 padding-bottom 留出箭头高度 */
 .blue-monitor-anchor {
 	position: absolute;
 	z-index: 8;
@@ -121,6 +157,9 @@
 	transform: translate(-50%, -100%);
 	pointer-events: none;
 }
+/* 气泡本体：底边框设为透明，交给 ::after 用渐变补齐「中间断开」的一段，
+   为向下的三角箭头留出开口；transform-origin 落在箭头尖端（下方 14px 处），
+   所以入场缩放看起来是从地图标记点向上展开 */
 .blue-monitor {
 	position: relative;
 	box-sizing: border-box;
@@ -136,6 +175,7 @@
 	animation: blueMonitorIn 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
 	pointer-events: auto;
 }
+/* 用两端实色、中间透明的横向渐变补出底边，缺口宽度 28px 与箭头等宽 */
 .blue-monitor::after {
 	content: "";
 	position: absolute;
@@ -150,6 +190,8 @@
 		#2996cf 0
 	);
 }
+/* 头部固定 52px 高，标题与关闭按钮两端对齐（space-between）；
+   左内边距 24px 比右侧大 8px，是为了抵消关闭按钮自带的 4px 内边距，使视觉左右等距 */
 .blue-monitor-header {
 	display: flex;
 	align-items: center;
@@ -164,6 +206,8 @@
 	letter-spacing: 1px;
 	color: #edfaff;
 }
+/* 键值对两列布局：左列固定 104px 放指标名，右列自适应放数值，保证多行对齐；
+   min-height 40px 让指标行无论多少都保持一致的节奏，气泡高度不会随行数抖动 */
 .blue-monitor-data {
 	margin: 0;
 	padding: 10px 24px 12px;
@@ -208,6 +252,8 @@
 .blue-monitor-close:hover {
 	color: #a2edff;
 }
+/* 箭头由两层同形状的 clip-path 三角叠成：外层实色描边、内层深色填充，
+   形成镂空尖角，并与气泡底边的缺口宽度对齐 */
 .blue-monitor-arrow {
 	position: absolute;
 	left: 50%;
@@ -225,10 +271,13 @@
 	background: #064469;
 	clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
+/* 收起态：换成更短的退场动画并关掉命中测试，避免动画期间误点 */
 .blue-monitor-closing {
 	animation: blueMonitorOut 240ms cubic-bezier(0.55, 0, 1, 0.45) both;
 	pointer-events: none;
 }
+/* 展开：从接近 0（0.015）而非 0 开始缩放，
+   避免完全塌陷时浏览器对边框与阴影的退化计算产生闪烁；时长 380ms 出快入缓 */
 @keyframes blueMonitorIn {
 	from {
 		opacity: 0;
@@ -239,6 +288,7 @@
 		transform: scale(1);
 	}
 }
+/* 收起：与展开相反的路径，240ms 加速收拢，快于展开以降低等待感 */
 @keyframes blueMonitorOut {
 	from {
 		opacity: 1;
@@ -249,6 +299,8 @@
 		transform: scale(0.015);
 	}
 }
+/* ===== 加载遮罩 ===== */
+/* 全屏黑底 + z-index 20，必须高于所有浮层（监测气泡 z-index 8、页签 2）才能完全遮住场景 */
 .blue-loading {
 	position: absolute;
 	inset: 0;
@@ -261,6 +313,8 @@
 	font-family: "D-DIN", sans-serif;
 	color: #fff;
 }
+/* 进度数字 22px、单位 13px 分两级字号，弱化单位以突出百分比；
+   底部 13px 外边距把进度文案与下方的加载提示词分开 */
 .blue-loading-progress {
 	font-size: 22px;
 	margin-bottom: 13px;
@@ -268,18 +322,30 @@
 .blue-loading-progress small {
 	font-size: 13px;
 }
+/* 加载文案的模糊呼吸：alternate 让动画在首尾自动折返，无需写 50% 关键帧 */
 .blue-loading-word {
 	font-size: 23px;
 	letter-spacing: 8px;
 	animation: blueLoadingBlur 1s ease-in-out infinite alternate;
 }
+/* 键盘聚焦统一用青色描边 + 4px 偏移，保证在深色底上有足够对比 */
 .blue-shell button:focus-visible {
 	outline: 2px solid #4df1ff;
 	outline-offset: 4px;
 }
+/* ===== 入场编排 ===== */
+/* 与脚本的分工：index.tsx 只切换状态类（.blue-loaded、.blue-view-transition、data-motion），
+   位移、时长与错峰全部由 CSS transition 承担，因此同一套规则既能覆盖首屏加载完成，
+   也能覆盖视图切换，JS 侧无需维护时间线。元素的默认样式即「已入场」的最终态，
+   这样即便样式表或脚本之一加载失败，内容也仍然完整可见 */
+/* 下面这批「最终态」声明（opacity: 1、translate 归零）本身不产生动画，
+   真正的作用是给 :not(.blue-loaded) / 离场选择器提供一个可回退的默认值：
+   未加载时元素停在屏幕外与透明态，加载完成后靠 transition 平滑回到这里 */
 .blue-panels {
 	opacity: 1;
 }
+/* 面板逐个错峰 0.2s，形成从左/右向中间依次推入的节奏；
+   1.5s 配 cubic-bezier(0.16, 1, 0.3, 1) 是「起点快、末端极缓」的减速曲线 */
 .blue-panels .blue-panel {
 	transform: translateX(0);
 	opacity: 1;
@@ -293,11 +359,15 @@
 .blue-panels .blue-panel:nth-child(3) {
 	transition-delay: 0.4s;
 }
+/* 容器只负责整体淡入与「位移归零」的基准态，真正的推入/推出位移加在子按钮上，
+   这样每个按钮可以各自错峰，而容器本身不必参与 transform */
 .blue-layers,
 .blue-map-tools {
 	opacity: 1;
 	transform: translateX(0);
 }
+/* 控件延迟走 CSS 变量 --blue-control-delay，离场时可整体改写成更短的错峰，
+   不必为每个子选择器重写一次 transition */
 .blue-layers .blue-layer-button,
 .blue-map-tools button {
 	--blue-control-delay: 0s;
@@ -321,6 +391,7 @@
 :is(.blue-layers, .blue-map-tools) button:nth-child(5) {
 	--blue-control-delay: 0.4s;
 }
+/* 外框比面板晚 0.1s 出现，形成「内容先到、边框后抱」的层次 */
 .blue-shell-frame {
 	opacity: 1;
 	transform: translateX(0);
@@ -328,6 +399,8 @@
 		opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s,
 		transform 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
 }
+/* 顶栏 / 底栏用位移 + 透明度入场：位移 32px 量级刚好能被感知又不会显得跳脱，
+   底栏再晚 0.08s，让顶栏先落位 */
 .blue-command-header,
 .blue-command-footer {
 	opacity: 1;
@@ -339,6 +412,7 @@
 .blue-command-footer {
 	transition-delay: 0.08s;
 }
+/* 页签与货运方式都是水平居中元素，位移必须带上 translateX(-50%) 才能保持居中 */
 .blue-view-tabs,
 .blue-freight-modes {
 	opacity: 1;
@@ -350,6 +424,8 @@
 .blue-freight-modes {
 	transition-delay: 0.2s;
 }
+/* 菜单按钮只做透明度入场（图形本身是 SVG，位移会破坏梯形拼接），
+   延迟同样走变量，便于离场时统一清零 */
 .blue-header-nav .blue-header-menu {
 	--blue-header-delay: 0.08s;
 	opacity: 1;
@@ -364,6 +440,12 @@
 .blue-header-nav .blue-header-menu:nth-child(3) {
 	--blue-header-delay: 0.24s;
 }
+/* ===== 离场 / 未加载态 ===== */
+/* 三种状态共用同一套规则：
+   [data-motion="exit"]   用户主动切走视图
+   .blue-view-transition  视图切换过渡中
+   :not(.blue-loaded)     首屏资源尚未就绪
+   左侧元素向左推出 150%、右侧向右推出，保证推出距离超过自身宽度 */
 .blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
 	:is(.blue-panels-left .blue-panel, .blue-layers .blue-layer-button) {
 	transform: translateX(-150%);
@@ -380,6 +462,7 @@
 	.blue-shell-frame-right {
 	transform: translateX(150%);
 }
+/* 顶栏向上、底栏向下各让开 32px，方向与各自的贴边位置一致 */
 .blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
 	.blue-command-header {
 	transform: translateY(-32px);
@@ -392,6 +475,8 @@
 	:is(.blue-view-tabs, .blue-freight-modes) {
 	transform: translate(-50%, 32px);
 }
+/* 统一淡出：过渡时长压到 1s、缓动换成 cubic-bezier(0.7, 0, 0.84, 0)（前段平缓、末段加速掠出），
+   与入场的强减速曲线形成「进慢出快」的对比；delay 归零避免离场时还要等错峰 */
 .blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
 	:is(
 		.blue-panel,
@@ -408,6 +493,7 @@
 	transition-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
 	transition-delay: 0s;
 }
+/* 离场也保留面板 0.12s 的错峰，让收起过程仍有层次而不是同时消失 */
 .blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
 	.blue-panels
 	.blue-panel:nth-child(2) {
@@ -418,6 +504,7 @@
 	.blue-panel:nth-child(3) {
 	transition-delay: 0.24s;
 }
+/* 离场过程中立即关闭命中测试，防止动画期间仍能点到已淡出的控件 */
 .blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
 	:is(
 		.blue-panels,
@@ -436,6 +523,8 @@
 	opacity: 0;
 	transition-delay: 0s;
 }
+/* 控件离场改用 0.06s 的密集错峰（比入场的 0.1s 更紧），
+   让整列按钮几乎一起抽走，显得干脆 */
 .blue-shell:is([data-motion="exit"], .blue-view-transition, :not(.blue-loaded))
 	:is(.blue-layers, .blue-map-tools)
 	button {
@@ -466,6 +555,8 @@
 	button:nth-child(5) {
 	--blue-control-delay: 0.24s;
 }
+/* 过渡期间为参与动画的元素提前提升为独立合成层，减少 transform/opacity 触发的重绘；
+   只在过渡窗口内声明，结束后不影响常态下的布局与层叠 */
 .blue-shell:is(
 		[data-motion="exit"],
 		[data-motion="enter"],
@@ -484,6 +575,7 @@
 	) {
 	will-change: transform, opacity;
 }
+/* 过渡期间暂停 CSS 动画，避免「呼吸边框」与「巡边光束」在元素位移时继续跑，白白消耗帧时间 */
 .blue-shell:is(
 		[data-motion="exit"],
 		[data-motion="enter"],
@@ -493,7 +585,8 @@
 	:is(.blue-shell-breathing, .blue-panel-beam) {
 	animation-play-state: paused;
 }
-/* SVG SMIL trails do not respond to CSS animation-play-state. */
+/* SVG 的 SMIL 流光不响应 CSS 的 animation-play-state，
+   因此暂停 CSS 动画之外还要把整组流光隐藏，才能达到同样的「停住」效果 */
 .blue-shell:is(
 		[data-motion="exit"],
 		[data-motion="enter"],
@@ -503,6 +596,7 @@
 	.blue-line-flow {
 	display: none;
 }
+/* 当前下钻路径文本：绝对定位在地图中上部，nowrap 防止省/市名被折行挡住地图 */
 .blue-region-path {
 	position: absolute;
 	left: 675px;
@@ -512,6 +606,7 @@
 	color: #bcd8ee;
 	white-space: nowrap;
 }
+/* 货运方式选择器：位于底栏上方 75px 处水平居中，同样需带 translateX(-50%) */
 .blue-freight-modes {
 	position: absolute;
 	left: 50%;
@@ -520,12 +615,16 @@
 	display: flex;
 	gap: 20px;
 }
+/* 加载文案的模糊呼吸：终态才写 filter/opacity，起始帧沿用元素默认值（清晰、不透明） */
 @keyframes blueLoadingBlur {
 	to {
 		filter: blur(1.6px);
 		opacity: 0.5;
 	}
 }
+/* ===== 降低动态效果偏好 ===== */
+/* 用户开启「减少动态效果」时：取消所有位移/透明度过渡与外框呼吸，
+   气泡展开动画压到 1ms（保留结束态），流光直接隐藏，避免持续闪动引发不适 */
 @media (prefers-reduced-motion: reduce) {
 	.blue-monitor {
 		animation-duration: 1ms;

@@ -1,12 +1,29 @@
+/**
+ * 各区经济收益：对比五个城区（南山区 / 天河区 / 福田区 / 龙岗区 / 宝安区）的经济收益。
+ * 被重庆、广东两套大屏的左侧栏复用（screens/chongqing、screens/guangdong），
+ * 数值为示例数据，单位为亿元（5000~8000 亿元量级，按降序排列）。
+ * 柱体用 pictorialBar 的自定义 SVG 轮廓画成「水滴/光柱」，柱顶再用 custom 系列贴一枚光点。
+ */
 import { type ECharts, type EChartsOption, graphic, init } from "echarts";
 import { onCleanup, onMount } from "solid-js";
 import Card from "../componnets/card";
 
+/**
+ * 各区经济收益卡片。
+ *
+ * - props：无，区名与数值内联在 option 里，换数据需改对应 data。
+ * - 响应式依赖：option 是普通对象（仅用 satisfies 做类型检查），不参与响应式追踪。
+ * - 生命周期：onMount 建实例并挂 ResizeObserver；onCleanup 先解绑监听再 dispose。
+ * - 动画：未显式配置 animation，沿用 ECharts 默认的 1000ms 入场时长与缓出曲线。
+ */
 export default function DistrictEconomicIncome() {
+	/** 图表挂载点，由 JSX 的 ref 赋值 */
 	let chartRef: HTMLDivElement | undefined;
+	/** ECharts 实例句柄，dispose 后置回 null 防止重复销毁 */
 	let chartInstance: ECharts | null = null;
 
 	const option = {
+		// 左上角单位标签，替代被隐藏的 y 轴标题
 		title: {
 			text: "亿元",
 			left: "5%",
@@ -16,6 +33,7 @@ export default function DistrictEconomicIncome() {
 				fontSize: 8,
 			},
 		},
+		// 与其它左侧卡片同一套留白：顶部放单位标签与柱顶数字，底部放 x 轴标签
 		grid: {
 			left: "12%",
 			top: "25%",
@@ -26,6 +44,7 @@ export default function DistrictEconomicIncome() {
 			trigger: "axis",
 			axisPointer: {
 				type: "shadow",
+				// 阴影保留 0.2 透明度，hover 时给当前类目一条浅色定位带
 				shadowStyle: { opacity: 0.2 },
 			},
 			backgroundColor: "rgba(0,0,0,1)",
@@ -36,6 +55,7 @@ export default function DistrictEconomicIncome() {
 				fontSize: 10,
 			},
 		},
+		// 全局调色板兜底；实际颜色由每个数据项的 itemStyle 渐变覆盖
 		color: ["#6BC7F6"],
 		xAxis: [
 			{
@@ -56,12 +76,14 @@ export default function DistrictEconomicIncome() {
 				axisLabel: {
 					color: "#ffffff",
 					fontSize: 10,
+					// 强制显示全部五个区名，避免窄容器下 ECharts 自动抽稀
 					interval: 0,
 					padding: [0, 0, 0, 0],
 				},
 				data: ["南山区", "天河区", "福田区", "龙岗区", "宝安区"],
 			},
 			{
+				// 空的载体轴：只给 custom 系列提供与类目对齐的坐标系，自身不画任何轴线
 				axisLine: {
 					show: false,
 					lineStyle: {
@@ -81,6 +103,7 @@ export default function DistrictEconomicIncome() {
 				show: false,
 			},
 			splitLine: {
+				// 不画网格线：柱体本身是大面积渐变，再叠横线会显脏
 				show: false,
 			},
 			axisLabel: {
@@ -90,21 +113,26 @@ export default function DistrictEconomicIncome() {
 		},
 		series: [
 			{
+				// 图形柱：symbol 用 path:// 内联一段 10×10 的水滴轮廓（底宽 10、顶部收成尖点），
+				// pictorialBar 会按柱高纵向拉伸它，得到上尖下宽的「光柱」造型
 				name: "",
 				type: "pictorialBar",
 				symbol: "path://M0,10 L10,10 C5.5,10 5.5,5 5,0 C4.5,5 4.5,10 0,10 z",
 				label: {
 					show: true,
 					position: "top",
+					// 留 10px 间距给柱顶光点，避免数字压在光点上
 					distance: 10,
 					color: "#ffffff",
 					fontSize: 10,
 				},
 
+				// 每项单独配渐变：第 1/3/5 项蓝色、第 2/4 项青绿，形成冷暖交替的节奏
 				data: [
 					{
 						value: 8000,
 						itemStyle: {
+							// 0,0 → 0,1 为自上而下：柱顶实色、柱底只剩 10% 不透明度，像光从地面升起
 							color: new graphic.LinearGradient(0, 0, 0, 1, [
 								{ offset: 0, color: "rgba(64, 175, 255, 1)" },
 								{ offset: 1, color: "rgba(64, 175, 255, 0.10)" },
@@ -150,11 +178,14 @@ export default function DistrictEconomicIncome() {
 				],
 			},
 			{
+				// 柱顶光点：custom 系列把 10×10 图标贴到 (类目, 数值) 的像素位，
+				// z:3 保证盖在柱体之上；挂第二条轴是为了不干扰第一根柱的宽度与间距计算
 				name: "",
 				type: "custom",
 				z: 3,
 				xAxisIndex: 1,
 				renderItem: (_params, api) => {
+					// value(0) 为类目下标、value(1) 为数值，api.coord 把数据坐标换算成画布像素
 					const categoryIndex = api.value(0);
 
 					const categoryData = api.value(1);
@@ -167,6 +198,7 @@ export default function DistrictEconomicIncome() {
 					return {
 						type: "image",
 						style: {
+							// 各减 5 即图标宽高的一半，让光点以柱顶为圆心
 							x: basicsXAxis - 5,
 							y: topBasicsYAxis - 5,
 							width: 10,
@@ -181,6 +213,10 @@ export default function DistrictEconomicIncome() {
 		],
 	} satisfies EChartsOption;
 
+	/**
+	 * 建 ECharts 实例、写入 option，并用 ResizeObserver 跟随卡片尺寸重绘。
+	 * @returns 解绑尺寸监听的清理函数；容器 ref 未就绪时返回 undefined，调用方需用 `?.` 兜底。
+	 */
 	const initChart = () => {
 		if (!chartRef) return;
 
@@ -189,6 +225,7 @@ export default function DistrictEconomicIncome() {
 
 		// 自动调整大小
 		const resizeObserver = new ResizeObserver(() => {
+			// 卸载瞬间可能仍有一次回调，用可选链避免操作已销毁的实例
 			chartInstance?.resize();
 		});
 
@@ -199,6 +236,7 @@ export default function DistrictEconomicIncome() {
 		};
 	};
 
+	/** 销毁实例并清空引用；置 null 后重复调用不会二次 dispose。 */
 	const disposeChart = () => {
 		if (chartInstance) {
 			chartInstance.dispose();
@@ -209,12 +247,15 @@ export default function DistrictEconomicIncome() {
 	onMount(() => {
 		const cleanupResize = initChart();
 
+		// 先解绑 ResizeObserver 再 dispose：否则容器变化仍会回调到已销毁的实例
 		onCleanup(() => {
 			cleanupResize?.();
 			disposeChart();
 		});
 	});
 
+	// class 里的 -translate-x-[150%] 与 opacity-0 是入场初始态，
+	// 由 map-3d.ts 的 GSAP 时间线按 #left-card 选择器补间回 x:0 / opacity:1
 	return (
 		<div
 			id="left-card"

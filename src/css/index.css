@@ -1,21 +1,32 @@
+/**
+ * 全局样式入口：引入 Tailwind v4、字体声明与关键帧，并定义基础主题变量、
+ * 以及 App 中悬浮切换面板（.screen-switcher）的样式。
+ */
 @import "tailwindcss" prefix(tw);
 @import "./font.css";
 @import "./animation.css";
 
+/* ===== 基础重置与主题变量 ===== */
+
 :root {
+  /* 大屏里大量使用绝对定位与自定义行高，统一用 normal 避免继承到意外的 1.5 倍行距 */
   line-height: normal;
 }
 
 /* 配置 Tailwind 主题变量 */
+/* @theme 中的变量会被编译成工具类：--font-* → font-*，--animate-* → animate-*，--text-* → text-* */
 @theme {
   /* 字体族定义 */
+  /* 英文数字优先用 D-DIN，缺失时回退到 Arial（指标数字对齐更稳） */
   --font-d-din: "D-DIN", Arial, sans-serif;
   --font-d-din-bold: "D-DIN-Bold", Arial, sans-serif;
   --font-d-din-italic: "D-DIN-Italic", Arial, sans-serif;
+  /* 中文优先用阿里巴巴普惠体，macOS 回退苹方，Windows 回退微软雅黑 */
   --font-alibaba: "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-alimama-shuhei: "阿里妈妈数黑体 Bold", "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-pingfang-sc: "PingFang SC", "Microsoft YaHei", sans-serif;
   /* 注册动画 */
+  /* 用 --index 让同一批元素的延迟各不相同，形成错峰模糊，--index 由使用方内联传入 */
   --animate-blur-ani: blurAni 1.5s calc(var(--index) / 5 * 1s) alternate infinite;
   /* 文字大小 */
   --text-xxs: 10px;
@@ -23,21 +34,30 @@
   --blur-xxs: 2px;
 }
 
+/* ===== 全局基础样式 ===== */
+
 body {
+  /* 字体回退顺序：思源黑体 → 各平台系统 UI 字体 → 中文平台字体，保证换机器后字形尽量一致 */
   font-family: "SourceHanSansCN", "-apple-system", "BlinkMacSystemFont", "Helvetica Neue", Helvetica, "Segoe UI",
     "Arial", "Roboto", "PingFang SC", "miui", "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+  /* 背景压黑，避免大屏加载中或画布透明处露出白底 */
   background: #000;
+  /* 大屏属于展示型页面，全局禁止选中，防止拖拽动画时误选文字 */
   -webkit-user-select: none;
   user-select: none;
 }
 
+/* ===== 大屏切换面板（Tweakpane） ===== */
+
 /* Tweakpane 大屏切换面板（顶部把手可拖拽，宽度由 JS 实测内容统一设定） */
 .screen-switcher {
   position: fixed;
+  /* 远高于场景内的所有层级，保证面板永远浮在最上层且不被画布遮挡 */
   z-index: 2147483000;
   max-width: calc(100vw - 8px);
   pointer-events: auto;
   user-select: none;
+  /* 覆盖 Tweakpane 自带的 --tp-* 主题变量，统一成深蓝玻璃质感，与其它面板配色保持一致 */
   --tp-base-background-color: rgba(7, 28, 44, 0.92);
   --tp-base-shadow-color: rgba(0, 0, 0, 0.5);
   --tp-button-background-color: rgba(48, 220, 255, 0.12);
@@ -59,9 +79,12 @@ body {
   --tp-label-foreground-color: #8cd5e8;
 }
 
+/* ===== 拖拽把手与折叠按钮 ===== */
+
 /* 顶部拖拽把手 */
 .screen-switcher-handle {
   position: relative;
+  /* 18px 是拖拽热区高度，太矮在触屏上难以命中 */
   height: 18px;
   display: flex;
   align-items: center;
@@ -69,9 +92,12 @@ body {
   color: rgba(126, 246, 255, 0.55);
   background: rgba(7, 28, 44, 0.92);
   border: 1px solid rgba(48, 220, 255, 0.35);
+  /* 去掉下边框，让把手与 Tweakpane 面板拼成一个整体 */
   border-bottom: none;
+  /* 只圆上两角，下沿用面板自己的圆角 */
   border-radius: 8px 8px 0 0;
   cursor: move;
+  /* 阻止浏览器把拖动识别成页面滚动/缩放，否则 pointermove 会被中断 */
   touch-action: none;
 }
 
@@ -80,6 +106,7 @@ body {
   height: 10px;
 }
 
+/* 折叠按钮压在把手右侧，虽然位于把手内部，但 pointerdown 会 stopPropagation 避免触发拖拽 */
 .screen-switcher-collapse {
   position: absolute;
   right: 3px;
@@ -89,6 +116,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* 抹掉 button 的默认外观，使其与深色把手融为一体 */
   appearance: none;
   padding: 0;
   border: none;
@@ -106,17 +134,22 @@ body {
   color: #7ef6ff;
 }
 
+/* 拖拽过程中由 App 的 classList 加上 .dragging，用于给把手更亮的反馈 */
 .screen-switcher.dragging .screen-switcher-handle {
   cursor: grabbing;
   color: rgba(126, 246, 255, 0.9);
   background: rgba(12, 51, 77, 0.95);
 }
 
+/* ===== Tweakpane 内部元素微调 ===== */
+
+/* .tp-dfwv 是 Tweakpane 的面板根节点，宽度交给外层 .screen-switcher 统一控制 */
 .screen-switcher .tp-dfwv {
   width: auto;
   font-size: 12px;
 }
 
+/* .tp-rotv 是内容容器，只圆下两角以接住把手的直角边 */
 .screen-switcher .tp-rotv {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   border-radius: 0 0 6px 6px;

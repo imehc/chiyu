@@ -1,15 +1,22 @@
+/**
+ * 地图地坪：单次 draw call 绘制网格底板、分块面板、扫描带与流光，
+ * 全部在片元着色器里按平面坐标程序化生成，因此下钻换区域时不需要重建几何体。
+ * 暂未接入场景：全仓无引用，保留为地图地坪的备选实现。
+ */
 import { DoubleSide, Group, Mesh, PlaneGeometry, ShaderMaterial } from "three";
 
+/** 地坪覆盖范围；坐标与地图投影后的局部平面一致 */
 export interface TerrainBounds {
-	/** Center in the map's projected, local XY coordinates. */
+	/** 中心点，使用地图投影后的局部 XY 坐标 */
 	x: number;
 	y: number;
 	width: number;
 	height: number;
-	/** The spatial scale used by the region's extruded sides and markers. */
+	/** 该行政区挤出侧面与标记点使用的空间缩放，越小则细节越密 */
 	scale: number;
 }
 
+/** 全国视图的默认范围：宽 15、高 10 的世界单位，是其它区域缩放的基准 */
 const NATIONAL_BOUNDS: TerrainBounds = {
 	x: 0,
 	y: 0,
@@ -18,6 +25,12 @@ const NATIONAL_BOUNDS: TerrainBounds = {
 	scale: 1,
 };
 
+/**
+ * 地坪片元着色器。
+ * 构造顺序：底层渐变 → 分块面板明暗 → 三级网格 → 装饰性电路短线 → 扫过光带 → 车道流光 → 十字网格与点阵。
+ * 所有图案都以 vPlane（相对区域最长边的归一化坐标）为基准，并借助 fwidth 让线宽随距离自适应，
+ * 所以同一份 shader 在全国与区县尺度下都能保持相近的视觉密度。
+ */
 const FRAGMENT_SHADER = /* glsl */ `
 	varying vec2 vPlane;
 	uniform float time;
@@ -123,18 +136,23 @@ const FRAGMENT_SHADER = /* glsl */ `
 `;
 
 /**
- * A single draw call for the map's grid, tiled floor, and scanning rings.
- * Add group to the map's local XY group; its parent supplies rotation.x=-PI/2.
- * Call update with elapsed seconds only while the China view is visible.
+ * 地坪网格与扫描效果。
+ * 暂未接入场景；接入时把 group 加入地图的局部 XY 组，父级需提供 rotation.x = -PI/2 把平面放平。
+ * 仅在中国视图可见时调用 update 传秒数，避免看不见时仍有 uniform 与 draw call 开销。
  */
 export default class MapTerrain {
+	/** 对外挂载点，位置与缩放随 setRegion 变化 */
 	readonly group = new Group();
+	/** 单位平面，实际尺寸由 plane.scale 拉伸，缩放到任意区域都无需新建几何体 */
 	private readonly geometry = new PlaneGeometry(2, 2);
 	private readonly material = new ShaderMaterial({
 		uniforms: {
+			/** 累计动画时间（秒），已乘以动画速率 */
 			time: { value: 0 },
+			/** 0.55 → 1 的显影系数，切换区域时重新从半透明淡入 */
 			reveal: { value: 1 },
 		},
+		// vPlane 直接取顶点局部坐标（[-1,1]），与贴图无关，便于按区域尺寸归一化
 		vertexShader: /* glsl */ `
 			varying vec2 vPlane;
 			void main() {
@@ -143,6 +161,7 @@ export default class MapTerrain {
 			}
 		`,
 		fragmentShader: FRAGMENT_SHADER,
+		// 双面渲染 + 单 pass：地坪可能被相机从下方看到一点，但不需要两次绘制
 		transparent: true,
 		depthTest: true,
 		depthWrite: false,
@@ -151,26 +170,37 @@ export default class MapTerrain {
 		toneMapped: false,
 	});
 	private readonly plane = new Mesh(this.geometry, this.material);
+	/** 时间流逝速率；小区域略慢，避免扫描线在其上显得过快 */
 	private animationRate = 1;
+	/** 自上次切换区域以来经过的秒数，用于计算淡入显影 */
 	private revealAge = 1;
+	/** 上一帧的时间戳（秒），用于求 delta；首帧为 undefined */
 	private previousSeconds: number | undefined;
+	/** 释放标记，防止释放后仍被场景更新 */
 	private disposed = false;
 
 	constructor() {
 		this.group.name = "MapTerrain";
 		this.plane.name = "MapTerrainFloor";
+		// 负的 renderOrder 保证地坪先于地图轮廓绘制，作为背景而不是遮挡物
 		this.plane.renderOrder = -2;
+		// 地坪不参与拾取：射线检测直接返回空，避免挡住省份点击
 		this.plane.raycast = () => undefined;
 		this.group.add(this.plane);
 		this.setRegion();
 	}
 
+	/**
+	 * 切换到某个行政区的地坪范围，同时重置淡入动画。
+	 * 所有入参都做有限性校验并取绝对值，防止上游数据缺失导致 NaN 传播到矩阵。
+	 */
 	setRegion(bounds: TerrainBounds = NATIONAL_BOUNDS): void {
 		if (this.disposed) return;
 		const width = Number.isFinite(bounds.width) ? Math.abs(bounds.width) : 15;
 		const height = Number.isFinite(bounds.height)
 			? Math.abs(bounds.height)
 			: 10;
+		// 以最长边作为平面尺寸基准，保证不规则行政区的图案密度一致
 		const span = Math.max(width, height, 0.001);
 		const scale = Number.isFinite(bounds.scale)
 			? Math.max(0.0001, Math.abs(bounds.scale))
@@ -178,19 +208,24 @@ export default class MapTerrain {
 		this.group.position.set(
 			Number.isFinite(bounds.x) ? bounds.x : 0,
 			Number.isFinite(bounds.y) ? bounds.y : 0,
+			// 略微压到地图平面之下，避免与省界共面产生 z-fighting
 			-0.08 * scale,
 		);
 		this.plane.scale.set(span * 1.12, span * 1.12, 1);
-		// Coordinates already scale with the footprint, so smaller regions
-		// retain the same screen detail and only slightly slower scan cadence.
+		// 坐标本身随平面缩放，因此小区域保留同样的屏幕细节，只是扫描节奏略慢
 		this.animationRate = 0.84 + 0.16 * Math.sqrt(Math.min(scale, 1));
 		this.revealAge = 0;
 		this.material.uniforms.reveal.value = 0.55;
 	}
 
+	/**
+	 * 推进时间 uniform 与显影动画。
+	 * @param seconds 单调递增的秒数（通常来自渲染循环的 clock）
+	 */
 	update(seconds: number): void {
 		if (this.disposed || !this.group.visible || !Number.isFinite(seconds))
 			return;
+		// 首帧没有参照，按 60fps 估一个 delta；单帧最多按 100ms 计，防止后台切换回来时光带瞬移
 		const delta =
 			this.previousSeconds === undefined
 				? 1 / 60
@@ -198,10 +233,12 @@ export default class MapTerrain {
 		this.previousSeconds = seconds;
 		this.revealAge += delta;
 		this.material.uniforms.time.value = seconds * this.animationRate;
+		// 指数收敛：约 0.6 秒走完大半，避免线性淡入显得生硬
 		this.material.uniforms.reveal.value =
 			0.55 + 0.45 * (1 - Math.exp(-this.revealAge * 5));
 	}
 
+	/** 从父级摘除并释放几何体与材质，可重复调用 */
 	dispose(): void {
 		if (this.disposed) return;
 		this.disposed = true;

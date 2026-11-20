@@ -1,4 +1,12 @@
+/**
+ * 广东省大屏页面骨架：一块全屏 canvas 承载 3D 地图，其上叠 DOM 覆盖层放顶部栏、菜单、
+ * 统计卡、左右图表列与底部托盘。由路由挂载，autofit 以 1920×1080 设计稿等比缩放到当前视口；
+ * 缩放通过 transform 作用在 #guangdong-large-screen 上，元素自身仍按设计稿尺寸布局，
+ * 因此内部所有 tw-* 数值都可以直接按 1920×1080 来写，不需要做响应式换算。
+ * 场景内容与入场动画全部委托给 world.ts，本文件只负责布局、状态与生命周期。
+ */
 import autofit from "autofit.js";
+import { cn } from "cn";
 import { type Component, createSignal, onCleanup, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import BulkCommoditySales from "../../charts/bulk-commodity-sales";
@@ -21,33 +29,54 @@ import StatisticalCard, {
 	type Statistical,
 } from "../../layouts/statistical-card";
 import Map3D from "../../shared/map/map-3d";
-import { cn } from "../../utils/cn";
 import { guangdongAssets, guangdongStatisticalCards } from "./config";
 import GuangdongWorld from "./world";
 
+/** 页面级响应式状态：loading 进度、菜单高亮项与统计卡数据 */
 interface GuangdongScreenState {
+	/** 资源加载进度，0~100，由 Map3D 的 onProgress 回调写入 */
 	progress: number;
+	/** 当前选中菜单项的 index，传给 Menu 做受控高亮 */
 	activeIndex: string | number;
+	/** 顶部统计卡数据，来自 config.ts */
 	statisticalCards: Statistical[];
 }
 
+/**
+ * 广东省数据大屏。
+ *
+ * 布局采用「canvas 打底 + 绝对定位覆盖层」：canvas 占满视口渲染 3D 场景，
+ * 覆盖层 #guangdong-large-screen 承载 Header、顶部 Menu、统计卡、左右各 4 张图表、
+ * 底部托盘、雷达与 loading 遮罩。左右图表列通过 perspective + rotate-y 轻微内收，
+ * 形成环绕地图的纵深感；覆盖层设 pointer-events-none，避免拦截 canvas 的鼠标拾取。
+ *
+ * 生命周期：onMount 先 autofit.init 建立缩放，再创建 Map3D 开始加载资源；
+ * 资源就绪后 hideLoading → play 启动场景与入场动画；
+ * onCleanup 时先销毁场景再解除 autofit 监听，防止缩图层残留。
+ */
 const GuangdongScreen: Component = () => {
+	/** 大屏根节点，作为 autofit 的缩放目标与 Map3D 的 UI 查询根 */
 	let containerRef!: HTMLDivElement;
+	/** 3D 渲染画布，尺寸由父容器决定 */
 	let el!: HTMLCanvasElement;
+	/** 场景生命周期句柄，onCleanup 时据此销毁 */
 	const [map3d, setMap3d] = createSignal<Map3D>();
 	const [state, setState] = createStore<GuangdongScreenState>({
 		progress: 0,
+		// 默认选中「经济概览」，与 Menu 的 defaultActive 对应
 		activeIndex: "1",
 		statisticalCards: guangdongStatisticalCards,
 	});
 
 	onMount(() => {
+		// 以 1920×1080 为设计稿，按视口等比缩放；resize 跟随窗口变化重算
 		autofit.init({
 			dh: 1080,
 			dw: 1920,
 			el: "#guangdong-large-screen",
 			resize: true,
 		});
+		// world 传类而非实例，由 Map3D 在资源加载完成后自行 new，避免提前占用 WebGL 资源
 		const map = new Map3D({
 			el,
 			root: containerRef,
@@ -56,6 +85,7 @@ const GuangdongScreen: Component = () => {
 		});
 		map.initAssets(
 			async () => {
+				// 先等遮罩淡出再播放，否则镜头动画会藏 loading 层后面
 				await map.hideLoading();
 				map.play();
 			},
@@ -63,19 +93,26 @@ const GuangdongScreen: Component = () => {
 				setState("progress", progress);
 			},
 		);
+		// 句柄存入信号，供 onCleanup 与后续交互统一访问
 		setMap3d(map);
 	});
 
+	/** 菜单只切换高亮，当前版本不触发场景或数据切换 */
 	function handleMenuSelect(index: string | number) {
 		setState("activeIndex", index);
 	}
 
 	onCleanup(() => {
+		// 先停场景与帧循环，再解除缩放监听；顺序反了会让 autofit 在销毁过程中再次改尺寸。
+		// Map3D.destroy 内部还会 kill 全局 gsap 时间轴、dispose 场景资源并把 canvas 移出 DOM。
 		map3d()?.destroy();
 		autofit.off("#guangdong-large-screen");
 	});
 
+	// 覆盖层层级：canvas z-2 → 装饰与托盘 z-3 → 左右图表 z-4 → 统计卡 z-9 → loading z-99；
+	// 左右两列再叠加 perspective 与相反的 rotate-y，让 8 张图表呈弧面环抱地图。
 	return (
+		// 根节点定位为全屏容器：canvas 与其上的覆盖层都以它为定位基准
 		<div
 			class={cn(
 				"tw:w-full tw:h-screen tw:bg-black tw:z-1",

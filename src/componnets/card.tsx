@@ -1,25 +1,39 @@
+/**
+ * 通用数据卡片外壳：斜切角的标题栏 + 发光描边 + 内容插槽。
+ * 标题栏与边框全部用内联 SVG 绘制（渐变、遮罩、扫描光），宽度变化时靠模板字符串重算路径，
+ * 上层大屏只需传入尺寸、标题与 children。
+ */
+
+import { cn } from "cn";
 import { createUniqueId, type JSXElement } from "solid-js";
-import { cn } from "../utils/cn";
 
 interface CardProps {
-	/** @default 398 */
+	/** 卡片宽度（像素），会参与 SVG 路径计算 @default 398 */
 	width?: number;
-	/** @default 200 */
+	/** 卡片总高度（像素），决定底部边框的分段位置 @default 200 */
 	height?: number;
-	/** @default '标题' */
+	/** 标题文本，超长不会自动截断 @default '标题' */
 	title?: string;
+	/** 卡片内容区，渲染在标题栏下方 */
 	children: JSXElement;
 }
 
+/**
+ * 卡片容器。
+ * 内部生成唯一 uid，部分渐变/遮罩的 id 拼了该后缀，其余仍为固定 id，多实例同页可能冲突。
+ */
 export default function Card({
 	width = 398,
 	height = 200,
 	title = "标题",
 	children,
 }: CardProps) {
+	// SVG 的渐变/遮罩/clipPath 都是全局 id；uid 只用于新增的少数 defs，
+	// 文件里仍存在 paint0_linear_70_69244 等固定 id，同页多张卡片时可能互相覆盖
 	const uid = createUniqueId();
 
-	/** svg路径计算 */
+	/** svg 路径计算：标题栏描边由多段 1px 矩形与斜切角拼成，固定数值决定切角与约 175px 的文字区，
+	 * 多数端点跟随 width，但底部描边右端点是硬编码的 H397，width 不为 398 时会画到卡片外 */
 	const titleStorke = `
         M165 0.5
         L165.707 -0.207107
@@ -92,8 +106,11 @@ export default function Card({
         L10.7071 1.20711
         L9.29289 -0.207107Z
         `;
+	// bdPath 按 156px 的「基准高度」绘制，实际高度变化时把中段整体平移 diff/2，
+	// 让上下两端的斜切角保持原样、只有竖直边被拉长
 	const minHeight = 156;
 	const diff = height - minHeight;
+	/** 主体边框：左右两侧留出 3.5px 的斜切口，底边与顶边均为 1px 描边路径 */
 	const bdPath = `
         M3.485 ${46.0565 + diff / 2}
         V${45.8735 + diff / 2}
@@ -116,6 +133,8 @@ export default function Card({
         V${46.0565 + diff / 2}Z
     `;
 
+	// 图层顺序：标题栏容器 z-2 压住内容区 z-1，扫描光被限制在 36px 高的标题栏内；
+	// 内容区从 top-9（36px）开始，正好避开标题栏
 	return (
 		<div
 			class="tw:relative"

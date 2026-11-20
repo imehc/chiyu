@@ -1,3 +1,11 @@
+/* ==========================================================================
+   底部装饰条：贴底 62px，内含渐变底板、网格/电路纹理、发光描边与流光。
+   图形本身在 footer.tsx，这里只负责定位与层级。
+   ========================================================================== */
+
+/* ===== 底栏容器 ===== */
+/* z-index: 1 低于顶栏（2）、高于地图画布，保证装饰不会盖住顶栏的菜单；
+   整块仅作装饰，pointer-events: none 让点击穿透到下方舞台 */
 .blue-command-footer {
 	position: absolute;
 	left: 0;
@@ -7,6 +15,7 @@
 	z-index: 1;
 	pointer-events: none;
 }
+/* display: block 去掉 SVG 作为内联元素时的基线空隙，避免底栏下方露出 1~2px 的缝隙 */
 .blue-footer-art {
 	display: block;
 	width: 100%;
@@ -14,9 +23,12 @@
 	overflow: visible;
 	pointer-events: none;
 }
+/* 与顶栏同值：中央金色光条的常态辉光强度 */
 .blue-footer-gold-glow {
 	opacity: 0.4;
 }
+/* ===== 降低动态效果偏好 ===== */
+/* SMIL 流光不能被 CSS 暂停，直接隐藏整组；底栏其余部分为静态图形，无需额外处理 */
 @media (prefers-reduced-motion: reduce) {
 	.blue-command-footer .blue-line-flow {
 		display: none;

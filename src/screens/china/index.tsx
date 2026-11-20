@@ -1,3 +1,8 @@
+/**
+ * 中国大屏页面入口：负责画布与 DOM 叠层的组装、Map3D 生命周期管理、
+ * 资源加载进度反馈，以及入场动画触发。
+ * 三维场景本身由 ./world.ts 的 ChinaWorld 描述，左右两侧图表来自 ./panels。
+ */
 import autofit from "autofit.js";
 import { createSignal, For, onCleanup, onMount } from "solid-js";
 import CurrentTime from "../../componnets/current-time";
@@ -7,18 +12,27 @@ import Bottom from "../../layouts/bottom";
 import Header from "../../layouts/header";
 import StatisticalCard from "../../layouts/statistical-card";
 import Map3D from "../../shared/map/map-3d";
-import { cn } from "../../utils/cn";
+import { cn } from "cn";
 import { chinaAssets, chinaStatisticalCards } from "./config";
 import { ChinaLeftPanels, ChinaRightPanels } from "./panels";
 import ChinaWorld from "./world";
 
+/**
+ * 中国大屏根组件。
+ * 布局是「全屏 canvas 打底 + 绝对定位 DOM 叠层」：canvas 承载 Three.js 场景，
+ * 上层的 Header、统计卡片、左右图表、底部菜单、雷达与 LOADING 蒙层都盖在其上。
+ * 设计稿基准为 1920×1080，由 autofit 按视口等比缩放。
+ */
 export default function ChinaScreen() {
 	let containerRef!: HTMLDivElement;
 	let canvasRef!: HTMLCanvasElement;
+	/** Three.js 场景实例，卸载时置空以配合可选链，避免销毁后再被访问 */
 	let map: Map3D | undefined;
+	/** 资源加载百分比，仅用于 LOADING 蒙层里的数字显示 */
 	const [progress, setProgress] = createSignal(0);
 
 	onMount(() => {
+		// 以 1920×1080 为基准做整体缩放，并监听窗口尺寸变化重新计算
 		autofit.init({
 			dh: 1080,
 			dw: 1920,
@@ -31,6 +45,7 @@ export default function ChinaScreen() {
 			world: ChinaWorld,
 			assets: chinaAssets,
 		});
+		// 资源就绪后才淡出蒙层并播放时间线，避免首帧出现空白或材质未就绪
 		map.initAssets(
 			async () => {
 				await map?.hideLoading();
@@ -41,11 +56,20 @@ export default function ChinaScreen() {
 	});
 
 	onCleanup(() => {
+		// 先销毁场景再解绑 autofit，顺序与创建时相反，防止缩放回调访问已销毁的渲染器
 		map?.destroy();
 		map = undefined;
 		autofit.off("#china-large-screen");
 	});
 
+	/**
+	 * 以下为纯展示结构：三维内容全部在 canvas 里，DOM 只负责文字与装饰图。
+	 * 叠层顺序（z 轴由低到高）：canvas(2) → 背景贴图与四角框(3) →
+	 * 左右图表面板(4) → 统计卡片(9) → LOADING 蒙层(99)。
+	 * #top-menu、#bottom-tray、#bottom-radar 初始为位移+透明状态，
+	 * 待地图时间线播完由 shared/map/map-3d.ts 的 handleMapPlayComplete 统一补间入场，
+	 * 这些 id 同时被 Map3D 的查询选择器使用，改动时需与公共层保持一致。
+	 */
 	return (
 		<div
 			class="tw:relative tw:size-full tw:h-screen tw:bg-black tw:z-1"

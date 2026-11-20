@@ -1,3 +1,14 @@
+/* ==========================================================================
+   地图操作类控件：图层按钮、工具按钮、返回按钮、底部视图页签与货运方式选择器。
+   只负责外观与悬停/激活态，尺寸均乘以 --blue-control-scale（index.tsx 写入的补偿系数）：
+   舞台缩放低于 2/3 时按 2/(3*scale) 反比补偿，使控件屏幕尺寸不再继续缩小。
+   控件边框的 SVG 形状在 button-frame.tsx，这里通过 class 控制其各图层透明度。
+   ========================================================================== */
+
+/* ===== 按钮基础重置 ===== */
+/* 所有控件共用一套重置：去掉浏览器默认外观、背景与边框，只保留文字与内联 SVG；
+   isolation: isolate 让按钮内部形成独立层叠上下文，边框层 z-index: 0 与文字层 z-index: 1
+   只在按钮内部比较，不会与外部浮层（如监测气泡 z-index: 8）互相干扰 */
 .blue-layer-button,
 .blue-map-tools button,
 .blue-back,
@@ -20,6 +31,8 @@
 		color 180ms ease,
 		text-shadow 180ms ease;
 }
+/* 文字与图标抬到边框之上（z-index: 1），保证不会被 SVG 底板的渐变遮住；
+   排除 .blue-tab-frame / .blue-control-frame，它们是边框本身而非内容图标 */
 .blue-layer-button > span,
 .blue-back > span,
 .blue-map-tools button > span,
@@ -28,6 +41,7 @@
 	position: relative;
 	z-index: 1;
 }
+/* 边框铺满按钮并压到 z-index: 0；overflow: visible 让描边的辉光可以溢出按钮边界 */
 .blue-back > .blue-control-frame,
 .blue-map-tools button > .blue-control-frame {
 	position: absolute;
@@ -38,6 +52,9 @@
 	overflow: visible;
 	pointer-events: none;
 }
+/* ===== 光条边框的三层状态 ===== */
+/* 底板与描边默认只有 0.3 的不透明度：控件常态是「几乎隐形」，悬停才点亮，
+   这样一列按钮不会把地图压得太满 */
 .blue-control-plate {
 	opacity: 0.3;
 	transition: opacity 180ms ease;
@@ -46,11 +63,13 @@
 	opacity: 0.3;
 	transition: opacity 180ms ease;
 }
+/* light 是叠在描边上的加粗同形描边，模糊 2px 后充当即时辉光 */
 .blue-control-light {
 	opacity: 0;
 	filter: blur(2px);
 	transition: opacity 180ms ease;
 }
+/* 三角指示器默认左移 3px 隐藏，悬停时归位并淡入，形成「滑出」的小动效 */
 .blue-control-marker {
 	opacity: 0;
 	transform: translateX(-3px);
@@ -59,6 +78,9 @@
 		opacity 180ms ease,
 		transform 180ms ease;
 }
+/* ===== 图层按钮 ===== */
+/* 高度 32、宽度 92 为基准，间距与字号同步乘缩放因子；
+   white-space: nowrap 保证中文标签不被折行，宽度不够时靠下面按 data-layer 单独放宽 */
 .blue-layer-button {
 	display: flex;
 	align-items: center;
@@ -79,6 +101,8 @@
 	width: calc(15px * var(--blue-control-scale));
 	height: calc(15px * var(--blue-control-scale));
 }
+/* 按标签字数放宽：热力/区域 为两字，扫描为三字，各预留不同的文字宽度，
+   避免 nowrap 文本溢出到边框之外 */
 .blue-layer-button[data-layer="heat"],
 .blue-layer-button[data-layer="region"] {
 	width: calc(108px * var(--blue-control-scale));
@@ -86,11 +110,13 @@
 .blue-layer-button[data-layer="scan"] {
 	width: calc(124px * var(--blue-control-scale));
 }
+/* 已开启的图层：文字提亮、去掉背景填充（状态只靠边框与字色表达） */
 .blue-layer-button.enabled {
 	color: #cceeff;
 	background: none;
 	text-shadow: 0 0 4px #77d9ff44;
 }
+/* ===== 工具按钮 ===== */
 .blue-map-tools button {
 	width: calc(76px * var(--blue-control-scale));
 	height: calc(30px * var(--blue-control-scale));
@@ -100,10 +126,13 @@
 	line-height: 1;
 	text-shadow: 0 0 3px #80c8ef22;
 }
+/* 工具按钮的边框比图层按钮更淡（0.16），弱化存在感，让地图成为主体 */
 .blue-map-tools button .blue-control-plate,
 .blue-map-tools button .blue-control-edge {
 	opacity: 0.16;
 }
+/* ===== 返回按钮 ===== */
+/* 绝对定位在图层列左上方的空白处，用于退出下钻 */
 .blue-back {
 	position: absolute;
 	top: 146px;
@@ -116,6 +145,8 @@
 	font-size: 14px;
 	color: #d0e4ed;
 }
+/* ===== 悬停 / 聚焦 ===== */
+/* 悬停与键盘聚焦共用一套高亮，保证两种输入方式反馈一致 */
 .blue-layer-button:hover,
 .blue-layer-button:focus-visible,
 .blue-map-tools button:hover,
@@ -126,6 +157,7 @@
 	background: none;
 	text-shadow: 0 0 5px #8edaff88;
 }
+/* 悬停时三层边框一起点亮：底板与描边从 0.3 到 1，light 从 0 到 1 */
 .blue-back:is(:hover, :focus-visible) .blue-control-plate,
 .blue-back:is(:hover, :focus-visible) .blue-control-edge,
 .blue-back:is(:hover, :focus-visible) .blue-control-light,
@@ -138,6 +170,8 @@
 	opacity: 1;
 	transform: translateX(0);
 }
+/* ===== 视图页签 ===== */
+/* 页签自身不画边框，形状完全交给内联的 .blue-tab-frame，故这里把 clip-path/背景/阴影全部置空 */
 .blue-view-tabs {
 	gap: 16px;
 }
@@ -157,6 +191,7 @@
 		color 200ms ease,
 		text-shadow 200ms ease;
 }
+/* 关闭可能由全局样式带来的伪元素装饰，避免与 SVG 边框叠加 */
 .blue-view-tabs button::after {
 	display: none;
 }
@@ -164,6 +199,7 @@
 	position: relative;
 	z-index: 1;
 }
+/* ===== 货运方式 ===== */
 .blue-freight-modes button {
 	display: flex;
 	align-items: center;
@@ -178,6 +214,8 @@
 	white-space: nowrap;
 	color: #d7e7ef;
 }
+/* 三种运输方式各用一个语义色：铁路金黄、海运青绿、空运浅蓝，
+   与地图上的轨迹配色对应，用户靠颜色即可辨认模式 */
 .blue-freight-modes button[data-mode="rail"] {
 	color: #f7df45;
 }
@@ -192,6 +230,7 @@
 	z-index: 1;
 	transition: opacity 180ms ease;
 }
+/* 小圆点指示器：取 currentColor，自然跟随上面的模式色，并用同色外发光强调 */
 .blue-freight-modes button > .blue-freight-indicator {
 	flex: 0 0 7px;
 	width: 7px;
@@ -200,12 +239,15 @@
 	background: currentColor;
 	box-shadow: 0 0 5px currentColor;
 }
+/* 未选中的模式文字压到 0.45，弱化但保留可读性；悬停/聚焦恢复到 1 作为预览 */
 .blue-freight-modes button[aria-pressed="false"] > span {
 	opacity: 0.45;
 }
 .blue-freight-modes button:is(:hover, :focus-visible) > span {
 	opacity: 1;
 }
+/* ===== 页签边框状态 ===== */
+/* 边框同样铺满按钮并让描边辉光溢出；z-index 交给父级按钮的 isolate 上下文管理 */
 .blue-tab-frame {
 	position: absolute;
 	inset: 0;
@@ -214,6 +256,7 @@
 	overflow: visible;
 	pointer-events: none;
 }
+/* 面、双层边、底光、金色标记的静态透明度：常态偏暗，选中/悬停时统一提亮 */
 .blue-tab-face {
 	opacity: 0.32;
 	transition: opacity 200ms ease;
@@ -228,6 +271,7 @@
 	filter: drop-shadow(0 0 3px #20adf3);
 	transition: opacity 200ms ease;
 }
+/* 金色底标默认完全隐藏，只在激活态出现，作为「当前项」的最终标识 */
 .blue-tab-active-mark {
 	opacity: 0;
 	filter: drop-shadow(0 0 2px #eac64d88);
@@ -238,6 +282,10 @@
 	color: #e7f8ff;
 	text-shadow: 0 0 4px #8bcfff88;
 }
+/* 悬停态与真正选中态合并处理：三种控件（图层/页签/货运）用 :is() 复用同一组规则，
+   选中态分别由 .enabled、.active、aria-pressed="true" 表达。
+   选 :is() 而不是逗号并列，是因为 :is() 的权重取括号内最高的一项，
+   既能稳定压过前面的单类规则，又不必为「控件 × 状态」的每种组合各写一遍选择器 */
 :is(.blue-layer-button, .blue-view-tabs button, .blue-freight-modes button):is(
 		:hover,
 		:focus-visible
@@ -272,6 +320,8 @@
 	.blue-tab-active-mark {
 	opacity: 1;
 }
+/* ===== 降低动态效果偏好 ===== */
+/* 关闭所有过渡，悬停/选中仍然换色，只是不再有渐变过程 */
 @media (prefers-reduced-motion: reduce) {
 	.blue-control-frame *,
 	.blue-tab-frame *,

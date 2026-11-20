@@ -1,8 +1,13 @@
-import { cn } from "../../../utils/cn";
+/**
+ * 地图主标签（中文名 + 英文名）的 HTML 生成器，负责水平对齐与倒影样式。
+ * 被 scene/labels.ts 的 createFocusLabel 调用，产出的字符串再交给 CSS3D 标签组件渲染。
+ */
+import { cn } from "cn";
 
 /** 地图主标签（中文名 + 英文名）的水平对齐方式，以 3D 锚点为基准 */
 export type FocusLabelAlign = "left" | "center" | "right";
 
+/** 主标签渲染所需的数据：中英文名与对齐方式 */
 export interface FocusLabelData {
 	name: string;
 	enName: string;
@@ -36,6 +41,8 @@ const innerAlignClass: Record<FocusLabelAlign, string> = {
  *
  * 水平对齐放在外层 wrapper、垂直上浮动画留在 `#other-label` 上：
  * 两者若在同一元素，GSAP 写 transform 时会把居中的 translateX 一起覆盖掉。
+ * @param data 标签文案与对齐方式，align 缺省为 left
+ * @returns 可直接交给 label.init 的 HTML 字符串
  */
 export function buildFocusLabelHtml(data: FocusLabelData) {
 	const align = data.align ?? "left";
