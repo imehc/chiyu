@@ -1,16 +1,9 @@
 import { geoMercator } from "d3-geo";
 import gsap from "gsap";
 import {
-	AddEquation,
 	AdditiveBlending,
-	AmbientLight,
 	BoxGeometry,
 	Color,
-	type ColorRepresentation,
-	CustomBlending,
-	DirectionalLight,
-	DoubleSide,
-	DstColorFactor,
 	Fog,
 	Group,
 	LineBasicMaterial,
@@ -18,68 +11,59 @@ import {
 	MeshBasicMaterial,
 	MeshLambertMaterial,
 	MeshStandardMaterial,
-	OneFactor,
-	PlaneGeometry,
-	PointLight,
+	type Object3D,
+	type Object3DEventMap,
 	PointsMaterial,
-	QuadraticBezierCurve3,
 	RepeatWrapping,
 	Sprite,
 	SpriteMaterial,
-	SRGBColorSpace,
 	type Texture,
-	TubeGeometry,
 	Vector3,
 	type Vector3Like,
-	type Object3D,
-	type Object3DEventMap,
 } from "three";
 import { InteractionManager } from "three.interactive";
 import labelIcon from "/texture/label-icon.png";
 import type Assets from "../../shared/map/assets";
 import type { MapWorldOptions } from "../../shared/map/map-3d";
+import {
+	createBarHalo,
+	createGlowPillar,
+	createRotationBorders,
+} from "../../shared/map/scene/accents";
+import {
+	createMapDiffuse,
+	createMapGrid,
+	createMapOcean,
+} from "../../shared/map/scene/background";
+import { createMapEnvironment } from "../../shared/map/scene/environment";
+import {
+	createBarLabel,
+	createMapLabels,
+	createMonitoringLabel,
+} from "../../shared/map/scene/labels";
+import {
+	populateMapFlyLines,
+	populateMapScatter,
+} from "../../shared/map/scene/layers";
+import { createMapMaterials } from "../../shared/map/scene/materials";
+import type { MapFocusLabelInfo as WorldMapFocusLabelInfo } from "../../shared/map/scene/types";
 import { sortByValue } from "../../shared/map/utils/sort-by-value";
 import WorldCore from "../../shared/map/world-core";
 import BaseMap from "../../shared/map/world-core/components/base-map";
 import ExtrudeMap from "../../shared/map/world-core/components/extrude-map";
 import Focus from "../../shared/map/world-core/components/focus";
-import Grid from "../../shared/map/world-core/components/grid";
 import Label3D, {
 	type Label,
 } from "../../shared/map/world-core/components/label-3d";
 import Line from "../../shared/map/world-core/components/line";
 import Particles from "../../shared/map/world-core/components/particles";
-import Plane from "../../shared/map/world-core/components/plane";
-import DiffuseShader from "../../shared/map/world-core/shader/diffuse-shader";
 import GradientShader from "../../shared/map/world-core/shader/gradient-shader";
-import {
-	buildFocusLabelHtml,
-	type FocusLabelAlign,
-} from "../../shared/map/utils/focus-label";
-import { cn } from "../../utils/cn";
 import infoData from "./data/info";
 import labelData from "./data/labels";
 import { chinaRegions } from "./data/regions";
 import scatterData from "./data/scatter";
 
 export type Point = [number, number];
-
-type PointLightParam = {
-	x: number;
-	y: number;
-	z: number;
-	color?: ColorRepresentation;
-	intensity?: number;
-	distance?: number;
-};
-
-interface WorldMapFocusLabelInfo {
-	name: string;
-	enName: string;
-	center: Point;
-	/** 中英文对齐方式，默认左对齐 */
-	align?: FocusLabelAlign;
-}
 
 const defaultMapFocusLabelInfo: WorldMapFocusLabelInfo = {
 	name: "中国",
@@ -206,41 +190,7 @@ export default class ChinaWorld extends WorldCore {
 	}
 
 	private initEnvironment() {
-		const sun = new AmbientLight(0xffffff, 5);
-		this.scene.add(sun);
-		const directionalLight = new DirectionalLight(0xffffff, 5);
-		directionalLight.position.set(-30, 6, -8);
-		directionalLight.castShadow = true;
-		directionalLight.shadow.radius = 20;
-		directionalLight.shadow.mapSize.width = 1024;
-		directionalLight.shadow.mapSize.height = 1024;
-		this.scene.add(directionalLight);
-		this.createPointLight({
-			color: "#1d5e5e",
-			intensity: 800,
-			distance: 10000,
-			x: -9,
-			y: 3,
-			z: -3,
-		});
-		this.createPointLight({
-			color: "#1d5e5e",
-			intensity: 200,
-			distance: 10000,
-			x: 0,
-			y: 2,
-			z: 5,
-		});
-	}
-
-	private createPointLight(pointParam: PointLightParam) {
-		const pointLight = new PointLight(
-			pointParam.color,
-			pointParam.intensity,
-			pointParam.distance,
-		);
-		pointLight.position.set(pointParam.x, pointParam.y, pointParam.z);
-		this.scene.add(pointLight);
+		createMapEnvironment(this.scene);
 	}
 
 	private createMap() {
@@ -372,120 +322,11 @@ export default class ChinaWorld extends WorldCore {
 	}
 
 	private createProvinceMaterial() {
-		const topMaterial = new MeshLambertMaterial({
-			color: 0xffffff,
-			transparent: true,
-			opacity: 0,
-			fog: false,
-			side: DoubleSide,
-		});
-		topMaterial.onBeforeCompile = (shader) => {
-			shader.uniforms = {
-				...shader.uniforms,
-				uColor1: { value: new Color(0x2a6e92) },
-				uColor2: { value: new Color(0x102736) },
-			};
-			shader.vertexShader = shader.vertexShader.replace(
-				"void main() {",
-				`
-        attribute float alpha;
-        varying vec3 vPosition;
-        varying float vAlpha;
-        void main() {
-          vAlpha = alpha;
-          vPosition = position;
-      `,
-			);
-			shader.fragmentShader = shader.fragmentShader.replace(
-				"void main() {",
-				`
-        varying vec3 vPosition;
-        varying float vAlpha;
-        uniform vec3 uColor1;
-        uniform vec3 uColor2;
-        void main() {
-      `,
-			);
-			shader.fragmentShader = shader.fragmentShader.replace(
-				"#include <opaque_fragment>",
-				/* glsl */ `
-      #ifdef OPAQUE
-      diffuseColor.a = 1.0;
-      #endif
-            #ifdef USE_TRANSMISSION
-      diffuseColor.a *= transmissionAlpha + 0.1;
-      #endif
-      vec3 gradient = mix(uColor1, uColor2, vPosition.x/${this._mapWidth.toFixed(2)});
-      outgoingLight = outgoingLight*gradient;
-      float topAlpha = 0.5;
-      if(vPosition.z>0.3){
-        diffuseColor.a *= topAlpha;
-      }
-      gl_FragColor = vec4( outgoingLight, diffuseColor.a  );
-      `,
-			);
-		};
-		const sideMap = this._assets.instance.getResource("side") as Texture;
-		if (!sideMap) {
-			throw new Error("sideMap is not found");
-		}
-		sideMap.wrapS = RepeatWrapping;
-		sideMap.wrapT = RepeatWrapping;
-		sideMap.repeat.set(1, 1.5);
-		sideMap.offset.y += 0.065;
-		const sideMaterial = new MeshStandardMaterial({
-			color: 0xffffff,
-			map: sideMap,
-			fog: false,
-			opacity: 0,
-			side: DoubleSide,
-		});
-		this.time.on("tick", () => {
-			sideMap.offset.y += 0.005;
-		});
-		sideMaterial.onBeforeCompile = (shader) => {
-			shader.uniforms = {
-				...shader.uniforms,
-				uColor1: { value: new Color(0x2a6e92) },
-				uColor2: { value: new Color(0x2a6e92) },
-			};
-			shader.vertexShader = shader.vertexShader.replace(
-				"void main() {",
-				`
-        attribute float alpha;
-        varying vec3 vPosition;
-        varying float vAlpha;
-        void main() {
-          vAlpha = alpha;
-          vPosition = position;
-      `,
-			);
-			shader.fragmentShader = shader.fragmentShader.replace(
-				"void main() {",
-				`
-        varying vec3 vPosition;
-        varying float vAlpha;
-        uniform vec3 uColor1;
-        uniform vec3 uColor2;
-        void main() {
-      `,
-			);
-			shader.fragmentShader = shader.fragmentShader.replace(
-				"#include <opaque_fragment>",
-				/* glsl */ `
-      #ifdef OPAQUE
-      diffuseColor.a = 1.0;
-      #endif
-            #ifdef USE_TRANSMISSION
-      diffuseColor.a *= transmissionAlpha + 0.1;
-      #endif
-      vec3 gradient = mix(uColor1, uColor2, vPosition.z/1.2);
-      outgoingLight = outgoingLight*gradient;
-      gl_FragColor = vec4( outgoingLight, diffuseColor.a  );
-      `,
-			);
-		};
-		return [topMaterial, sideMaterial];
+		return createMapMaterials(
+			this._assets,
+			this.time,
+			this._mapWidth.toFixed(2),
+		);
 	}
 
 	/**
@@ -508,7 +349,6 @@ export default class ChinaWorld extends WorldCore {
 	}
 
 	private createBar() {
-		const self = this;
 		const data = this.getBarRegions();
 		const barGroup = new Group();
 		this._barGroup = barGroup;
@@ -554,10 +394,18 @@ export default class ChinaWorld extends WorldCore {
 			areaBar.add(...hg);
 			barGroup.add(areaBar);
 			barGroup.rotation.x = -Math.PI / 2;
-			const barLabel = labelStyle04(
-				item,
-				index,
-				new Vector3(x, -y, this._depth + 1.1 + geoHeight),
+			const barLabel = createBarLabel(
+				{
+					label3d: this._label3d,
+					labelGroup: this._labelGroup,
+					project: (point) => this.geoProjection(point),
+				},
+				{
+					data: item,
+					index,
+					position: new Vector3(x, -y, this._depth + 1.1 + geoHeight),
+					unit: "指数",
+				},
 			);
 			this._allBar.push(areaBar);
 			this._allBarMaterial.push(material);
@@ -565,45 +413,6 @@ export default class ChinaWorld extends WorldCore {
 			this._allProvinceLabel.push(barLabel);
 		});
 		this.scene.add(barGroup);
-
-		type RegionLabel = (typeof chinaRegions)[number];
-		function labelStyle04(
-			data: RegionLabel,
-			index: number,
-			position: Vector3Like,
-		) {
-			const label = self._label3d.create("", "provinces-label", false);
-			label.init(
-				`<div>
-                    <div id="provinces-label-wrap" class="${cn(
-											"tw:translate-x-1/2 tw:translate-y-[200%] tw:opacity-0",
-											"tw:flex tw:justify-between tw:items-center tw:px-5",
-											"tw:h-13 tw:rounded-3xl tw:rounded-bl-none",
-											"tw:bg-[#00000066] tw:box-border tw:gap-x-2",
-										)}">
-                        <div id="number" class="tw:text-white tw:text-3xl tw:font-bold tw:whitespace-nowrap">
-                            <span id="value">${data.value}</span>
-                            <span class="tw:text-white tw:text-xs tw:font-normal tw:opacity-50 tw:pl-1">指数</span>
-                        </div>
-                        <div class="tw:text-white tw:text-base tw:font-bold">
-                            <span class="tw:block">${data.name}</span>
-                            <span class="tw:block tw:text-white tw:text-xxs tw:opacity-50 tw:font-bold">${data.enName.toUpperCase()}</span>
-                        </div>
-                        <div class="${cn("tw:text-3xl tw:font-bold", [
-													index > 4
-														? "tw:text-[#fef99e] tw:[text-shadow:0_0_5px_#fef99e,0_0_10px_#fef99e]"
-														: "tw:text-[#7efbf6] tw:[text-shadow:0_0_5px_#7efbf6,0_0_10px_#7efbf6]",
-												])}">
-								${index + 1}
-							</div>
-                    </div>
-                </div>`,
-				position,
-			);
-			self._label3d.setLabelStyle(label, 0.01, "x");
-			label.setParent(self._labelGroup);
-			return label;
-		}
 	}
 
 	private createEvent() {
@@ -648,389 +457,89 @@ export default class ChinaWorld extends WorldCore {
 	}
 
 	private createHUIGUANG(h: number, color: number) {
-		const geometry = new PlaneGeometry(0.35, h);
-		geometry.translate(0, h / 2, 0);
-		const texture = this._assets.instance.getResource("huiguang") as Texture;
-		if (!texture) {
-			throw new Error("huiguang texture not found");
-		}
-		texture.colorSpace = SRGBColorSpace;
-		texture.wrapS = RepeatWrapping;
-		texture.wrapT = RepeatWrapping;
-		const material = new MeshBasicMaterial({
-			color: color,
-			map: texture,
-			transparent: true,
-			opacity: 0.4,
-			depthWrite: false,
-			side: DoubleSide,
-			blending: AdditiveBlending,
-		});
-		const mesh = new Mesh(geometry, material);
-		mesh.renderOrder = 10;
-		mesh.rotateX(Math.PI / 2);
-		const mesh2 = mesh.clone();
-		const mesh3 = mesh.clone();
-		mesh2.rotateY((Math.PI / 180) * 60);
-		mesh3.rotateY((Math.PI / 180) * 120);
-		return [mesh, mesh2, mesh3];
+		return createGlowPillar(this._assets, h, color);
 	}
 
 	private createQuan(position: Vector3Like, _index: number) {
-		const guangquan1 = this._assets.instance.getResource(
-			"guangquan1",
-		) as Texture;
-		const guangquan2 = this._assets.instance.getResource(
-			"guangquan2",
-		) as Texture;
-		if (!guangquan1 || !guangquan2) {
-			throw new Error("guangquan1 or guangquan2 not found");
-		}
-		const geometry = new PlaneGeometry(0.5, 0.5);
-		const material1 = new MeshBasicMaterial({
-			color: 0xffffff,
-			map: guangquan1,
-			alphaMap: guangquan1,
-			opacity: 1,
-			transparent: true,
-			depthTest: false,
-			fog: false,
-			blending: AdditiveBlending,
-		});
-		const material2 = new MeshBasicMaterial({
-			color: 0xffffff,
-			map: guangquan2,
-			alphaMap: guangquan2,
-			opacity: 1,
-			transparent: true,
-			depthTest: false,
-			fog: false,
-			blending: AdditiveBlending,
-		});
-		const mesh1 = new Mesh(geometry, material1);
-		const mesh2 = new Mesh(geometry, material2);
-		mesh1.renderOrder = 6;
-		mesh2.renderOrder = 6;
-		mesh1.rotateX(-Math.PI / 2);
-		mesh2.rotateX(-Math.PI / 2);
-		mesh1.position.copy(position);
-		mesh2.position.copy(position);
-		mesh2.position.y -= 0.001;
-		mesh1.scale.set(0, 0, 0);
-		mesh2.scale.set(0, 0, 0);
-		const quanGroup = new Group();
-		quanGroup.add(mesh1, mesh2);
-		this.scene.add(quanGroup);
+		const { group, rotatingMesh } = createBarHalo(this._assets, position);
+		this.scene.add(group);
 		this.time.on("tick", () => {
-			mesh1.rotation.z += 0.05;
+			rotatingMesh.rotation.z += 0.05;
 		});
-		return quanGroup;
+		return group;
 	}
 
 	private createDiffuse() {
-		const geometry = new PlaneGeometry(200, 200);
-		const material = new MeshBasicMaterial({
-			color: 0x000000,
-			depthWrite: false,
-			transparent: true,
-			blending: CustomBlending,
-		});
-		material.blendEquation = AddEquation;
-		material.blendSrc = DstColorFactor;
-		material.blendDst = OneFactor;
-		new DiffuseShader({
-			material,
+		createMapDiffuse({
+			scene: this.scene,
 			time: this.time,
-			size: 60,
-			diffuseSpeed: 8.0,
-			diffuseColor: 0x71918e,
-			diffuseWidth: 2.0,
-			callback: (pointShader) => {
-				setTimeout(() => {
-					gsap.to(pointShader.uniforms.uTime, {
-						value: 4,
-						repeat: -1,
-						duration: 6,
-						ease: "power1.easeIn",
-					});
-				}, 3);
-			},
+			assets: this._assets,
 		});
-		const mesh = new Mesh(geometry, material);
-		mesh.renderOrder = 3;
-		mesh.rotation.x = -Math.PI / 2;
-		mesh.position.set(0, 0.21, 0);
-		this.scene.add(mesh);
 	}
 
 	private createGrid() {
-		new Grid(
-			{
-				scene: this.scene,
-				time: this.time,
-			},
-			{
-				gridSize: 50,
-				gridDivision: 20,
-				gridColor: 0x1b4b70,
-				shapeSize: 0.5,
-				shapeColor: 0x2a5f8a,
-				pointSize: 0.1,
-				pointColor: 0x154d7d,
-			},
-		);
+		createMapGrid({ scene: this.scene, time: this.time, assets: this._assets });
 	}
 
 	private createBottomBg() {
-		const geometry = new PlaneGeometry(20, 20);
-		const texture = this._assets.instance.getResource("ocean") as
-			| Texture
-			| undefined;
-		if (!texture) {
-			throw new Error("ocean texture not found");
-		}
-		texture.colorSpace = SRGBColorSpace;
-		texture.wrapS = RepeatWrapping;
-		texture.wrapT = RepeatWrapping;
-		texture.repeat.set(1, 1);
-		const material = new MeshBasicMaterial({
-			map: texture,
-			opacity: 1,
-			fog: false,
+		createMapOcean({
+			scene: this.scene,
+			time: this.time,
+			assets: this._assets,
 		});
-		const mesh = new Mesh(geometry, material);
-		mesh.rotation.x = -Math.PI / 2;
-		mesh.position.set(0, -0.7, 0);
-		this.scene.add(mesh);
 	}
 
 	private createLabel() {
-		const self = this;
-		const labelGroup = this._labelGroup;
-		const label3d = this._label3d;
-		const otherLabel: Label[] = [];
-		labelData.forEach((province) => {
-			const label = labelStyle01(province, label3d, labelGroup);
-			otherLabel.push(label);
-		});
-		const mapFocusLabel = labelStyle02(
+		this._otherLabel = createMapLabels(
 			{
-				...this._mapFocusLabelInfo,
+				label3d: this._label3d,
+				labelGroup: this._labelGroup,
+				project: (point) => this.geoProjection(point),
 			},
-			label3d,
-			labelGroup,
+			labelData,
+			this._mapFocusLabelInfo,
+			[
+				{
+					icon: labelIcon,
+					center: [124.5, 33.0],
+					width: "40px",
+					height: "40px",
+					reflect: true,
+				},
+				{
+					icon: labelIcon,
+					center: [92.5, 40.0],
+					width: "20px",
+					height: "20px",
+					reflect: false,
+				},
+			],
 		);
-		const iconLabel1 = labelStyle03(
-			{
-				icon: labelIcon,
-				center: [124.5, 33.0],
-				width: "40px",
-				height: "40px",
-				reflect: true,
-			},
-			label3d,
-			labelGroup,
-		);
-		const iconLabel2 = labelStyle03(
-			{
-				icon: labelIcon,
-				center: [92.5, 40.0],
-				width: "20px",
-				height: "20px",
-				reflect: false,
-			},
-			label3d,
-			labelGroup,
-		);
-		otherLabel.push(mapFocusLabel);
-		otherLabel.push(iconLabel1);
-		otherLabel.push(iconLabel2);
-		this._otherLabel = otherLabel;
-
-		type DecorationLabel = (typeof labelData)[number];
-		type ProvinceLabel = {
-			icon: string;
-			center: [number, number];
-			width: string;
-			height: string;
-			reflect: boolean;
-		};
-		function labelStyle01(
-			province: DecorationLabel,
-			label3d: Label3D,
-			labelGroup: Group,
-		) {
-			const label = label3d.create(
-				"",
-				cn("tw:text-white tw:text-xs tw:will-change-transform", {
-					"tw:blur-xxs": province.blur,
-				}),
-				false,
-			);
-			const [x, y] = self.geoProjection(province.center);
-			label.init(
-				`<div id="other-label" class="${cn(
-					"tw:flex tw:items-center tw:p-1 tw:rounded-sm",
-					"tw:bg-[#00000099] tw:will-change-transform",
-					"tw:translate-y-[200%] tw:opacity-0 tw:bg-none",
-				)}">
-					<img class="tw:block tw:size-5 tw:mr-2" src="${labelIcon}">
-					${province.name}
-				</div>`,
-				new Vector3(x, -y, 0.4),
-			);
-			label3d.setLabelStyle(label, 0.02, "x");
-			label.setParent(labelGroup);
-			return label;
-		}
-		function labelStyle02(
-			province: WorldMapFocusLabelInfo,
-			label3d: Label3D,
-			labelGroup: Group,
-		) {
-			const label = label3d.create(
-				"",
-				"tw:p-1 tw:text-white tw:will-change-transform tw:tracking-wider tw:text-4xl tw:font-bold",
-				false,
-			);
-			const [x, y] = self.geoProjection(province.center);
-			label.init(buildFocusLabelHtml(province), new Vector3(x, -y, 0.4));
-			label3d.setLabelStyle(label, 0.015, "x");
-			label.setParent(labelGroup);
-			return label;
-		}
-		function labelStyle03(
-			data: ProvinceLabel,
-			label3d: Label3D,
-			labelGroup: Group,
-		) {
-			const label = label3d.create(
-				"",
-				cn("decoration-label", { "": data.reflect }),
-				false,
-			);
-			const [x, y] = self.geoProjection(data.center);
-			label.init(
-				`<div id="other-label" class="tw:translate-y-[200%] tw:opacity-0 tw:bg-none tw:will-change-transform">
-					<img class="tw:block tw:size-10" style="width:${data.width};height:${data.height}" src="${data.icon}">
-				</div>
-				`,
-				new Vector3(x, -y, 0.4),
-			);
-			label3d.setLabelStyle(label, 0.02, "x");
-			label.setParent(labelGroup);
-			return label;
-		}
 	}
 
 	private createRotateBorder() {
-		const max = 12;
-		const rotationBorder1 = this._assets.instance.getResource(
-			"rotationBorder1",
-		) as Texture | undefined;
-		const rotationBorder2 = this._assets.instance.getResource(
-			"rotationBorder2",
-		) as Texture | undefined;
-		if (!rotationBorder1 || !rotationBorder2) {
-			throw new Error("rotationBorder1 or rotationBorder2 not found");
-		}
-		const plane01 = new Plane(
-			{ time: this.time },
-			{
-				width: max * 1.178,
-				needRotate: true,
-				rotateSpeed: 0.001,
-				material: new MeshBasicMaterial({
-					map: rotationBorder1,
-					color: 0x48afff,
-					transparent: true,
-					opacity: 0.2,
-					side: DoubleSide,
-					depthWrite: false,
-					blending: AdditiveBlending,
-				}),
-				position: new Vector3(0, 0.28, 0),
-			},
-		);
-		plane01.instance.rotation.x = -Math.PI / 2;
-		plane01.instance.renderOrder = 6;
-		plane01.instance.scale.set(0, 0, 0);
-		plane01.setParent(this.scene);
-
-		const plane02 = new Plane(
-			{ time: this.time },
-			{
-				width: max * 1.116,
-				needRotate: true,
-				rotateSpeed: -0.004,
-				material: new MeshBasicMaterial({
-					map: rotationBorder2,
-					color: 0x48afff,
-					transparent: true,
-					opacity: 0.4,
-					side: DoubleSide,
-					depthWrite: false,
-					blending: AdditiveBlending,
-				}),
-				position: new Vector3(0, 0.3, 0),
-			},
-		);
-		plane02.instance.rotation.x = -Math.PI / 2;
-		plane02.instance.renderOrder = 6;
-		plane02.instance.scale.set(0, 0, 0);
-		plane02.setParent(this.scene);
-		this._rotateBorder1 = plane01.instance;
-		this._rotateBorder2 = plane02.instance;
+		[this._rotateBorder1, this._rotateBorder2] = createRotationBorders({
+			scene: this.scene,
+			time: this.time,
+			assets: this._assets,
+		});
 	}
 
 	private createFlyLine() {
 		this._flyLineGroup = new Group();
 		this._flyLineGroup.visible = false;
 		this.scene.add(this._flyLineGroup);
-		const texture = this._assets.instance.getResource("mapFlyline") as Texture;
-		if (!texture) {
-			throw new Error("mapFlyline texture not found");
-		}
-		texture.wrapS = texture.wrapT = RepeatWrapping;
-		texture.repeat.set(0.5, 2);
-		const tubeRadius = 0.1;
-		const tubeSegments = 32;
-		const tubeRadialSegments = 2;
-		const closed = false;
-		const [centerX, centerY] = this.geoProjection(this._flyLineCenter);
-		const centerPoint = new Vector3(centerX, -centerY, 0);
-		const material = new MeshBasicMaterial({
-			map: texture,
-			color: 0x2a6f72,
-			transparent: true,
-			fog: false,
-			opacity: 1,
-			depthTest: false,
-			blending: AdditiveBlending,
-		});
-		this.time.on("tick", () => {
-			texture.offset.x -= 0.006;
-		});
-		this.getBarRegions().forEach((region) => {
-			const [x, y] = this.geoProjection(region.centroid);
-			const point = new Vector3(x, -y, 0);
-			const center = new Vector3();
-			center.addVectors(centerPoint, point).multiplyScalar(0.5);
-			center.setZ(3);
-			const curve = new QuadraticBezierCurve3(centerPoint, center, point);
-			const tubeGeometry = new TubeGeometry(
-				curve,
-				tubeSegments,
-				tubeRadius,
-				tubeRadialSegments,
-				closed,
-			);
-			const mesh = new Mesh(tubeGeometry, material);
-			mesh.rotation.x = -Math.PI / 2;
-			mesh.position.set(0, this._depth + 0.44, 0);
-			mesh.renderOrder = 21;
-			this._flyLineGroup?.add(mesh);
-		});
+		populateMapFlyLines(
+			{
+				assets: this._assets,
+				group: this._flyLineGroup,
+				project: (point) => this.geoProjection(point),
+				depth: this._depth,
+			},
+			this.time,
+			this._flyLineCenter,
+			() => this.getBarRegions(),
+		);
 	}
 
 	private createFocus() {
@@ -1079,33 +588,18 @@ export default class ChinaWorld extends WorldCore {
 		this._scatterGroup.visible = false;
 		this._scatterGroup.rotation.x = -Math.PI / 2;
 		this.scene.add(this._scatterGroup);
-		const texture = this._assets.instance.getResource("arrow") as Texture;
-		if (!texture) {
-			throw new Error("arrow texture not found");
-		}
-		const material = new SpriteMaterial({
-			map: texture,
-			color: 0xfffef4,
-			fog: false,
-			transparent: true,
-			depthTest: false,
-		});
-		const scatterAllData = sortByValue([...scatterData]);
-		const max = scatterAllData[0].value;
-		scatterAllData.forEach((data) => {
-			const sprite = new Sprite(material);
-			sprite.renderOrder = 23;
-			const scale = 0.1 + (data.value / max) * 0.2;
-			sprite.scale.set(scale, scale, scale);
-			const [x, y] = this.geoProjection([data.lng, data.lat]);
-			sprite.position.set(x, -y, this._depth + 0.45);
-			sprite.userData.position = [x, -y, this._depth + 0.45];
-			this._scatterGroup?.add(sprite);
-		});
+		populateMapScatter(
+			{
+				assets: this._assets,
+				group: this._scatterGroup,
+				project: (point) => this.geoProjection(point),
+				depth: this._depth,
+			},
+			() => sortByValue([...scatterData]),
+		);
 	}
 
 	private createInfoPoint() {
-		const self = this;
 		this._infoPointGroup = new Group();
 		this.scene.add(this._infoPointGroup);
 		this._infoPointGroup.visible = false;
@@ -1144,7 +638,20 @@ export default class ChinaWorld extends WorldCore {
 				index: index,
 			};
 			this._infoPointGroup?.add(sprite);
-			const label = infoLabel(data, label3d, this._infoPointGroup as Group);
+			const label = createMonitoringLabel(
+				{
+					label3d,
+					labelGroup: this._infoPointGroup as Group,
+					project: (point) => this.geoProjection(point),
+				},
+				data,
+				{
+					depth: this._depth,
+					verticalOffset: 3.6,
+					valueLabel: "算力指数",
+					valueUnit: "",
+				},
+			);
 			this._infoLabelElement.push(label);
 			this._interactionManager.add(sprite);
 			sprite.addEventListener("mousedown" as keyof Object3DEventMap, (ev) => {
@@ -1167,73 +674,6 @@ export default class ChinaWorld extends WorldCore {
 				document.body.style.cursor = "default";
 			});
 		});
-
-		type Label3dConfig = (typeof infoData)[0];
-		function infoLabel(
-			data: Label3dConfig,
-			label3d: Label3D,
-			labelGroup: Group,
-		) {
-			const label = label3d.create(
-				"",
-				cn(
-					"tw:bg-[#00000080] tw:text-[#a3dcde] tw:text-sm",
-					"tw:w-42.5 tw:h-26.5 tw:pt-4 tw:px-3 tw:mb-7.5",
-					"tw:will-change-transform tw:box-content",
-				),
-				true,
-			);
-			const [x, y] = self.geoProjection([data.lng, data.lat]);
-			label.init(
-				` <div class="${cn(
-					"tw:before:content-[''] tw:before:block tw:before:size-4",
-					"tw:before:border-t tw:before:border-l tw:before:border-solid",
-					"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
-					"tw:before:absolute tw:before:top-0 tw:before:left-0",
-					"tw:after:content-[''] tw:after:block tw:after:size-4",
-					"tw:after:border-t tw:after:border-r tw:after:border-solid",
-					"tw:after:border-t-[#4b87a6] tw:after:border-r-[#4b87a6]",
-					"tw:after:absolute tw:after:top-0 tw:after:right-0",
-				)}">
-                    <div class="${cn(
-											"tw:before:content-[''] tw:before:block tw:before:size-4",
-											"tw:before:border-b tw:before:border-l tw:before:border-solid",
-											"tw:before:border-t-[#4b87a6] tw:before:border-l-[#4b87a6]",
-											"tw:before:absolute tw:before:bottom-0 tw:before:left-0",
-											"tw:after:content-[''] tw:after:block tw:after:size-4",
-											"tw:after:border-b tw:after:border-r tw:after:border-solid",
-											"tw:after:border-b-[#4b87a6] tw:after:border-r-[#4b87a6]",
-											"tw:after:absolute tw:after:bottom-0 tw:after:right-0",
-										)}">
-                        <div class="tw:absolute tw:top-2 tw:right-3 tw:flex">
-							<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
-                        	<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
-                        	<div class="tw:w-1 tw:h-0.5 tw:mr-1 tw:bg-[#17e5c3]"></div>
-                        </div>
-                        <div>
-                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
-								<span class="tw:w-15 tw:pl-2">名称</span>
-								<span class="tw:text-white">${data.name}</span>
-							</div>
-                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
-								<span class="tw:w-15 tw:pl-2">算力指数</span>
-								<span class="tw:text-white">${data.value}</span>
-							</div>
-                        	<div class="tw:flex tw:h-7 tw:leading-7 tw:bg-[#232f3a99] tw:mb-1">
-								<span class="tw:w-15 tw:pl-2">等级</span>
-								<span class="tw:text-white">${data.level}</span>
-							</div>
-                        </div>
-                    </div>
-                    </div>
-                `,
-				new Vector3(x, -y, self._depth + 3.6),
-			);
-			label3d.setLabelStyle(label, 0.015, "x");
-			label.setParent(labelGroup);
-			label.visible = false;
-			return label;
-		}
 	}
 
 	private createInfoPointLabelLoop() {

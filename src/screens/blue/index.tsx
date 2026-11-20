@@ -64,7 +64,7 @@ export default function BlueScreen() {
 	const [stageHeight, setStageHeight] = createSignal(834);
 	const [loaded, setLoaded] = createSignal(false);
 	const [progress, setProgress] = createSignal(0);
-	const [view, setView] = createSignal<View>("china");
+	const [view, setView] = createSignal<View>("globe");
 	const [transitioning, setTransitioning] = createSignal(false);
 	const [motionPhase, setMotionPhase] = createSignal<"idle" | "exit" | "enter">(
 		"idle",
