@@ -237,9 +237,10 @@ export default class RegionNavigation {
 				Number(feature.properties?.childrenNum) > 0 &&
 				!this.context.state.cityDataCache.has(adcode)
 			) {
-				const response = await fetch(`/geojson/blue/${adcode}.json`, {
-					signal: this.context.state.abortController.signal,
-				});
+				const response = await fetch(
+					`${import.meta.env.BASE_URL}geojson/blue/${adcode}.json`,
+					{ signal: this.context.state.abortController.signal },
+				);
 				if (response.ok)
 					this.context.state.cityDataCache.set(adcode, await response.json());
 			}

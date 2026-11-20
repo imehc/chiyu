@@ -86,11 +86,12 @@ export default class WorldResources {
 	/**
 	 * 读取并解析一份 GeoJSON，请求统一挂载 abortController 的取消信号。
 	 * 销毁时 abort 会让 fetch 直接 reject，调用方需按「已销毁」处理而不是当错误上报。
-	 * @param name 相对 /geojson 的路径，如 blue/100000.json
+	 * @param name 相对 public/geojson 的路径，如 blue/100000.json
 	 * @returns 标准 GeoJSON FeatureCollection
 	 */
 	async readMap(name: string) {
-		const response = await fetch(`/geojson/${name}`, {
+		// public 资源跟随 Vite 的部署基路径，兼容根目录与子目录预览。
+		const response = await fetch(`${import.meta.env.BASE_URL}geojson/${name}`, {
 			signal: this.context.state.abortController.signal,
 		});
 		if (!response.ok) throw new Error(`地图资源读取失败: ${name}`);

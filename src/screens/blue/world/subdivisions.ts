@@ -153,9 +153,10 @@ export default class Subdivisions {
 			let data = this.context.state.cityDataCache.get(adcode);
 			if (!data) {
 				// 复用全局 AbortController：返回上级或销毁时统一中断所有在途请求，避免请求堆积
-				const response = await fetch(`/geojson/blue/${adcode}.json`, {
-					signal: this.context.state.abortController.signal,
-				});
+				const response = await fetch(
+					`${import.meta.env.BASE_URL}geojson/blue/${adcode}.json`,
+					{ signal: this.context.state.abortController.signal },
+				);
 				// 404 等错误静默返回，保留已渲染的父级轮廓，不弹错误打断下钻
 				if (!response.ok) return;
 				data = (await response.json()) as FeatureCollection<
