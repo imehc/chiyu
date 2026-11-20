@@ -14,9 +14,9 @@ importers:
       autofit.js:
         specifier: ^3.2.8
         version: 3.2.8
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
+      cn:
+        specifier: ^0.5.2
+        version: 0.5.2
       d3-geo:
         specifier: ^3.1.2
         version: 3.1.2
@@ -35,9 +35,6 @@ importers:
       solid-js:
         specifier: ^1.9.19
         version: 1.9.19
-      tailwind-merge:
-        specifier: ^3.7.0
-        version: 3.7.0
       three:
         specifier: ^0.187.0
         version: 0.187.0
@@ -805,9 +802,10 @@ packages:
   caniuse-lite@1.0.30001826:
     resolution: {integrity: sha512-wTB+9tIbLro/BCXwLuNV1meHE4L9dS6dArMDwgYfNBPMYScqClHyGunhkCSDtHhe/69Xl0sHlKgBVZ+fNsYtWA==}
 
-  clsx@2.1.1:
-    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
-    engines: {node: '>=6'}
+  cn@0.5.2:
+    resolution: {integrity: sha512-wm10E6iuJ37rALOw3D+3cfaXXZSLNMh2uxpQn3dNICqfJM59yXqgbA9/9Iiz155j5kYNLdK6WreNdW3NQtx3OQ==}
+    engines: {node: '>=22'}
+    hasBin: true
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -1063,9 +1061,6 @@ packages:
   source-map-js@1.2.2:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
-
-  tailwind-merge@3.7.0:
-    resolution: {integrity: sha512-XPPUyAc+cvspz3lHTcR/QgPfW2A0lv/xQNIjX3HGhLR+Nq2lHaLq5MtTesHn8GUr3W3DguT2KT5x3NVgRtYwmA==}
 
   tailwindcss@4.3.5:
     resolution: {integrity: sha512-FcQk9BuffmEHJP2G0XmB2SplU1aLTI7j07Kunk+U74Ny+XiWOtzXz9aujFZ/avntw1e2cOv/3PkgzflQ7gX2vQ==}
@@ -1719,7 +1714,7 @@ snapshots:
 
   caniuse-lite@1.0.30001826: {}
 
-  clsx@2.1.1: {}
+  cn@0.5.2: {}
 
   convert-source-map@2.0.0: {}
 
@@ -1947,8 +1942,6 @@ snapshots:
       - supports-color
 
   source-map-js@1.2.2: {}
-
-  tailwind-merge@3.7.0: {}
 
   tailwindcss@4.3.5: {}
 
