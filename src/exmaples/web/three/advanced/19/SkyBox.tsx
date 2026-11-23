@@ -1,5 +1,6 @@
 import { useCubeTexture } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
+import { asset } from "@site/src/utils/asset";
 import gsap from "gsap";
 import type React from "react";
 import { useEffect } from "react";
@@ -34,7 +35,7 @@ export const SkyBox: React.FC<Props> = ({ url }) => {
 			`${url}/posz.jpg`, // 前侧（+Z 轴）
 			`${url}/negz.jpg`, // 后侧（-Z 轴）
 		],
-		{ path: "/textures/skyBox/" },
+		{ path: asset("/textures/skyBox/") },
 	);
 
 	// 当背景图片加载完成后，使用动画切换场景背景

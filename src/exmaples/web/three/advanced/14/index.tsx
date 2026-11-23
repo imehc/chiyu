@@ -1,6 +1,7 @@
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { asset } from "@site/src/utils/asset";
 import { Leva, useControls } from "leva";
 import { useEffect, useRef } from "react";
 import { type Mesh, TextureLoader } from "three";
@@ -13,7 +14,7 @@ export const Demo2v14 = () => {
 	return (
 		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas shadows camera={{ position: [0, 0, 2.75] }}>
-				<Environment files="/imgs/venice_sunset_1k.hdr" />
+				<Environment files={asset("/imgs/venice_sunset_1k.hdr")} />
 				<directionalLight
 					intensity={2}
 					position={[4, 0, 2]}
@@ -53,11 +54,11 @@ function Earth() {
 	const { gl } = useThree();
 	const texture = useLoader(
 		TextureLoader,
-		"/v214/img/worldColour.5400x2700.jpg",
+		asset("/v214/img/worldColour.5400x2700.jpg"),
 	);
 	const displacementMap = useLoader(
 		TextureLoader,
-		"/v214/img/gebco_bathy_2700x1350.jpg",
+		asset("/v214/img/gebco_bathy_2700x1350.jpg"),
 	);
 
 	const material = useControls({

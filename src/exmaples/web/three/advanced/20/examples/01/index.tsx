@@ -1,4 +1,5 @@
 import { useFrame } from "@react-three/fiber";
+import { asset } from "@site/src/utils/asset";
 import { useEffect, useMemo } from "react";
 import Globe from "three-globe";
 
@@ -21,7 +22,7 @@ function createGlobeData() {
 export default function GlobeComponent() {
 	const globe = useMemo(() => {
 		const g = new Globe()
-			.globeImageUrl("/three-globe/example/img/earth-night.png")
+			.globeImageUrl(asset("/three-globe/example/img/earth-night.png"))
 			.pointsData(createGlobeData())
 			.pointAltitude("size")
 			.pointColor("color");

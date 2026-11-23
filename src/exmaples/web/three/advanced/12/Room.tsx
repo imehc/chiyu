@@ -1,9 +1,10 @@
 import { useGLTF } from "@react-three/drei";
+import { asset } from "@site/src/utils/asset";
 import type { GLTFResult } from "../../types/use_gltf";
 
 export default function Room() {
 	const { nodes, materials } = useGLTF(
-		"/v212/models/room-transformed.glb",
+		asset("/v212/models/room-transformed.glb"),
 	) as unknown as GLTFResult;
 
 	return (
@@ -62,4 +63,4 @@ export default function Room() {
 	);
 }
 
-useGLTF.preload("/models/room-transformed.glb");
+useGLTF.preload(asset("/models/room-transformed.glb"));

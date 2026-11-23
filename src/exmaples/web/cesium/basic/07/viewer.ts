@@ -1,3 +1,4 @@
+import { asset } from "@site/src/utils/asset";
 import {
 	EllipsoidTerrainProvider,
 	UrlTemplateImageryProvider,
@@ -70,7 +71,7 @@ export function initViewer(el: HTMLElement) {
 				color: "#e6a23ccc",
 			},
 		],
-		img: "/cesium/07/marker6.png",
+		img: asset("/cesium/07/marker6.png"),
 	});
 
 	return { viewer, cluster };

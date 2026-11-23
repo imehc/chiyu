@@ -1,5 +1,6 @@
 import type { OrbitControls } from "@react-three/drei";
 import { useGLTF } from "@react-three/drei";
+import { asset } from "@site/src/utils/asset";
 import { Easing, Tween } from "@tweenjs/tween.js";
 import type { ComponentRef, RefObject } from "react";
 import type { GLTFResult } from "../../types/use_gltf";
@@ -11,7 +12,7 @@ export function Model({
 	controls: RefObject<ComponentRef<typeof OrbitControls> | null>;
 }) {
 	const { nodes, materials } = useGLTF(
-		"/models/scan-transformed.glb",
+		asset("/models/scan-transformed.glb"),
 	) as unknown as GLTFResult;
 
 	return (
@@ -45,4 +46,4 @@ export function Model({
 	);
 }
 
-useGLTF.preload("/models/scan-transformed.glb");
+useGLTF.preload(asset("/models/scan-transformed.glb"));

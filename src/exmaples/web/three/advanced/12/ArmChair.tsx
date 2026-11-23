@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { asset } from "@site/src/utils/asset";
 import { useMemo, useRef, useState } from "react";
 import type { Mesh } from "three";
 import type { GLTFResult } from "../../types/use_gltf";
@@ -9,7 +10,7 @@ export default function ArmChair() {
 
 	const ref = useRef<Mesh>(null);
 	const { nodes, materials } = useGLTF(
-		"/v212/models/armchair-transformed.glb",
+		asset("/v212/models/armchair-transformed.glb"),
 	) as unknown as GLTFResult;
 
 	const materialOverrides = useMemo(() => {
@@ -47,4 +48,4 @@ export default function ArmChair() {
 	);
 }
 
-useGLTF.preload("/v212/models/armchair-transformed.glb");
+useGLTF.preload(asset("/v212/models/armchair-transformed.glb"));

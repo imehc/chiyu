@@ -1,6 +1,7 @@
 import { Circle, OrbitControls } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
 import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { asset } from "@site/src/utils/asset";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Container from "../../../componets/Container";
 
@@ -8,7 +9,7 @@ import Container from "../../../componets/Container";
  * 加载模型
  */
 const Demo16: React.FC = () => {
-	const gltf = useLoader(GLTFLoader, "/models/monkey.glb");
+	const gltf = useLoader(GLTFLoader, asset("/models/monkey.glb"));
 
 	return (
 		<Container>

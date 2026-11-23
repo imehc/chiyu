@@ -1,4 +1,5 @@
 import { useFrame } from "@react-three/fiber";
+import { asset } from "@site/src/utils/asset";
 import { useEffect, useMemo } from "react";
 import Globe from "three-globe";
 
@@ -20,7 +21,7 @@ function createGlobeData() {
 export default function ArcLinkComponent() {
 	const globe = useMemo(() => {
 		return new Globe()
-			.globeImageUrl("/three-globe/example/img/earth-night.png")
+			.globeImageUrl(asset("/three-globe/example/img/earth-night.png"))
 			.arcsData(createGlobeData())
 			.arcColor("color")
 			.arcDashLength(() => Math.random())

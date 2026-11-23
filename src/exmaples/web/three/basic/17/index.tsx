@@ -1,6 +1,7 @@
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
 import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { asset } from "@site/src/utils/asset";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Container from "../../../componets/Container";
 
@@ -8,7 +9,7 @@ import Container from "../../../componets/Container";
  * 环境
  */
 const Demo17: React.FC = () => {
-	const gltf = useLoader(GLTFLoader, "/models/monkey.glb");
+	const gltf = useLoader(GLTFLoader, asset("/models/monkey.glb"));
 
 	return (
 		<Container>
@@ -17,7 +18,7 @@ const Demo17: React.FC = () => {
 				{/* <Environment preset="city" background /> */}
 				<Environment
 					// files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/meadow_2_1k.hdr"
-					files="/imgs/venice_sunset_1k.hdr"
+					files={asset("/imgs/venice_sunset_1k.hdr")}
 					background
 					// 模糊背景
 					// blur={0.5}

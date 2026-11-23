@@ -1,6 +1,7 @@
 import type { OrbitControls } from "@react-three/drei";
 import { useGLTF } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
+import { asset } from "@site/src/utils/asset";
 import { Easing, Tween } from "@tweenjs/tween.js";
 import { button, useControls } from "leva";
 import type { ComponentRef, RefObject } from "react";
@@ -14,7 +15,7 @@ interface Props {
 
 export const Arena: React.FC<Props> = ({ controls }) => {
 	const { nodes, materials } = useGLTF(
-		"/models/collision-world.glb",
+		asset("/models/collision-world.glb"),
 	) as unknown as GLTFResult;
 	const { camera } = useThree();
 

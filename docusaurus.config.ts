@@ -1,6 +1,7 @@
 import type * as Preset from "@docusaurus/preset-classic";
 import type { Config } from "@docusaurus/types";
 import { themes as prismThemes } from "prism-react-renderer";
+import { SITE_BASE_URL } from "./src/config/site";
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -19,8 +20,8 @@ const config: Config = {
 	// 可通过环境变量覆盖，便于部署到自有服务器；未设置时沿用 GitHub Pages 地址
 	url: (process.env.SITE_URL || "https://imehc.github.io").replace(/\/+$/, ""),
 	// Set the /<baseUrl>/ pathname under which your site is served
-	// For GitHub pages deployment, it is often '/<projectName>/'
-	baseUrl: "/",
+	// 默认根目录；GitHub Pages 项目站点构建时传 SITE_BASE_URL=/Chiyu/
+	baseUrl: SITE_BASE_URL,
 
 	onBrokenLinks: "throw",
 

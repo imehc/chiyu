@@ -1,4 +1,5 @@
 import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
+import { asset } from "@site/src/utils/asset";
 import {
 	Cartesian3,
 	Math as CesiumMath,
@@ -117,7 +118,7 @@ function loadShanghaipudongModel(viewer: Viewer) {
 		orientation: orientation,
 		model: {
 			// uri: "https://data.mars3d.cn/gltf/mars/shanghai/pudong/scene.gltf",
-			uri: "/cesium/09/scene/scene.gltf",
+			uri: asset("/cesium/09/scene/scene.gltf"),
 			scale: 520,
 		},
 	});
@@ -156,7 +157,7 @@ async function loadFengcheModel(viewer: Viewer, isStale: () => boolean) {
 			orientation: orientation,
 			model: {
 				// uri: "https://data.mars3d.cn/gltf/mars/fengche.gltf",
-				uri: "/cesium/09/fengche/fengche.gltf",
+				uri: asset("/cesium/09/fengche/fengche.gltf"),
 				scale: 40,
 				runAnimations: true,
 			},

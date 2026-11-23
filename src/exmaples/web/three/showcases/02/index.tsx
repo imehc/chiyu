@@ -21,6 +21,7 @@ import {
 	useRopeJoint,
 	useSphericalJoint,
 } from "@react-three/rapier";
+import { asset } from "@site/src/utils/asset";
 import { Leva, useControls } from "leva";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
@@ -35,8 +36,8 @@ import {
 import Container from "../../../componets/Container";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
-useGLTF.preload("/card/tag.glb");
-useTexture.preload("/card/band.jpeg");
+useGLTF.preload(asset("/card/tag.glb"));
+useTexture.preload(asset("/card/band.jpeg"));
 
 declare module "@react-three/fiber" {
 	interface ThreeElements {
@@ -124,8 +125,8 @@ const Band = () => {
 		RigidBodyOptions,
 		"type" | "canSleep" | "colliders" | "angularDamping" | "linearDamping"
 	>;
-	const { nodes, materials } = useGLTF("/card/tag.glb");
-	const texture = useTexture("/card/band.jpeg");
+	const { nodes, materials } = useGLTF(asset("/card/tag.glb"));
+	const texture = useTexture(asset("/card/band.jpeg"));
 	const { width, height } = useThree((state) => state.size);
 	const lineMaterialParameters = useMemo(
 		() => ({ resolution: new Vector2(width, height) }),

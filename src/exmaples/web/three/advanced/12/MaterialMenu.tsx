@@ -1,5 +1,6 @@
 import { Environment, Hud, OrthographicCamera } from "@react-three/drei";
 import { useLoader, useThree } from "@react-three/fiber";
+import { asset } from "@site/src/utils/asset";
 import { useMemo } from "react";
 import { TextureLoader } from "three";
 import Button from "./Button";
@@ -10,11 +11,11 @@ export default function MaterialMenu({
 	setSelected(n: number): void;
 }) {
 	const texture = useLoader(TextureLoader, [
-		"/v212/img/fabric_pattern_05.jpg",
-		"/v212/img/leather_red.jpg",
-		"/v212/img/fabric_pattern_07.jpg",
-		"/v212/img/book_pattern.jpg",
-		"/v212/img/denim_fabric_02.jpg",
+		asset("/v212/img/fabric_pattern_05.jpg"),
+		asset("/v212/img/leather_red.jpg"),
+		asset("/v212/img/fabric_pattern_07.jpg"),
+		asset("/v212/img/book_pattern.jpg"),
+		asset("/v212/img/denim_fabric_02.jpg"),
 	]);
 
 	const { size } = useThree();

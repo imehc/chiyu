@@ -4,6 +4,7 @@ Command: npx gltfjsx@6.2.15 ./public/models/shoe-draco.glb -o ./src/demo/21/Mode
 */
 
 import { useGLTF } from "@react-three/drei";
+import { asset } from "@site/src/utils/asset";
 import { useControls } from "leva";
 import { type JSX, useEffect, useState } from "react";
 import {
@@ -41,7 +42,7 @@ type GLTFResult = GLTF & {
 export function Model(props: JSX.IntrinsicElements["group"]) {
 	const [hovered, setHovered] = useState(false);
 	const { nodes, materials } = useGLTF(
-		"/models/shoe-draco.glb",
+		asset("/models/shoe-draco.glb"),
 	) as unknown as GLTFResult;
 
 	useEffect(() => {
@@ -94,4 +95,4 @@ export function Model(props: JSX.IntrinsicElements["group"]) {
 	);
 }
 
-useGLTF.preload("/models/shoe-draco.glb");
+useGLTF.preload(asset("/models/shoe-draco.glb"));

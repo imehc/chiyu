@@ -1,4 +1,5 @@
 import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
+import { asset } from "@site/src/utils/asset";
 import {
 	Cartesian3,
 	Math as CesiumMath,
@@ -154,7 +155,7 @@ export function initViewer(el: HTMLElement) {
 
 function loadVideo(viewer: Viewer, container: HTMLElement): HTMLVideoElement {
 	// 示例视频URL，实际使用时需要替换为有效的视频URL
-	const videoUrl = "/cesium/spatial-analysis/05/video.mp4";
+	const videoUrl = asset("/cesium/spatial-analysis/05/video.mp4");
 	const video = document.createElement("video");
 	video.id = "video_dom";
 	video.preload = "auto";

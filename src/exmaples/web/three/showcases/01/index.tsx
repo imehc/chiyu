@@ -22,6 +22,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { HDRLoader } from "three/addons/loaders/HDRLoader.js";
 // import { useControls } from 'leva';
 import "./style.css";
+import { asset } from "@site/src/utils/asset";
 import Container from "../../../componets/Container";
 
 export const CarColor: FC = () => {
@@ -41,7 +42,9 @@ export const CarColor: FC = () => {
 		// tmp.fog = new Fog('red', 10, 15);
 		tmp.fog = new Fog(0x333333, 10, 15);
 		//通过RGBELoader加载hdr文件，它是一种图像格式，将其用作场景的环境映射或者用来创建基于物理的材质
-		tmp.environment = new HDRLoader().load("/models/car/venice_sunset_1k.hdr");
+		tmp.environment = new HDRLoader().load(
+			asset("/models/car/venice_sunset_1k.hdr"),
+		);
 		tmp.environment.mapping = EquirectangularReflectionMapping;
 		tmp.fog = new Fog(0x333333, 10, 15);
 		return tmp;
@@ -155,7 +158,7 @@ export const CarColor: FC = () => {
 		const loader = new GLTFLoader();
 		//设置GLTFLoader加载器使用DRACO来解析我们的模型数据
 		loader.setDRACOLoader(dracoLoader);
-		loader.load("/models/car/ferrari.glb", (gltf) => {
+		loader.load(asset("/models/car/ferrari.glb"), (gltf) => {
 			//获取到模型的数据
 			const carModel = gltf.scene.children[0];
 			wheels.push(carModel.getObjectByName("rim_fl") as Mesh);

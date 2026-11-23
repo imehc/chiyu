@@ -1,4 +1,5 @@
 import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
+import { asset } from "@site/src/utils/asset";
 import {
 	Cesium3DTileset,
 	EllipsoidTerrainProvider,
@@ -61,7 +62,7 @@ export function initViewer(el: HTMLElement) {
 	new CesiumNavigation(viewer, options);
 
 	// 加载3D Tiles模型
-	Cesium3DTileset.fromUrl("/cesium/02/data/tileset.json")
+	Cesium3DTileset.fromUrl(asset("/cesium/02/data/tileset.json"))
 		.then((tileset) => {
 			if (viewer.isDestroyed()) {
 				tileset.destroy();

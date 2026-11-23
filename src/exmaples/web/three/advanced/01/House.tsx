@@ -1,5 +1,6 @@
 import { useGLTF } from "@react-three/drei";
 import type { ThreeElements } from "@react-three/fiber";
+import { asset } from "@site/src/utils/asset";
 import type { GLTFResult } from "../../types/use_gltf";
 
 type GroupProps = ThreeElements["group"];
@@ -9,7 +10,7 @@ type GroupProps = ThreeElements["group"];
  */
 export const House: React.FC<GroupProps> = (props) => {
 	const { nodes, materials } = useGLTF(
-		"/models/house-water-transformed.glb",
+		asset("/models/house-water-transformed.glb"),
 	) as unknown as GLTFResult;
 	Object.keys(materials).forEach((m: string) => {
 		if (!["sink_faiance", "white_409", "Ceramic"].includes(m)) {
@@ -779,6 +780,6 @@ export const House: React.FC<GroupProps> = (props) => {
 };
 
 useGLTF.preload(
-	"/models/house-water-transformed.glb",
+	asset("/models/house-water-transformed.glb"),
 	// 'https://cdn.jsdelivr.net/gh/Sean-Bradley/React-Three-Fiber-Boilerplate@b3e619b356ad199fa95b22291469fdbeec244baf/public/models/house-water-transformed.glb'
 );

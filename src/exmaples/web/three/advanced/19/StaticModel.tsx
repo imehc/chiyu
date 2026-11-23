@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { asset } from "@site/src/utils/asset";
 
 /**
  * 静态模型加载组件
@@ -10,7 +11,7 @@ import { useGLTF } from "@react-three/drei";
 export const StaticModel = () => {
 	// useGLTF: 加载 GLTF 格式的 3D 模型文件
 	// 返回模型的场景对象
-	const { scene } = useGLTF("/models/monkey.glb");
+	const { scene } = useGLTF(asset("/models/monkey.glb"));
 
 	// primitive: 使用 Three.js 原生对象渲染加载的模型场景。
 	return <primitive object={scene} />;

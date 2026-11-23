@@ -1,5 +1,6 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
 import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
+import { asset } from "@site/src/utils/asset";
 import Globe from "globe.gl";
 import { useEffect, useRef } from "react";
 
@@ -16,7 +17,7 @@ export default function EarthShieldComponent() {
 		const world = new Globe(el)
 			.width(width)
 			.height(height)
-			.globeImageUrl("/three-globe/example/img/earth-night.png")
+			.globeImageUrl(asset("/three-globe/example/img/earth-night.png"))
 			.ringsData([shieldRing])
 			.ringAltitude(0.25)
 			.ringColor(() => "lightblue")

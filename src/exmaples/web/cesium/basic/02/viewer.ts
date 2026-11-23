@@ -1,3 +1,4 @@
+import { asset } from "@site/src/utils/asset";
 import {
 	type Cartesian2,
 	Cesium3DTileFeature,
@@ -46,7 +47,7 @@ export function initViewer(el: HTMLElement) {
 export async function loadFiles(viewer: Viewer) {
 	try {
 		const tileset = await Cesium3DTileset.fromUrl(
-			"/cesium/02/data/tileset.json",
+			asset("/cesium/02/data/tileset.json"),
 		);
 		if (viewer.isDestroyed()) {
 			tileset.destroy();

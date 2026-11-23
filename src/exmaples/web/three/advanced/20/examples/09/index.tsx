@@ -1,5 +1,6 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
 import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
+import { asset } from "@site/src/utils/asset";
 import { csvParse } from "d3";
 import Globe, { type GlobeInstance } from "globe.gl";
 import { useEffect, useEffectEvent, useRef } from "react";
@@ -10,7 +11,7 @@ export default function WorldPopulationComponent() {
 
 	const getWorldPopulation = useEffectEvent(async (world: GlobeInstance) => {
 		try {
-			fetch("/datasets/world_population.csv")
+			fetch(asset("/datasets/world_population.csv"))
 				.then((res) => res.text())
 				.then((csv) =>
 					csvParse(csv, ({ lat, lng, pop }) => ({
@@ -32,7 +33,7 @@ export default function WorldPopulationComponent() {
 		const world = new Globe(el)
 			.width(width)
 			.height(height)
-			.globeImageUrl("/three-globe/example/img/earth-night.png")
+			.globeImageUrl(asset("/three-globe/example/img/earth-night.png"))
 			.heatmapPointLat("lat")
 			.heatmapPointLng("lng")
 			.heatmapPointWeight("pop")

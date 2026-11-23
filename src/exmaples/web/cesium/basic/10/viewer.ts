@@ -3,6 +3,7 @@ import {
 	type TencentImageryProviderOptions,
 } from "@cesium-china/cesium-map";
 import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
+import { asset } from "@site/src/utils/asset";
 import {
 	Cesium3DTileset,
 	CustomShader,
@@ -70,7 +71,9 @@ export async function initViewer(
 
 	let tileset: Cesium3DTileset;
 	try {
-		tileset = await Cesium3DTileset.fromUrl("/cesium/02/data/tileset.json");
+		tileset = await Cesium3DTileset.fromUrl(
+			asset("/cesium/02/data/tileset.json"),
+		);
 	} catch (error) {
 		if (!viewer.isDestroyed()) viewer.destroy();
 		throw error;
@@ -204,13 +207,13 @@ function texture1(viewer: Viewer, tileset: Cesium3DTileset) {
 		uniforms: {
 			u_texture: {
 				value: new TextureUniform({
-					url: "/cesium/10/wall.jpg",
+					url: asset("/cesium/10/wall.jpg"),
 				}),
 				type: UniformType.SAMPLER_2D,
 			},
 			u_texture1: {
 				value: new TextureUniform({
-					url: "/cesium/10/wall1.jpg",
+					url: asset("/cesium/10/wall1.jpg"),
 				}),
 				type: UniformType.SAMPLER_2D,
 			},
@@ -274,13 +277,13 @@ function texture2(viewer: Viewer, tileset: Cesium3DTileset) {
 		uniforms: {
 			u_texture: {
 				value: new TextureUniform({
-					url: "/cesium/10/wall.jpg",
+					url: asset("/cesium/10/wall.jpg"),
 				}),
 				type: UniformType.SAMPLER_2D,
 			},
 			u_texture1: {
 				value: new TextureUniform({
-					url: "/cesium/10/wall.jpg",
+					url: asset("/cesium/10/wall.jpg"),
 				}),
 				type: UniformType.SAMPLER_2D,
 			},
@@ -354,13 +357,13 @@ function texture3(viewer: Viewer, tileset: Cesium3DTileset) {
 		uniforms: {
 			u_texture: {
 				value: new TextureUniform({
-					url: "/cesium/10/wall.jpg",
+					url: asset("/cesium/10/wall.jpg"),
 				}),
 				type: UniformType.SAMPLER_2D,
 			},
 			u_texture1: {
 				value: new TextureUniform({
-					url: "/cesium/10/wall1.jpg",
+					url: asset("/cesium/10/wall1.jpg"),
 				}),
 				type: UniformType.SAMPLER_2D,
 			},

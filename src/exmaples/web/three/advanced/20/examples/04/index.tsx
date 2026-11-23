@@ -1,5 +1,6 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
 import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
+import { asset } from "@site/src/utils/asset";
 import { interpolateYlOrRd, scaleSequentialSqrt } from "d3";
 import Globe from "globe.gl";
 import { use, useEffect, useRef } from "react";
@@ -23,8 +24,8 @@ export default function ChoroplethCountriesComponent() {
 		const world = new Globe(el)
 			.width(width)
 			.height(height)
-			.globeImageUrl("/three-globe/example/img/earth-night.png")
-			.backgroundImageUrl("/three-globe/example/img/night-sky.png")
+			.globeImageUrl(asset("/three-globe/example/img/earth-night.png"))
+			.backgroundImageUrl(asset("/three-globe/example/img/night-sky.png"))
 			.lineHoverPrecision(0)
 			.polygonsData(features.filter((d) => d.properties.ISO_A2 !== "AQ"))
 			.polygonAltitude(0.06)

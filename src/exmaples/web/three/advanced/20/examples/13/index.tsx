@@ -1,5 +1,6 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
 import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
+import { asset } from "@site/src/utils/asset";
 import type { FeatureCollection, MultiLineString, Position } from "geojson";
 import Globe, { type GlobeInstance } from "globe.gl";
 import { useEffect, useEffectEvent, useRef } from "react";
@@ -19,7 +20,7 @@ export default function SubmarineCablesComponent() {
 	const loadData = useEffectEvent(async (world: GlobeInstance) => {
 		fetch(
 			// "//http-proxy.vastur.com?url=https://www.submarinecablemap.com/api/v3/cable/cable-geo.json",
-			"/datasets/cable-geo.json",
+			asset("/datasets/cable-geo.json"),
 		)
 			.then((r) => r.json())
 			.then(
@@ -59,9 +60,9 @@ export default function SubmarineCablesComponent() {
 		const world = new Globe(el)
 			.width(width)
 			.height(height)
-			.globeImageUrl("/three-globe/example/img/earth-night.png")
-			.bumpImageUrl("/three-globe/example/img/earth-topology.png")
-			.backgroundImageUrl("/three-globe/example/img/night-sky.png");
+			.globeImageUrl(asset("/three-globe/example/img/earth-night.png"))
+			.bumpImageUrl(asset("/three-globe/example/img/earth-topology.png"))
+			.backgroundImageUrl(asset("/three-globe/example/img/night-sky.png"));
 
 		loadData(world);
 

@@ -1,5 +1,6 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
 import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
+import { asset } from "@site/src/utils/asset";
 import Globe from "globe.gl";
 import { useEffect, useRef } from "react";
 import { Mesh, MeshPhongMaterial, SphereGeometry, TextureLoader } from "three";
@@ -16,8 +17,8 @@ export default function CloudsComponent() {
 		const world = new Globe(el, { animateIn: false })
 			.width(width)
 			.height(height)
-			.globeImageUrl("/three-globe/example/img/earth-blue-marble.png")
-			.bumpImageUrl("/three-globe/example/img/earth-topology.png");
+			.globeImageUrl(asset("/three-globe/example/img/earth-blue-marble.png"))
+			.bumpImageUrl(asset("/three-globe/example/img/earth-topology.png"));
 
 		const controls = world.controls();
 		if (controls) {
@@ -25,7 +26,7 @@ export default function CloudsComponent() {
 			controls.autoRotateSpeed = 0.35;
 		}
 
-		const CLOUDS_IMG_URL = "/three-globe/example/img/clouds.png";
+		const CLOUDS_IMG_URL = asset("/three-globe/example/img/clouds.png");
 		const CLOUDS_ALT = 0.004;
 		const CLOUDS_ROTATION_SPEED = -0.006;
 

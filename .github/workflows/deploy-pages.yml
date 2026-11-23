@@ -50,6 +50,9 @@ jobs:
         run: pnpm install
 
       - name: Build project
+        env:
+          # GitHub Pages 项目站点路径（仓库名 Chiyu）
+          SITE_BASE_URL: /Chiyu/
         run: pnpm build
 
       - name: Deploy

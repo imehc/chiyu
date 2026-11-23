@@ -1,3 +1,4 @@
+import { asset } from "@site/src/utils/asset";
 import {
 	CzmlDataSource,
 	EllipsoidTerrainProvider,
@@ -62,7 +63,7 @@ export function initViewer(el: HTMLElement) {
 }
 
 export async function loadCZML(viewer: Viewer) {
-	const czmldata = await CzmlDataSource.load("/cesium/08/wx.czml");
+	const czmldata = await CzmlDataSource.load(asset("/cesium/08/wx.czml"));
 	if (viewer.isDestroyed()) return;
 	viewer.dataSources.add(czmldata);
 	viewer.clock.shouldAnimate = true;

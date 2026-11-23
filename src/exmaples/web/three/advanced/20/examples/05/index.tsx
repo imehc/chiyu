@@ -1,5 +1,6 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
 import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
+import { asset } from "@site/src/utils/asset";
 import Globe, { type GlobeInstance } from "globe.gl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { ShaderMaterial, TextureLoader, Vector2 } from "three";
@@ -26,9 +27,11 @@ export default function DayNightCycleComponent() {
 
 		try {
 			const [dayTexture, nightTexture] = await Promise.all([
-				new TextureLoader().loadAsync("/three-globe/example/img/earth-day.png"),
 				new TextureLoader().loadAsync(
-					"/three-globe/example/img/earth-night.png",
+					asset("/three-globe/example/img/earth-day.png"),
+				),
+				new TextureLoader().loadAsync(
+					asset("/three-globe/example/img/earth-night.png"),
 				),
 			]);
 			const material = new ShaderMaterial({
@@ -43,7 +46,7 @@ export default function DayNightCycleComponent() {
 			});
 			world
 				.globeMaterial(material)
-				.backgroundImageUrl("/three-globe/example/img/night-sky.png")
+				.backgroundImageUrl(asset("/three-globe/example/img/night-sky.png"))
 				// Update globe rotation on shader
 				.onZoom(({ lng, lat }) =>
 					material.uniforms.globeRotation.value.set(lng, lat),

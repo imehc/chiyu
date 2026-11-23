@@ -1,5 +1,6 @@
 import ContainerWrapper from "@site/src/exmaples/web/componets/ContainerWrapper";
 import { useContainerSize } from "@site/src/exmaples/web/hooks/useContainerSize";
+import { asset } from "@site/src/utils/asset";
 import Globe from "globe.gl";
 import { useEffect, useRef } from "react";
 
@@ -13,7 +14,7 @@ export default function HeatMapComponent() {
 		const world = new Globe(el)
 			.width(width)
 			.height(height)
-			.globeImageUrl("/three-globe/example/img/earth-dark.png")
+			.globeImageUrl(asset("/three-globe/example/img/earth-dark.png"))
 			.heatmapsData([gData()])
 			.heatmapPointLat("lat")
 			.heatmapPointLng("lng")

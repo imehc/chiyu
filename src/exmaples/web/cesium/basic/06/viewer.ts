@@ -1,4 +1,5 @@
 import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
+import { asset } from "@site/src/utils/asset";
 import { randomPoint } from "@turf/turf";
 import {
 	BillboardCollection,
@@ -268,7 +269,7 @@ function loadIcon(viewer: Viewer) {
 	viewer.entities.add({
 		position: Cartesian3.fromDegrees(-115.59777, 40.03883),
 		billboard: {
-			image: "/cesium/06/icon.png",
+			image: asset("/cesium/06/icon.png"),
 			heightReference: HeightReference.CLAMP_TO_GROUND, // 贴附地面
 
 			scaleByDistance: new NearFarScalar(2000000, 1.5, 8000000, 0.5),
@@ -309,7 +310,7 @@ function loadMultipleIcon(viewer: Viewer, count = 50000) {
 			//根据距离缩放
 			scaleByDistance: new NearFarScalar(2000000, 1, 8000000, 0.1),
 			position: Cartesian3.fromDegrees(cor[0], cor[1]),
-			image: "/cesium/06/icon.png",
+			image: asset("/cesium/06/icon.png"),
 			width: 32,
 			height: 32,
 		});

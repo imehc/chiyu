@@ -1,6 +1,7 @@
 import { Environment, PointerLockControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { asset } from "@site/src/utils/asset";
 import { Leva } from "leva";
 import Container from "../../../componets/Container";
 import { Physics } from "./Physics";
@@ -27,7 +28,7 @@ const Demo2v07 = () => {
 				/>
 				<Environment
 					// files="https://cdn.jsdelivr.net/gh/Sean-Bradley/React-Three-Fiber-Boilerplate@octree/public/img/rustig_koppie_puresky_1k.hdr"
-					files="/imgs/rustig_koppie_puresky_1k.hdr"
+					files={asset("/imgs/rustig_koppie_puresky_1k.hdr")}
 					background
 				/>
 				<Physics />

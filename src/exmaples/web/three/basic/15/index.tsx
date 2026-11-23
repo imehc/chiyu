@@ -1,6 +1,7 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
 import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { asset } from "@site/src/utils/asset";
 import { Leva } from "leva";
 import { TextureLoader } from "three";
 import Container from "../../../componets/Container";
@@ -9,7 +10,7 @@ import { Lights } from "./Lights";
 import { Polyhedron } from "./Polyhedron";
 
 const Scene = () => {
-	const texture = useLoader(TextureLoader, "/imgs/grid.png");
+	const texture = useLoader(TextureLoader, asset("/imgs/grid.png"));
 	return (
 		<>
 			<Lights />

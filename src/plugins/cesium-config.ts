@@ -1,6 +1,7 @@
 import path from "node:path";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import { config } from "dotenv";
+import { SITE_BASE_URL } from "../config/site";
 
 // 加载 .env 文件
 config();
@@ -53,7 +54,8 @@ export default function cesiumPlugin(): Plugin {
 					// Define global constants for the runtime
 					// 从 .env 文件读取
 					new currentBundler.instance.DefinePlugin({
-						CESIUM_BASE_URL: JSON.stringify(`/${cesiumBaseUrl}`),
+						// Cesium 静态资源跟随部署根路径
+						CESIUM_BASE_URL: JSON.stringify(`${SITE_BASE_URL}${cesiumBaseUrl}`),
 						CESIUM_ACCESS_TOKEN: JSON.stringify(
 							process.env.CESIUM_ACCESS_TOKEN || "",
 						),

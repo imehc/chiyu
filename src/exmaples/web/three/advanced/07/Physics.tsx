@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { asset } from "@site/src/utils/asset";
 import { useCallback, useRef } from "react";
 import type { Sphere, Vector3 } from "three";
 import type { Capsule } from "three/addons/math/Capsule.js";
@@ -18,7 +19,7 @@ export type Collider = {
 
 export const Physics = () => {
 	const { nodes, scene } = useGLTF(
-		"/models/scene-transformed.glb",
+		asset("/models/scene-transformed.glb"),
 	) as unknown as GLTFResult;
 	const octree = useOctree(scene);
 	useOctreeHelper(octree);

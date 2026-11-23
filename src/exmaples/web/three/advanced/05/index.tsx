@@ -1,6 +1,7 @@
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import Stats from "@site/src/exmaples/web/componets/ExampleStats";
+import { asset } from "@site/src/utils/asset";
 import { Leva } from "leva";
 import { type ComponentRef, useRef } from "react";
 import Container from "../../../componets/Container";
@@ -27,7 +28,7 @@ const Demo2v05 = () => {
 					shadow-camera-bottom={-30}
 				/>
 				<Environment
-					files="/imgs/drakensberg_solitary_mountain_1k.hdr"
+					files={asset("/imgs/drakensberg_solitary_mountain_1k.hdr")}
 					background
 				/>
 				<OrbitControls ref={ref} target={[0, 1, 0]} />

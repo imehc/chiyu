@@ -1,3 +1,4 @@
+import { asset } from "@site/src/utils/asset";
 import { featureCollection, union } from "@turf/turf";
 import type { GeoJSON } from "geojson";
 
@@ -7,7 +8,7 @@ import type { GeoJSON } from "geojson";
  * @returns GeoJSON 数据
  */
 async function fetchCountriesData(useSimpleMerge = false) {
-	const res = await fetch("/datasets/ne_110m_admin_0_countries.geojson");
+	const res = await fetch(asset("/datasets/ne_110m_admin_0_countries.geojson"));
 	const data = await res.json();
 	// 处理数据：将 Taiwan 合并到 China
 	const features = [...data.features];

@@ -1,3 +1,4 @@
+import { asset } from "@site/src/utils/asset";
 import {
 	Color,
 	EllipsoidTerrainProvider,
@@ -52,8 +53,11 @@ export function initViewer(el: HTMLElement) {
 export async function loadShpFile(viewer: Viewer) {
 	try {
 		// 使用完整URL - shpjs 需要完整的 URL
-		const baseUrl = window.location.origin;
-		const geojson = await shp(`${baseUrl}/cesium/05/shp2/唐家泊果园.shp`);
+		const shpUrl = new URL(
+			asset("/cesium/05/shp2/唐家泊果园.shp"),
+			window.location.origin,
+		).href;
+		const geojson = await shp(shpUrl);
 		if (viewer.isDestroyed()) return;
 		const dataSource = await GeoJsonDataSource.load(geojson, {
 			clampToGround: true, // 贴地显示

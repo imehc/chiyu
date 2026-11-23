@@ -1,9 +1,10 @@
 import { useLoader } from "@react-three/fiber";
+import { asset } from "@site/src/utils/asset";
 import { useControls } from "leva";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 export const Model: React.FC = () => {
-	const { scene } = useLoader(GLTFLoader, "/models/scene.glb");
+	const { scene } = useLoader(GLTFLoader, asset("/models/scene.glb"));
 	const {
 		x,
 		y,

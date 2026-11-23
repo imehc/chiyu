@@ -1,4 +1,5 @@
 import { mountExampleGui } from "@site/src/exmaples/web/componets/mountExampleGui";
+import { asset } from "@site/src/utils/asset";
 import {
 	Cartesian3,
 	Math as CesiumMath,
@@ -256,24 +257,24 @@ function loadSkyBox(viewer: Viewer, type?: OnGroundType, onGround = false) {
 	const skyBox = new SkyBox(viewer);
 	if (!onGround) {
 		skyBox.customSkyBox({
-			positiveX: "/cesium/basic/12/SkyBox/tycho2t3_80_px.jpg",
-			negativeX: "/cesium/basic/12/SkyBox/tycho2t3_80_mx.jpg",
-			positiveY: "/cesium/basic/12/SkyBox/tycho2t3_80_py.jpg",
-			negativeY: "/cesium/basic/12/SkyBox/tycho2t3_80_my.jpg",
-			positiveZ: "/cesium/basic/12/SkyBox/tycho2t3_80_pz.jpg",
-			negativeZ: "/cesium/basic/12/SkyBox/tycho2t3_80_mz.jpg",
+			positiveX: asset("/cesium/basic/12/SkyBox/tycho2t3_80_px.jpg"),
+			negativeX: asset("/cesium/basic/12/SkyBox/tycho2t3_80_mx.jpg"),
+			positiveY: asset("/cesium/basic/12/SkyBox/tycho2t3_80_py.jpg"),
+			negativeY: asset("/cesium/basic/12/SkyBox/tycho2t3_80_my.jpg"),
+			positiveZ: asset("/cesium/basic/12/SkyBox/tycho2t3_80_pz.jpg"),
+			negativeZ: asset("/cesium/basic/12/SkyBox/tycho2t3_80_mz.jpg"),
 		});
 	} else {
 		switch (type) {
 			case "lantian":
 				skyBox.skyBoxOnGround({
 					sources: {
-						positiveX: "/cesium/basic/12/ground/lantian/Right.jpg",
-						negativeX: "/cesium/basic/12/ground/lantian/Left.jpg",
-						positiveY: "/cesium/basic/12/ground/lantian/Front.jpg",
-						negativeY: "/cesium/basic/12/ground/lantian/Back.jpg",
-						positiveZ: "/cesium/basic/12/ground/lantian/Up.jpg",
-						negativeZ: "/cesium/basic/12/ground/lantian/Down.jpg",
+						positiveX: asset("/cesium/basic/12/ground/lantian/Right.jpg"),
+						negativeX: asset("/cesium/basic/12/ground/lantian/Left.jpg"),
+						positiveY: asset("/cesium/basic/12/ground/lantian/Front.jpg"),
+						negativeY: asset("/cesium/basic/12/ground/lantian/Back.jpg"),
+						positiveZ: asset("/cesium/basic/12/ground/lantian/Up.jpg"),
+						negativeZ: asset("/cesium/basic/12/ground/lantian/Down.jpg"),
 					},
 					maxHeight: 50000, // 在 50km 以下显示近地天空盒
 				});
@@ -281,12 +282,12 @@ function loadSkyBox(viewer: Viewer, type?: OnGroundType, onGround = false) {
 			case "qingtian":
 				skyBox.skyBoxOnGround({
 					sources: {
-						positiveX: "/cesium/basic/12/ground/qingtian/rightav9.jpg",
-						negativeX: "/cesium/basic/12/ground/qingtian/leftav9.jpg",
-						positiveY: "/cesium/basic/12/ground/qingtian/frontav9.jpg",
-						negativeY: "/cesium/basic/12/ground/qingtian/backav9.jpg",
-						positiveZ: "/cesium/basic/12/ground/qingtian/topav9.jpg",
-						negativeZ: "/cesium/basic/12/ground/qingtian/bottomav9.jpg",
+						positiveX: asset("/cesium/basic/12/ground/qingtian/rightav9.jpg"),
+						negativeX: asset("/cesium/basic/12/ground/qingtian/leftav9.jpg"),
+						positiveY: asset("/cesium/basic/12/ground/qingtian/frontav9.jpg"),
+						negativeY: asset("/cesium/basic/12/ground/qingtian/backav9.jpg"),
+						positiveZ: asset("/cesium/basic/12/ground/qingtian/topav9.jpg"),
+						negativeZ: asset("/cesium/basic/12/ground/qingtian/bottomav9.jpg"),
 					},
 					maxHeight: 50000, // 在 50km 以下显示近地天空盒
 				});
@@ -294,12 +295,12 @@ function loadSkyBox(viewer: Viewer, type?: OnGroundType, onGround = false) {
 			case "wanxia":
 				skyBox.skyBoxOnGround({
 					sources: {
-						positiveX: "/cesium/basic/12/ground/wanxia/SunSetRight.png",
-						negativeX: "/cesium/basic/12/ground/wanxia/SunSetLeft.png",
-						positiveY: "/cesium/basic/12/ground/wanxia/SunSetFront.png",
-						negativeY: "/cesium/basic/12/ground/wanxia/SunSetBack.png",
-						positiveZ: "/cesium/basic/12/ground/wanxia/SunSetUp.png",
-						negativeZ: "/cesium/basic/12/ground/wanxia/SunSetDown.png",
+						positiveX: asset("/cesium/basic/12/ground/wanxia/SunSetRight.png"),
+						negativeX: asset("/cesium/basic/12/ground/wanxia/SunSetLeft.png"),
+						positiveY: asset("/cesium/basic/12/ground/wanxia/SunSetFront.png"),
+						negativeY: asset("/cesium/basic/12/ground/wanxia/SunSetBack.png"),
+						positiveZ: asset("/cesium/basic/12/ground/wanxia/SunSetUp.png"),
+						negativeZ: asset("/cesium/basic/12/ground/wanxia/SunSetDown.png"),
 					},
 					maxHeight: 50000, // 在 50km 以下显示近地天空盒
 				});
@@ -310,8 +311,7 @@ function loadSkyBox(viewer: Viewer, type?: OnGroundType, onGround = false) {
 }
 
 function loadBackgroundImage(viewer: Viewer) {
-	viewer.scene.canvas.style.backgroundImage =
-		"url('/cesium/basic/12/backGroundImg.jpg')"; //设置背景图片
+	viewer.scene.canvas.style.backgroundImage = `url('${asset("/cesium/basic/12/backGroundImg.jpg")}')`; //设置背景图片
 	if (viewer.scene.skyBox) viewer.scene.skyBox.show = false; //不显示天空盒
 	viewer.scene.backgroundColor = new Color(0.0, 0.0, 0.0, 0.0); //设置背景色透明
 }

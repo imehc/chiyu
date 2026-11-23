@@ -5,6 +5,7 @@ import { Leva, useControls } from "leva";
 import { Model } from "./Model";
 import Models from "./models.json";
 import "./styles.css";
+import { asset } from "@site/src/utils/asset";
 import Container from "../../../componets/Container";
 
 /**
@@ -22,7 +23,7 @@ const Demo20: React.FC = () => {
 		<Container controls={<Leva fill titleBar={false} hideCopyButton />}>
 			<Canvas camera={{ position: [0, 0, -0.2], near: 0.025 }}>
 				<Environment
-					files="/models/assets-useGLTF/img/workshop_1k.hdr"
+					files={asset("/models/assets-useGLTF/img/workshop_1k.hdr")}
 					background
 				/>
 				<group>
