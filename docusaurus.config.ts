@@ -20,7 +20,7 @@ const config: Config = {
 	// 可通过环境变量覆盖，便于部署到自有服务器；未设置时沿用 GitHub Pages 地址
 	url: (process.env.SITE_URL || "https://imehc.github.io").replace(/\/+$/, ""),
 	// Set the /<baseUrl>/ pathname under which your site is served
-	// 默认根目录；GitHub Pages 项目站点构建时传 SITE_BASE_URL=/Chiyu/
+	// 默认根目录；GitHub Pages 项目站点构建时传 SITE_BASE_URL=/chiyu/
 	baseUrl: SITE_BASE_URL,
 
 	onBrokenLinks: "throw",

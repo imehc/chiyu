@@ -4,5 +4,5 @@ export function normalizeBaseUrl(value: string): string {
 	return trimmed ? `/${trimmed}/` : "/";
 }
 
-/** 部署根路径，默认根目录；GitHub Pages 构建时传 SITE_BASE_URL=/Chiyu/ */
+/** 部署根路径，默认根目录；GitHub Pages 构建时传 SITE_BASE_URL=/chiyu/ */
 export const SITE_BASE_URL = normalizeBaseUrl(process.env.SITE_BASE_URL || "/");

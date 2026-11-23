@@ -51,8 +51,8 @@ jobs:
 
       - name: Build project
         env:
-          # GitHub Pages 项目站点路径（仓库名 Chiyu）
-          SITE_BASE_URL: /Chiyu/
+          # GitHub Pages 项目站点路径（仓库名 chiyu）
+          SITE_BASE_URL: /chiyu/
         run: pnpm build
 
       - name: Deploy

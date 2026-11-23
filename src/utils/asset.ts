@@ -7,7 +7,7 @@ const BASE_PREFIX = (
 
 /**
  * static 下的根路径资源转成当前部署路径。
- * asset("/models/a.glb") -> "/Chiyu/models/a.glb"（GitHub Pages）或 "/models/a.glb"（根目录部署）
+ * asset("/models/a.glb") -> "/chiyu/models/a.glb"（GitHub Pages）或 "/models/a.glb"（根目录部署）
  */
 export function asset(path: string): string {
 	if (!path.startsWith("/") || path.startsWith("//")) return path;
